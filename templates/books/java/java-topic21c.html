@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>KnowledgeStream – Certificate of Completion</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --paper-bg: #ffffff;
+    --gold: #c59d36;
+    --accent: #0b74c9;
+    --muted: #6b7280;
+  }
+
+  /* Page layout - center the certificate */
+  html,body{height:100%;margin:0;background:#f3f4f6;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+
+  .page-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;}
+
+  /* Certificate card sized for A4 (print) but responsive on screen */
+  .certificate {
+    width: 900px;                /* screen width */
+    max-width: calc(100% - 3rem);
+    background: var(--paper-bg);
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 14px 40px rgba(2,6,23,0.12);
+    border-radius: 8px;
+    border: 12px solid rgba(197,157,54,0.15); /* subtle gold outer border */
+    box-sizing: border-box;
+  }
+
+  /* Inner decorative gold border */
+  .certificate .inner {
+    border: 6px solid rgba(197,157,54,0.18);
+    padding: 28px;
+    border-radius: 6px;
+    min-height: 550px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+
+  /* Header: title and logo */
+  .cert-header { display:flex;align-items:center;justify-content:space-between;gap:1rem; }
+  .brand {
+    display:flex;align-items:center;gap:.8rem;
+  }
+  .logo-mark{
+    width:72px;height:72px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#0284c7);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px;
+    box-shadow: 0 6px 18px rgba(11,116,201,0.18);
+  }
+  .cert-title { text-align:right; }
+  .cert-title h2 { margin:0;font-size:20px;color:var(--muted);font-weight:600;letter-spacing:0.03em; }
+  .cert-title h1 { margin-top:6px;font-size:20px;color:#0f172a;font-weight:800;letter-spacing:0.02em; }
+
+  /* Main content */
+  .cert-body { text-align:center;padding:22px 36px; }
+  .cert-body h3 { margin:0;font-size:22px;color:#0b74c9;font-weight:800; }
+  .cert-body p.lead { margin:10px 0 26px;color:var(--muted);font-size:15px;max-width:840px;margin-left:auto;margin-right:auto;line-height:1.45; }
+
+  /* Recipient name */
+  .recipient {
+    margin-top:10px;
+    font-size:36px;
+    font-weight:800;
+    color:#0f172a;
+    letter-spacing:0.01em;
+  }
+  .meta-row { display:flex;justify-content:space-between;align-items:center;margin-top:28px;gap:12px; }
+  .meta-left, .meta-right { display:flex;flex-direction:column;gap:6px; }
+  .meta-left .small, .meta-right .small { color:var(--muted); font-size:13px; }
+  .meta-left .big, .meta-right .big { font-weight:700; font-size:14px; color:#0f172a; }
+
+  /* Signature area */
+  .signatures { display:flex;justify-content:space-between;align-items:flex-end;margin-top:28px;gap:16px; }
+  .signature-box { text-align:left; }
+  .sig-image { height:48px; object-fit:contain; display:block; }
+  .sig-name { margin-top:6px; font-weight:700; color:#0f172a; }
+  .sig-title { font-size:13px; color:var(--muted); }
+
+  /* Seal - bottom-right absolute */
+  .seal {
+    position:absolute; right:28px; bottom:28px; width:96px; height:96px; border-radius:12px;
+    background:linear-gradient(135deg,#fff6e1,#fff9f0);
+    border:4px solid rgba(197,157,54,0.9); display:flex;align-items:center;justify-content:center;flex-direction:column;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.08);
+  }
+  .seal .ks { font-weight:800;color:var(--gold);font-size:18px; }
+  .seal .txt { font-size:11px;color:var(--muted); }
+
+  /* Controls */
+  .controls { display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap; }
+  .controls .input { padding:.6rem .8rem;border-radius:8px;border:1px solid #e6e9ef;background:white;min-width:260px; }
+  .btn { padding:.6rem .9rem;border-radius:8px;border:none;cursor:pointer;font-weight:700; }
+  .btn-generate { background:linear-gradient(90deg,var(--accent),#0284c7); color:white; }
+  .btn-print { background:#f1f5f9;color:#0f172a;border:1px solid #e6e9ef; }
+
+  /* Confetti canvas sits over everything */
+  #confettiCanvas { pointer-events:none; position:fixed; left:0; top:0; width:100%; height:100%; z-index:9999; display:none; }
+
+  /* Hide controls and unnecessary UI when printing */
+  @media print {
+    body{background:white}
+    .page-wrap{padding:0;margin:0}
+    .controls, .no-print { display:none !important; }
+    .certificate { box-shadow:none; border:none; width:100%; max-width:initial; margin:0; border-radius:0; }
+    .inner { border:none; padding:0; }
+    #confettiCanvas { display:none !important; }
+  }
+
+  /* Responsive */
+  @media (max-width:700px){
+    .certificate{ padding:20px; }
+    .cert-body h3{ font-size:18px }
+    .recipient { font-size:26px }
+    .brand .logo-mark{ width:56px;height:56px }
+  }
+</style>
+</head>
+<body>
+<!-- Confetti canvas -->
+<canvas id="confettiCanvas"></canvas>
+
+<div class="page-wrap">
+  <div style="max-width:1000px;width:100%;">
+    <!-- Controls -->
+    <div class="controls no-print" style="margin-bottom:12px;">
+      <input id="nameInput" class="input" type="text" placeholder="Enter learner's full name" aria-label="Learner name" />
+      <select id="dateMode" class="input" style="max-width:220px;">
+        <option value="today">Use today's date</option>
+        <option value="custom">Custom date...</option>
+      </select>
+      <input id="customDate" class="input" type="date" style="display:none;max-width:180px;" />
+      <button id="generateBtn" class="btn btn-generate">Generate Certificate</button>
+      <button id="printBtn" class="btn btn-print">Download / Print</button>
+    </div>
+
+    <!-- Certificate -->
+    <div class="certificate" role="region" aria-label="Certificate of Completion">
+      <div class="inner" id="certInner">
+        <!-- Header -->
+        <div class="cert-header">
+          <div class="brand" aria-hidden="true">
+            <div class="logo-mark">KS</div>
+            <div>
+              <div style="font-weight:800;color:#0f172a;font-size:18px;">KnowledgeStream</div>
+              <div style="color:var(--muted);font-size:13px;">Comprehensive Java Resource</div>
+            </div>
+          </div>
+          <div class="cert-title" aria-hidden="true">
+            <h2>Certificate of Completion</h2>
+            <h1 style="font-size:18px;margin-top:6px">Java Mastery Series (20 Topics)</h1>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="cert-body">
+          <h3>Certificate of Completion</h3>
+          <p class="lead">This is to certify that</p>
+
+          <div id="recipientName" class="recipient" aria-live="polite">-- Learner Name --</div>
+
+          <p class="lead" style="margin-top:10px;">has successfully completed the <strong>Java Mastery Series</strong> — a 20-topic comprehensive course covering core, modern, and advanced Java concepts for professional development.</p>
+
+          <div class="meta-row" style="margin-top:28px;">
+            <div class="meta-left">
+              <div class="small">Certificate ID</div>
+              <div id="certId" class="big">KS-JAVA-2025-00000</div>
+            </div>
+            <div class="meta-right" style="text-align:right;">
+              <div class="small">Date of Completion</div>
+              <div id="certDate" class="big">-- -- ----</div>
+            </div>
+          </div>
+
+          <!-- Signatures -->
+          <div class="signatures" style="margin-top:40px;">
+            <div class="signature-box" style="max-width:48%;">
+              <!-- Placeholder for signature image (replace naveen-signature.png later) -->
+              <img src="naveen-signature.png" alt="Instructor signature" class="sig-image" onerror="this.style.display='none'">
+              <div class="sig-name">Naveen Roman</div>
+              <div class="sig-title">Instructor — KnowledgeStream</div>
+            </div>
+            <div style="text-align:right;max-width:48%;">
+              <div style="font-weight:700;color:#0f172a;font-size:16px;">Certified by</div>
+              <div style="color:var(--muted);">KnowledgeStream</div>
+              <div style="margin-top:18px;font-size:12px;color:var(--muted);">Course: Java Mastery Series (20 Topics)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seal -->
+        <div class="seal" aria-hidden="true">
+          <div class="ks">KS</div>
+          <div class="txt">KnowledgeStream</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footnote / small text -->
+    <div style="margin-top:12px;color:var(--muted);font-size:13px;text-align:center;" class="no-print">
+      <small>Tip: Type the learner's name and press "Generate Certificate". Use "Download / Print" to save a PDF (select "Save as PDF" in print dialog).</small>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Certificate logic:
+   - Live update recipient name as typing
+   - Generate certificate id as KS-JAVA-2025-xxxxx (random 5 digits)
+   - Use today's date or custom date input
+   - Confetti animation on generate
+   - Print uses window.print (recommended Save as PDF)
+*/
+
+/* Utility: zero-pad */
+function zpad(n, len=5){ return String(n).padStart(len,'0'); }
+
+const nameInput = document.getElementById('nameInput');
+const recipientName = document.getElementById('recipientName');
+const generateBtn = document.getElementById('generateBtn');
+const printBtn = document.getElementById('printBtn');
+const certIdEl = document.getElementById('certId');
+const certDateEl = document.getElementById('certDate');
+const dateMode = document.getElementById('dateMode');
+const customDate = document.getElementById('customDate');
+const confettiCanvas = document.getElementById('confettiCanvas');
+
+let lastId = Date.now() % 100000; // seed
+
+// Live preview as user types
+nameInput.addEventListener('input', () => {
+  const v = nameInput.value.trim();
+  recipientName.textContent = v === '' ? '-- Learner Name --' : v;
+});
+
+// date mode toggle
+dateMode.addEventListener('change', () => {
+  if(dateMode.value === 'custom') {
+    customDate.style.display = 'inline-block';
+  } else {
+    customDate.style.display = 'none';
+  }
+});
+
+// Generate ID
+function generateCertId(){
+  lastId = (lastId + Math.floor(Math.random()*999)) % 100000;
+  return 'KS-JAVA-2025-' + zpad(lastId,5);
+}
+
+// format date to readable
+function formatDate(d){
+  const opt = { year:'numeric', month:'long', day:'numeric' };
+  return new Date(d).toLocaleDateString(undefined, opt);
+}
+
+// confetti simple engine
+function fireConfetti(){
+  const ctx = confettiCanvas.getContext('2d');
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+  confettiCanvas.style.display = 'block';
+  const pieces = [];
+  const colors = ['#f59e0b','#ef4444','#0ea5e9','#10b981','#8b5cf6','#f97316'];
+  for(let i=0;i<120;i++){
+    pieces.push({
+      x: Math.random()*confettiCanvas.width,
+      y: Math.random()*-confettiCanvas.height,
+      vy: 2 + Math.random()*4,
+      vx: -2 + Math.random()*4,
+      size: 6 + Math.random()*8,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*360,
+      rota: -3 + Math.random()*6
+    });
+  }
+  let t0 = performance.now();
+  function frame(t){
+    const dt = t - t0; t0 = t;
+    ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+    for(let p of pieces){
+      p.x += p.vx * (dt/16);
+      p.y += p.vy * (dt/16);
+      p.rot += p.rota * (dt/16);
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+      ctx.restore();
+    }
+    // stop after ~2.5s
+    if(performance.now() - startTime < 2500) requestAnimationFrame(frame);
+    else { ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); confettiCanvas.style.display='none'; }
+  }
+  const startTime = performance.now();
+  requestAnimationFrame(frame);
+}
+
+// ensure printable A4 sizing when user prints (browser print dialog will scale)
+function generateCertificate(){
+  // validate name
+  const name = nameInput.value.trim();
+  if(!name){
+    alert('Please enter the learner\'s full name before generating the certificate.');
+    nameInput.focus();
+    return;
+  }
+
+  // set recipient text (already live but ensure)
+  recipientName.textContent = name;
+
+  // id
+  const id = generateCertId();
+  certIdEl.textContent = id;
+
+  // date
+  if(dateMode.value === 'custom' && customDate.value){
+    certDateEl.textContent = formatDate(customDate.value);
+  } else {
+    certDateEl.textContent = formatDate(new Date());
+  }
+
+  // subtle highlight animation (flash border)
+  const certInner = document.getElementById('certInner');
+  certInner.animate([
+    { boxShadow: '0 0 0px rgba(11,116,201,0.0)' },
+    { boxShadow: '0 0 30px rgba(11,116,201,0.12)' },
+    { boxShadow: '0 0 0px rgba(11,116,201,0.0)' }
+  ], { duration: 1200 });
+
+  // fire confetti
+  fireConfetti();
+}
+
+// Print handler (download as PDF via browser)
+function doPrint(){
+  // Recommend user to use landscape/portrait? We'll let them choose default portrait.
+  window.print();
+}
+
+// wire events
+generateBtn.addEventListener('click', generateCertificate);
+printBtn.addEventListener('click', doPrint);
+
+// keyboard: Enter triggers generate
+nameInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){ e.preventDefault(); generateCertificate(); }
+});
+
+// ensure canvas resizes on window change
+window.addEventListener('resize', () => {
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>

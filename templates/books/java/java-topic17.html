@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KnowledgeStream – Real-World Java Developer Essentials (Topic 17 v2.0)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg:#ffffff; --muted:#6b7280; --accent:#0ea5e9; --accent-700:#0284c7;
+      --card:#fbfeff; --code-bg:#f8fafc;
+    }
+    body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:var(--bg);color:#0f172a;margin:0;}
+    .container{max-width:1100px;margin:0 auto;padding:1.25rem}
+    header{background:#ffffff;box-shadow:0 4px 14px rgba(2,6,23,0.06);position:sticky;top:0;z-index:60}
+    .brand{color:var(--accent);font-weight:800}
+    h1,h2{color:#075985}
+    .card{background:var(--card);border:1px solid #eef2f7;border-radius:.75rem;padding:1.1rem;margin-bottom:1.1rem;box-shadow:0 6px 18px rgba(2,6,23,0.04)}
+    pre{background:var(--code-bg);padding:1rem;border-radius:.5rem;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace}
+    code{color:#0f172a}
+    .badge{display:inline-block;padding:.28rem .6rem;border-radius:.45rem;font-weight:700;font-size:.82rem}
+    .badge-blue{background:#dbeafe;color:#1e40af}
+    .badge-green{background:#dcfce7;color:#166534}
+    .badge-yellow{background:#fffbeb;color:#92400e}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .75rem;border-radius:.45rem;font-weight:700;border:1px solid transparent;cursor:pointer}
+    .btn-run{background:linear-gradient(90deg,var(--accent),var(--accent-700));color:white}
+    .btn-copy{background:#f8fafc;border:1px solid #e6eef8;color:#0f172a}
+    .btn-down{background:#f1f5f9;border:1px solid #e6eef8;color:#0f172a}
+    .meta{font-size:.92rem;color:var(--muted)}
+    .diagram{background:#f8fafc;border:1px solid #e6eef8;padding:.9rem;border-radius:.6rem;margin-top:.7rem}
+    .table{width:100%;border-collapse:collapse;margin-top:.6rem}
+    .table th,.table td{padding:.6rem;border:1px solid #eef2f7;text-align:left}
+    .table th{background:#eef9ff;color:#0369a1}
+    footer{margin-top:1.2rem;color:var(--muted);font-size:.9rem;text-align:center;padding:1rem 0;border-top:1px solid #eef2f7}
+    #toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:white;padding:.6rem .9rem;border-radius:.45rem;display:none;z-index:1000}
+    @media (max-width:900px){ .container{padding:.8rem} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container flex items-center justify-between py-4">
+      <a href="index.html" class="brand text-2xl">KnowledgeStream</a>
+      <div class="meta">Topic 17 — Real-World Java Developer Essentials (v2.0)</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="text-3xl font-bold mb-2">🌟 Real-World Java Developer Essentials — Beginner → Pro</h1>
+    <p class="meta mb-6">A compact, practical guide to tools & practices every production Java developer should know: Git, builds, testing, logging, Spring Boot, packaging, Docker, and CI/CD.</p>
+
+    <!-- 1. Git & GitHub -->
+    <section class="card" id="git">
+      <div class="flex justify-between items-start">
+        <div>
+          <h2 class="text-xl font-semibold">1️⃣ Git & GitHub — Workflows & Best Practices</h2>
+          <p class="meta mt-1">Version control fundamentals, branching strategies, pull requests, conflict resolution, and real-world tips.</p>
+        </div>
+        <div class="text-right">
+          <span class="badge badge-blue">Essential</span>
+        </div>
+      </div>
+
+      <div class="diagram mt-4">
+        <strong>Simple Git Flow (feature branching)</strong>
+        <pre class="mt-2 small">main ←─ dev ←─ feature/awesome-feature
+Developer clones → create feature branch → commit locally → push → open PR → review → merge → CI runs tests → deploy</pre>
+      </div>
+
+      <table class="table mt-4">
+        <tr><th>Command</th><th>What it does</th></tr>
+        <tr><td><code>git clone &lt;url&gt;</code></td><td>Copy remote repo locally</td></tr>
+        <tr><td><code>git checkout -b feature/name</code></td><td>Create and switch to a new branch</td></tr>
+        <tr><td><code>git add .</code></td><td>Stage changes</td></tr>
+        <tr><td><code>git commit -m "message"</code></td><td>Commit staged changes</td></tr>
+        <tr><td><code>git push origin feature/name</code></td><td>Push branch to remote</td></tr>
+        <tr><td><code>gh pr create</code> (GitHub CLI)</td><td>Create a PR quickly from CLI</td></tr>
+      </table>
+
+      <details class="mt-3"><summary>Conflict demo (brief)</summary>
+        <div class="meta mt-2">
+          <p>Typical conflict scenario: two branches modify same lines. Resolve by editing file(s), test locally, then <code>git add</code> and <code>git commit</code>. Use <code>git merge --abort</code> to cancel if needed.</p>
+          <p><b>Pro tip:</b> rebase feature branch onto latest dev before opening PR to keep history linear: <code>git fetch origin && git rebase origin/dev</code></p>
+        </div>
+      </details>
+
+      <details class="mt-3"><summary>Pull Request checklist (for reviewers)</summary>
+        <ul class="meta mt-2">
+          <li>Does code compile and tests pass? (<code>mvn -DskipTests=false test</code>)</li>
+          <li>Are changes small and focused?</li>
+          <li>Is there documentation or a README update if required?</li>
+          <li>Security & performance impact considered?</li>
+        </ul>
+      </details>
+
+      <div class="mt-3 meta">Tools: GitHub, GitLab, Bitbucket, GitHub CLI (<code>gh</code>), SourceTree, GitKraken, VSCode built-in Git.</div>
+    </section>
+
+    <!-- 2. Maven & Gradle -->
+    <section class="card" id="build">
+      <div class="flex justify-between items-start">
+        <div>
+          <h2 class="text-xl font-semibold">2️⃣ Build Tools — Maven & Gradle (lifecycle, scopes, plugins)</h2>
+          <p class="meta mt-1">Dependency management, lifecycle phases, and common plugins used in Java projects.</p>
+        </div>
+        <div>
+          <span class="badge badge-green">Build</span>
+        </div>
+      </div>
+
+      <div class="diagram mt-3">
+        <strong>Maven lifecycle (common phases)</strong>
+        <pre class="mt-2 small">validate → compile → test → package → verify → install → deploy</pre>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 mt-3">
+        <div>
+          <h3 class="font-semibold">Maven — pom.xml snippet (dependencies + plugin)</h3>
+          <pre><code>&lt;dependencies&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;
+    &lt;artifactId&gt;junit-jupiter-api&lt;/artifactId&gt;
+    &lt;version&gt;5.9.0&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;build&gt;
+  &lt;plugins&gt;
+    &lt;plugin&gt;
+      &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+      &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+      &lt;version&gt;3.0.0-M5&lt;/version&gt;
+    &lt;/plugin&gt;
+  &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="font-semibold">Gradle — build.gradle snippet</h3>
+          <pre><code>plugins {
+  id 'java'
+}
+repositories { mavenCentral() }
+dependencies {
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+}
+test { useJUnitPlatform() }</code></pre>
+        </div>
+      </div>
+
+      <table class="table mt-3">
+        <tr><th>Scope</th><th>Meaning</th></tr>
+        <tr><td>compile / implementation</td><td>Required to compile and run</td></tr>
+        <tr><td>provided</td><td>Available at runtime by container (e.g., servlet-api)</td></tr>
+        <tr><td>test / testImplementation</td><td>Only available in test classpath</td></tr>
+      </table>
+
+      <details class="mt-3"><summary>Common plugins & why</summary>
+        <ul class="meta mt-2">
+          <li><b>Surefire / JUnit</b> — run unit tests.</li>
+          <li><b>Fail-safe</b> — integration tests.</li>
+          <li><b>Shade / Assembly</b> — build fat/uber-JARs.</li>
+          <li><b>Checkstyle / SpotBugs</b> — static analysis.</li>
+        </ul>
+      </details>
+
+      <details class="mt-3"><summary>Ant vs Maven vs Gradle (quick)</summary>
+        <table class="table mt-2">
+          <tr><th>Tool</th><th>Config</th><th>When to use</th></tr>
+          <tr><td>Ant</td><td>XML scripts (procedural)</td><td>Custom build scripts, legacy projects</td></tr>
+          <tr><td>Maven</td><td>Convention over config (pom.xml)</td><td>Standard Java projects; large eco-system</td></tr>
+          <tr><td>Gradle</td><td>DSL (Groovy/Kotlin)</td><td>Flexible, faster incremental builds; multi-project builds</td></tr>
+        </table>
+      </details>
+
+    </section>
+
+    <!-- 3. Unit Testing -->
+    <section class="card" id="junit">
+      <div class="flex justify-between">
+        <h2 class="text-xl font-semibold">3️⃣ Unit Testing — JUnit 5 (Beginner → Advanced)</h2>
+        <span class="badge badge-blue">Testing</span>
+      </div>
+
+      <p class="meta mt-2">Write deterministic, fast unit tests. Use parameterized tests, lifecycle methods, and mocks for dependencies.</p>
+
+      <div class="grid md:grid-cols-2 gap-4 mt-3">
+        <div>
+          <h3 class="font-semibold">Basic test</h3>
+          <pre><code>import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class MathTest {
+  @Test
+  void add() { assertEquals(5, 2 + 3); }
+}</code></pre>
+        </div>
+
+        <div>
+          <h3 class="font-semibold">Parameterized test</h3>
+          <pre><code>import org.junit.jupiter.params.*;
+import org.junit.jupiter.params.provider.*;
+class ParamTest {
+  @ParameterizedTest
+  @CsvSource({ "2,3,5", "1,1,2" })
+  void add(int a,int b,int expected){ assertEquals(expected, a+b); }
+}</code></pre>
+        </div>
+      </div>
+
+      <details class="mt-3"><summary>Test lifecycle & mocking</summary>
+        <ul class="meta mt-2">
+          <li><code>@BeforeEach</code> / <code>@AfterEach</code> for per-test setup/cleanup.</li>
+          <li><code>@BeforeAll</code> / <code>@AfterAll</code> for expensive shared setup (static).</li>
+          <li>Use Mockito or MockK to mock external dependencies (DB, web clients).</li>
+        </ul>
+      </details>
+
+      <details class="mt-3"><summary>CI integration (quick)</summary>
+        <div class="meta mt-2">
+          <p>In CI (GitHub Actions / Jenkins) run <code>mvn -DskipTests=false test</code> or <code>./gradlew test</code>. Fail build on test failures and integrate code coverage (JaCoCo).</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4. Logging -->
+    <section class="card" id="logging">
+      <div class="flex justify-between">
+        <h2 class="text-xl font-semibold">4️⃣ Logging — SLF4J & Logback (best practices)</h2>
+        <span class="badge badge-yellow">Observability</span>
+      </div>
+
+      <p class="meta mt-2">Use SLF4J as API and Logback (or Log4j2) as implementation. Prefer structured logs and include context (request-id, user-id).</p>
+
+      <div class="grid md:grid-cols-2 gap-4 mt-3">
+        <div>
+          <h3 class="font-semibold">Code (SLF4J)</h3>
+          <pre><code>import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class LogDemo {
+  private static final Logger log = LoggerFactory.getLogger(LogDemo.class);
+  public static void main(String[] args){
+    log.info("Application started");
+    try{ int x=1/0; } catch(Exception e){ log.error("Processing failed: {}", e.toString()); }
+  }
+}</code></pre>
+        </div>
+
+        <div>
+          <h3 class="font-semibold">logback.xml (simple)</h3>
+          <pre><code>&lt;configuration&gt;
+  &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+    &lt;encoder&gt;&lt;pattern&gt;%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n&lt;/pattern&gt;&lt;/encoder&gt;
+  &lt;/appender&gt;
+  &lt;root level="INFO"&gt;&lt;appender-ref ref="STDOUT"/&gt;&lt;/root&gt;
+&lt;/configuration&gt;</code></pre>
+        </div>
+      </div>
+
+      <details class="mt-3"><summary>Logging best practices</summary>
+        <ul class="meta mt-2">
+          <li>Don't log sensitive data (PII, passwords).</li>
+          <li>Use parameterized logging to avoid unnecessary String concatenation.</li>
+          <li>Use correlation IDs (MDC) for tracing across services.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- 5. Spring Boot deep dive -->
+    <section class="card" id="spring">
+      <div class="flex justify-between">
+        <h2 class="text-xl font-semibold">5️⃣ Spring Boot — DI, REST API, Config</h2>
+        <span class="badge badge-purple">Framework</span>
+      </div>
+
+      <p class="meta mt-2">Spring Boot accelerates building production-ready apps: Auto configuration, embedded server, and opinionated defaults. Focus: Controller → Service → Repository (DI).</p>
+
+      <div class="diagram mt-3">
+        <strong>Layer diagram</strong>
+        <pre class="mt-2 small">Client (HTTP) → Controller → Service → Repository → Database</pre>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 mt-3">
+        <div>
+          <h3 class="font-semibold">Main application</h3>
+          <pre><code>@SpringBootApplication
+public class DemoApp {
+  public static void main(String[] args){ SpringApplication.run(DemoApp.class, args); }
+}</code></pre>
+        </div>
+
+        <div>
+          <h3 class="font-semibold">Controller + Service (example)</h3>
+          <pre><code>@RestController
+@RequestMapping("/api")
+public class UserController {
+  private final UserService userService;
+  public UserController(UserService s){ this.userService = s; }
+  @GetMapping("/hello") public String hello(){ return userService.greet(); }
+}
+
+@Service
+class UserService {
+  public String greet(){ return "Hello from Spring Boot!"; }
+}</code></pre>
+        </div>
+      </div>
+
+      <details class="mt-3"><summary>application.properties example</summary>
+        <pre class="mt-2"><code>server.port=8080
+spring.datasource.url=jdbc:mysql://localhost:3306/appdb
+spring.datasource.username=root
+spring.datasource.password=secret</code></pre>
+      </details>
+
+      <details class="mt-3"><summary>Why DI matters (concise)</summary>
+        <div class="meta mt-2">
+          <p>Dependency Injection decouples object creation from usage, making code testable and modular. In Spring, beans are managed by the container, injected via constructors (preferred) or @Autowired.</p>
+        </div>
+      </details>
+
+      <details class="mt-3"><summary>Pro tips for Spring interviews</summary>
+        <ul class="meta mt-2">
+          <li>Be ready to explain @Component vs @Service vs @Repository and bean scopes.</li>
+          <li>Describe how Spring Boot autoconfiguration works (starters, conditional beans).</li>
+          <li>Know about transactions (@Transactional), caching, and actuator endpoints for monitoring.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- 6. Packaging, Docker, Deployment -->
+    <section class="card" id="deploy">
+      <div class="flex justify-between">
+        <h2 class="text-xl font-semibold">6️⃣ Packaging & Deployment — JAR, WAR, Docker, CI/CD</h2>
+        <span class="badge badge-green">Deploy</span>
+      </div>
+
+      <h3 class="font-semibold mt-3">Build & Run</h3>
+      <table class="table mt-2">
+        <tr><th>Format</th><th>Use</th><th>Command</th></tr>
+        <tr><td>.jar (fat/uber)</td><td>Standalone Spring Boot app</td><td><code>mvn clean package</code> → <code>java -jar target/app.jar</code></td></tr>
+        <tr><td>.war</td><td>Deploy to servlet container (Tomcat)</td><td>Package as war, drop into container</td></tr>
+      </table>
+
+      <h3 class="font-semibold mt-3">Dockerfile (simple Spring Boot)</h3>
+      <pre><code># Use multi-stage build for smaller image
+FROM eclipse-temurin:17-jdk-jammy AS build
+WORKDIR /app
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+COPY src src
+RUN mvn -B -DskipTests package
+
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+COPY --from=build /app/target/app.jar app.jar
+ENTRYPOINT ["java","-jar","/app/app.jar"]</code></pre>
+
+      <details class="mt-3"><summary>CI/CD pipeline overview (GitHub Actions example)</summary>
+        <div class="meta mt-2">
+          <p>Typical flow: push → CI (build, test) → build artifact → push to registry → deploy to staging → smoke tests → deploy production.</p>
+          <pre class="mt-2"><code>name: Java CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with: java-version: '17'
+      - name: Build with Maven
+        run: mvn -B -DskipTests=false package
+      - name: Publish artifact
+        uses: actions/upload-artifact@v3
+        with: name: app-jar; path: target/*.jar</code></pre>
+        </div>
+      </details>
+
+      <details class="mt-3"><summary>Cloud quick notes</summary>
+        <ul class="meta mt-2">
+          <li>Deploy JARs to AWS Elastic Beanstalk, ECS (Docker), or serverless containers (AWS Fargate).</li>
+          <li>Use environment variables for secrets (do NOT commit creds).</li>
+          <li>Integrate monitoring (Prometheus + Grafana) and logs (ELK/EFK stack).</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- Comparison tables & cheat-sheets -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">Concept Comparison & Quick Cheats</h2>
+
+      <h3 class="font-semibold mt-3">Maven vs Gradle vs Ant (quick)</h3>
+      <table class="table mt-2">
+        <tr><th>Aspect</th><th>Maven</th><th>Gradle</th><th>Ant</th></tr>
+        <tr><td>Config</td><td>XML (pom.xml)</td><td>Groovy/Kotlin DSL</td><td>XML (script-like)</td></tr>
+        <tr><td>Convention</td><td>Opinionated (convention over config)</td><td>Flexible & fast</td><td>Manual</td></tr>
+        <tr><td>When</td><td>Most Java projects</td><td>Large multi-module, performance</td><td>Legacy/custom tasks</td></tr>
+      </table>
+
+      <h3 class="font-semibold mt-4">Git branching quick cheats</h3>
+      <pre class="mt-2"><code># Create feature branch
+git checkout -b feature/XYZ
+# Keep branch up-to-date
+git fetch origin
+git rebase origin/dev
+# Push branch
+git push -u origin feature/XYZ</code></pre>
+    </section>
+
+    <!-- Pro tips, interview notes -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">Pro Tips & Interview Pointers</h2>
+      <ul class="meta mt-2 list-disc ml-5">
+        <li>Know not only commands, but why: explain what happens under the hood (e.g., git objects, refs, staging area).</li>
+        <li>Show CI knowledge: how to add a test step and fail fast on regressions.</li>
+        <li>In interviews, explain trade-offs: fat JAR vs thin JAR + dependencies, container image size vs startup time.</li>
+        <li>For production: use health checks, graceful shutdown, and rolling updates for zero-downtime deploys.</li>
+      </ul>
+    </section>
+
+    <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+    <footer>
+      <div class="meta">© 2025 KnowledgeStream — Real-World Java Developer Essentials. Want the sample project (Spring Boot + CI + Docker) zipped? Ask and I’ll generate the ZIP of source files and CI config for you.</div>
+    </footer>
+  </main>
+
+  <div id="toast">Copied to clipboard</div>
+
+<script>
+  // small helper UI: copy code, run (open JDoodle), download text file
+  const JDoodleURL = 'https://www.jdoodle.com/online-java-compiler/';
+
+  function showToast(msg){
+    const t=document.getElementById('toast'); t.innerText=msg; t.style.display='block';
+    setTimeout(()=>t.style.display='none',1600);
+  }
+
+  // attach copy/run/download to buttons (delegation)
+  document.addEventListener('click', async (e) => {
+    const el = e.target;
+    if(el.classList.contains('btn-copy')){
+      // find nearest pre or data-target attribute
+      const target = el.getAttribute('data-target') || el.closest('.card')?.querySelector('pre');
+      const pre = target ? (document.getElementById(target) || document.querySelector(target) || document.querySelector('pre')) : null;
+      const text = pre ? pre.innerText : '';
+      if(!text){ showToast('No code found'); return; }
+      try { await navigator.clipboard.writeText(text); showToast('Code copied to clipboard'); }
+      catch(err){ showToast('Copy failed'); }
+    } else if(el.classList.contains('btn-run')){
+      const target = el.getAttribute('data-target') || el.closest('.card')?.querySelector('pre');
+      const pre = target ? (document.getElementById(target) || document.querySelector(target) || document.querySelector('pre')) : null;
+      const text = pre ? pre.innerText : '';
+      if(!text){ showToast('No code found'); return; }
+      try { await navigator.clipboard.writeText(text); window.open(JDoodleURL,'_blank'); showToast('Copied & opened JDoodle — paste & run'); }
+      catch(err){ window.open(JDoodleURL,'_blank'); showToast('Opened JDoodle — paste & run'); }
+    } else if(el.classList.contains('btn-down')){
+      const target = el.getAttribute('data-target') || el.closest('.card')?.querySelector('pre');
+      const filename = el.getAttribute('data-filename') || 'example.txt';
+      const pre = target ? (document.getElementById(target) || document.querySelector(target) || document.querySelector('pre')) : null;
+      const text = pre ? pre.innerText : '';
+      if(!text){ showToast('No code to download'); return; }
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      showToast('Download started');
+    }
+  });
+</script>
+</body>
+</html>

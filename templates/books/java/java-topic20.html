@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KnowledgeStream – Functional & Reactive Programming (Java 8–21)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body{background:#f9fafb;color:#1e293b;font-family:'Inter',sans-serif;}
+  pre{background:#0f172a;color:#e2e8f0;padding:1rem;border-radius:.5rem;overflow-x:auto;}
+  code{color:#7dd3fc;}
+  .card{background:white;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:1.5rem;margin-bottom:2rem;}
+  .copy-btn,.run-btn{border-radius:.4rem;padding:.3rem .6rem;font-size:.9rem;margin-right:.3rem;cursor:pointer}
+  .copy-btn{background:#e2e8f0}.run-btn{background:#0ea5e9;color:white}
+  .diagram{background:#f1f5f9;border:1px solid #e5e7eb;padding:1rem;border-radius:.6rem;margin-top:.8rem}
+  details summary{cursor:pointer;font-weight:600;color:#0369a1;margin-top:.5rem}
+  table{width:100%;border-collapse:collapse;margin-top:1rem}
+  th,td{border:1px solid #e5e7eb;padding:.8rem;text-align:left}
+  th{background:#e0f2fe;color:#075985}
+  .callout{background:#fffbeb;border-left:4px solid #facc15;padding:.75rem;border-radius:.5rem;color:#854d0e;margin-top:.8rem}
+</style>
+<script>
+function copyCode(id){navigator.clipboard.writeText(document.getElementById(id).innerText);alert("✅ Code copied!");}
+function runCode(){window.open("https://www.jdoodle.com/online-java-compiler/","_blank");}
+</script>
+</head>
+<body>
+
+<header class="bg-sky-600 text-white sticky top-0 z-50 shadow-md">
+  <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <a href="index.html" class="text-3xl font-extrabold">KnowledgeStream</a>
+  </div>
+</header>
+
+<section class="container mx-auto px-6 py-10">
+  <h1 class="text-4xl font-bold text-sky-700 mb-6">🧠 Functional & Reactive Programming (Java 8 – 21)</h1>
+  <p class="text-gray-700 mb-8 leading-relaxed">
+    Functional and Reactive paradigms redefine how modern Java handles data and concurrency. They power non-blocking, event-driven architectures in frameworks like <b>Spring WebFlux</b> and <b>Project Reactor</b>.
+  </p>
+
+  <!-- Streams -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🌊 1. Stream API Deep Dive</h2>
+    <p>The <code>java.util.stream</code> package introduced in Java 8 allows declarative, functional-style operations on collections — processing data efficiently with pipelines.</p>
+
+    <div class="diagram">
+      <strong>Stream Pipeline:</strong>
+      <p>Source → Intermediate Ops (map, filter) → Terminal Ops (collect, forEach)</p>
+    </div>
+
+    <div class="flex justify-end mb-2 mt-4">
+      <button class="copy-btn" onclick="copyCode('stream')">📋 Copy</button>
+      <button class="run-btn" onclick="runCode()">▶ Run</button>
+    </div>
+
+<pre id="stream"><code>import java.util.*;
+import java.util.stream.*;
+
+public class StreamExample {
+  public static void main(String[] args){
+    List&lt;Integer&gt; nums = Arrays.asList(2,4,6,8,10);
+    int sum = nums.stream()
+                  .filter(n -&gt; n &gt; 4)
+                  .mapToInt(n -&gt; n * 2)
+                  .sum();
+    System.out.println("Sum: " + sum);
+  }
+}</code></pre>
+
+    <details><summary>🧠 Explanation</summary>
+      <ul class="list-disc ml-6 mt-2">
+        <li><code>filter()</code> removes unwanted data → returns Stream.</li>
+        <li><code>mapToInt()</code> transforms each element.</li>
+        <li><code>sum()</code> is terminal operation — closes the stream.</li>
+      </ul>
+    </details>
+
+    <h3 class="text-lg text-sky-600 mt-6 mb-2">⚡ Parallel Streams</h3>
+<pre><code>long count = nums.parallelStream()
+                 .filter(n -&gt; n % 2 == 0)
+                 .count();</code></pre>
+    <div class="callout">💡 Parallel Streams automatically split work across CPU cores — great for CPU-bound data processing, but avoid for small or IO-bound tasks.</div>
+  </div>
+
+  <!-- Functional Interfaces -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🧩 2. Functional Interfaces (Java 8+)</h2>
+    <p>A Functional Interface has exactly one abstract method — it can be represented as a Lambda expression. Java provides built-in interfaces under <code>java.util.function</code>.</p>
+
+    <table>
+      <tr><th>Interface</th><th>Method</th><th>Example</th></tr>
+      <tr><td><code>Supplier&lt;T&gt;</code></td><td><code>T get()</code></td><td>Provides values (lazy)</td></tr>
+      <tr><td><code>Function&lt;T,R&gt;</code></td><td><code>R apply(T)</code></td><td>Maps input → output</td></tr>
+      <tr><td><code>Predicate&lt;T&gt;</code></td><td><code>boolean test(T)</code></td><td>Boolean filter</td></tr>
+      <tr><td><code>Consumer&lt;T&gt;</code></td><td><code>void accept(T)</code></td><td>Processes input</td></tr>
+      <tr><td><code>BiConsumer&lt;T,U&gt;</code></td><td><code>void accept(T,U)</code></td><td>Processes two inputs</td></tr>
+    </table>
+
+<pre><code>Supplier&lt;String&gt; sup = () -&gt; "Hello Java!";
+Predicate&lt;Integer&gt; even = n -&gt; n % 2 == 0;
+Function&lt;Integer,Integer&gt; square = n -&gt; n*n;
+Consumer&lt;String&gt; print = s -&gt; System.out.println(s);
+
+if(even.test(4)) print.accept(sup.get() + " Square: " + square.apply(4));</code></pre>
+
+    <div class="callout">💡 Functional Interfaces = foundation of Streams, Lambdas & Async pipelines in Reactive Java.</div>
+  </div>
+
+  <!-- CompletableFuture -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🚀 3. Asynchronous Programming with CompletableFuture</h2>
+    <p><code>CompletableFuture</code> represents a promise — it executes tasks asynchronously and composes dependent tasks non-blocking.</p>
+
+    <div class="diagram">CompletableFuture = Future + Callbacks + Pipelines</div>
+
+<pre><code>import java.util.concurrent.*;
+
+public class AsyncDemo {
+  public static void main(String[] args) throws Exception {
+    CompletableFuture&lt;String&gt; future =
+      CompletableFuture.supplyAsync(() -&gt; "Hello")
+                       .thenApply(str -&gt; str + " World")
+                       .thenApply(String::toUpperCase);
+
+    System.out.println(future.get());
+  }
+}</code></pre>
+
+    <details><summary>🧠 Explanation</summary>
+      <ul class="list-disc ml-6 mt-2">
+        <li><code>supplyAsync()</code> runs in a ForkJoinPool thread.</li>
+        <li><code>thenApply()</code> chains callbacks without blocking.</li>
+        <li>Unlike <code>Future</code>, it supports chaining and error handling (<code>exceptionally()</code>).</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- Reactive Programming -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">⚛️ 4. Reactive Programming Basics</h2>
+    <p>Reactive Programming is about <b>data flows</b> and <b>propagation of change</b>.  
+       Instead of pulling data, subscribers react to new events as they arrive.</p>
+
+    <div class="diagram">
+      <strong>Reactive Streams Model (Java 9 Flow API)</strong>
+      <p>Publisher → Subscriber (onNext, onError, onComplete)</p>
+    </div>
+
+<pre><code>import java.util.concurrent.Flow.*;
+
+public class ReactiveDemo {
+  static class MyPublisher implements Publisher&lt;String&gt; {
+    public void subscribe(Subscriber&lt;? super String&gt; s){
+      s.onSubscribe(new Subscription(){
+        public void request(long n){ s.onNext("Hello Reactive!"); s.onComplete(); }
+        public void cancel(){}
+      });
+    }
+  }
+  public static void main(String[] args){
+    MyPublisher p = new MyPublisher();
+    p.subscribe(new Subscriber&lt;&gt;(){
+      public void onSubscribe(Subscription s){ s.request(1); }
+      public void onNext(String i){ System.out.println(i); }
+      public void onError(Throwable t){} 
+      public void onComplete(){ System.out.println("Done!"); }
+    });
+  }
+}</code></pre>
+
+    <div class="callout">💡 Reactive Streams (Flow API) provide a standard for asynchronous data processing with backpressure.</div>
+  </div>
+
+  <!-- RxJava & Reactor -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">☢️ 5. Reactive Libraries (RxJava & Project Reactor)</h2>
+    <p>These libraries implement Reactive Streams for real-world apps — they provide operators to transform, filter, and combine async data flows.</p>
+
+    <table>
+      <tr><th>Library</th><th>Core Type</th><th>Highlights</th></tr>
+      <tr><td>RxJava</td><td><code>Observable</code> / <code>Flowable</code></td><td>Powerful operators, Android integration</td></tr>
+      <tr><td>Project Reactor</td><td><code>Flux</code> / <code>Mono</code></td><td>Backed by Spring WebFlux, non-blocking HTTP</td></tr>
+    </table>
+
+<pre><code>// Project Reactor example
+Flux.just("A","B","C")
+    .map(String::toLowerCase)
+    .filter(s -&gt; !s.equals("b"))
+    .subscribe(System.out::println);</code></pre>
+
+    <div class="callout">
+      💡 Spring WebFlux uses <code>Mono&lt;T&gt;</code> for single values and <code>Flux&lt;T&gt;</code> for streams of events.
+    </div>
+  </div>
+
+  <!-- Concept Comparison -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">⚖️ Functional vs Reactive Programming</h2>
+    <table>
+      <tr><th>Aspect</th><th>Functional</th><th>Reactive</th></tr>
+      <tr><td>Focus</td><td>Declarative data processing</td><td>Asynchronous event streams</td></tr>
+      <tr><td>Key API</td><td>Streams, Lambdas</td><td>Flow API, RxJava, Reactor</td></tr>
+      <tr><td>Execution</td><td>Pull model (consumer requests)</td><td>Push model (publisher emits)</td></tr>
+      <tr><td>Best For</td><td>Collections & CPU tasks</td><td>IO, real-time data, non-blocking systems</td></tr>
+      <tr><td>Output</td><td>Final value or collection</td><td>Stream of values over time</td></tr>
+    </table>
+  </div>
+
+  <!-- Viva -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🎯 Interview & Viva Prep</h2>
+    <ul class="list-disc ml-6 text-gray-700">
+      <li>💬 What’s the difference between map and flatMap? → <code>map</code> transforms values; <code>flatMap</code> flattens nested streams.</li>
+      <li>💬 What’s backpressure? → Subscriber controls how much data it can handle to avoid overload.</li>
+      <li>💬 Why Reactive Programming? → To handle massive concurrency without threads explosion.</li>
+      <li>💬 CompletableFuture vs RxJava? → Future = one result; Reactive = many async results.</li>
+    </ul>
+  </div>
+
+  <!-- Quiz -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🧠 Quick Quiz</h2>
+    <form id="quiz">
+      <p>1️⃣ Which interface returns a value without input?<br>
+      <input type="radio" name="q1" value="A"> A. Consumer<br>
+      <input type="radio" name="q1" value="B"> B. Supplier<br></p>
+
+      <p>2️⃣ Reactive Streams use a ... model?<br>
+      <input type="radio" name="q2" value="A"> A. Pull<br>
+      <input type="radio" name="q2" value="B"> B. Push<br></p>
+
+      <button type="button" onclick="checkQuiz()" class="bg-sky-600 text-white px-4 py-1 rounded mt-2">Check Answers</button>
+    </form>
+    <p id="result" class="mt-3 font-semibold text-sky-700"></p>
+  </div>
+
+  <script>
+    function checkQuiz(){
+      let s=0;
+      if(document.querySelector('input[name="q1"]:checked')?.value==="B")s++;
+      if(document.querySelector('input[name="q2"]:checked')?.value==="B")s++;
+      document.getElementById('result').innerText=`Your Score: ${s}/2`;
+    }
+  </script>
+
+  <div class="flex justify-between mt-10">
+    <a href="java-topic19.html" class="text-sky-600 font-semibold">← Previous</a>
+    <a href="java-summary.html" class="text-sky-600 font-semibold">Next →</a>
+  </div>
+</section>
+
+<div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+<footer class="bg-sky-100 text-gray-600 text-center py-8 mt-10 border-t border-sky-200">
+  <p>© 2025 KnowledgeStream — Functional & Reactive Java Elite Edition 🌠</p>
+</footer>
+</body>
+</html>

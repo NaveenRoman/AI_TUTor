@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Java AI Interview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f6f7fb;
+    padding: 30px;
+}
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+.question-box {
+    background: #f1f5ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border-radius: 8px;
+}
+button {
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.start-btn { background:#4f46e5; color:#fff; }
+.submit-btn { background:#22c55e; color:#fff; }
+.voice-btn { background:#f59e0b; color:#fff; }
+.scores {
+    margin-top:20px;
+    background:#f9fafb;
+    padding:15px;
+    border-radius:10px;
+}
+.feedback {
+    background:#fff7ed;
+    padding:12px;
+    border-left:4px solid #fb923c;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h2>🎤 Java AI Interview</h2>
+<p>Question <span id="currentIndex">0</span> / 15</p>
+
+<div class="question-box">
+<b>Interviewer:</b>
+<div id="question">Click Start Interview</div>
+</div>
+
+<textarea id="answer" placeholder="Type or speak your answer..."></textarea>
+
+<br><br>
+<button class="voice-btn" onclick="startVoice()">🎙️ Speak Answer</button>
+<button class="submit-btn" onclick="submitAnswer()">Submit Answer</button>
+<button class="start-btn" onclick="startInterview()">▶ Start Interview</button>
+
+<div class="scores">
+<h3>📊 Scores</h3>
+<p>Technical: <span id="tech">-</span>/10</p>
+<p>Clarity: <span id="clarity">-</span>/10</p>
+<p>Communication: <span id="comm">-</span>/10</p>
+<p>Confidence: <span id="conf">-</span>/10</p>
+<p><b>Overall:</b> <span id="overall">-</span>/10</p>
+<div class="feedback">
+<b>HR Feedback:</b>
+<div id="feedback">-</div>
+</div>
+</div>
+
+</div>
+
+<script>
+let TOTAL_QUESTIONS = 15;
+let currentIndex = 0;
+let currentQuestion = "";
+let interviewHistory = [];
+
+/* ===============================
+   VOICE → TEXT (WEB SPEECH API)
+=============================== */
+let recognition;
+if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById("answer").value += " " + transcript;
+    };
+
+    recognition.onerror = function() {
+        alert("Voice recognition error. Try again.");
+    };
+} else {
+    alert("Voice recognition not supported in this browser.");
+}
+
+function startVoice() {
+    if (recognition) {
+        recognition.start();
+    }
+}
+
+/* ===============================
+   INTERVIEW FLOW
+=============================== */
+async function startInterview() {
+    currentIndex = 0;
+    interviewHistory = [];
+    clearScores();
+    await loadNextQuestion();
+}
+
+async function loadNextQuestion() {
+    if (currentIndex >= TOTAL_QUESTIONS) {
+        generateFinalReport();
+        return;
+    }
+
+    const res = await fetch("/api/ask-book-topic/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            subject: "java",
+            topic: `java-topic${currentIndex + 1}.html`,
+            question: "Ask one Java interview question"
+        })
+    });
+
+    const data = await res.json();
+
+    if (!data.answer) {
+        document.getElementById("question").innerText = "Unable to fetch question";
+        return;
+    }
+
+    currentQuestion = data.answer;
+    document.getElementById("question").innerText = currentQuestion;
+    document.getElementById("currentIndex").innerText = currentIndex + 1;
+}
+
+async function submitAnswer() {
+    const answer = document.getElementById("answer").value.trim();
+    if (!answer) return alert("Answer required");
+
+    const res = await fetch("/api/interview/hr/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            role: "Java Developer",
+            company: "Infosys",
+            question: currentQuestion,
+            answer: answer
+        })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("tech").innerText = data.technical_score;
+    document.getElementById("clarity").innerText = data.clarity_score;
+    document.getElementById("comm").innerText = data.communication_score;
+    document.getElementById("conf").innerText = data.confidence_score;
+    document.getElementById("overall").innerText = data.total_score;
+    document.getElementById("feedback").innerText = data.feedback;
+
+    interviewHistory.push(data);
+    currentIndex++;
+    document.getElementById("answer").value = "";
+
+    setTimeout(loadNextQuestion, 1200);
+}
+
+function clearScores() {
+    ["tech","clarity","comm","conf","overall","feedback"].forEach(
+        id => document.getElementById(id).innerText = "-"
+    );
+}
+
+function generateFinalReport() {
+    let avg = (
+        interviewHistory.reduce((a,b)=>a+b.total_score,0) /
+        interviewHistory.length
+    ).toFixed(2);
+
+    alert("🎉 Interview Completed!\nFinal Score: " + avg + "/10");
+}
+</script>
+
+</body>
+</html>

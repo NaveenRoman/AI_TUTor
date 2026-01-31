@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Java Topic 3 — Arrays & Strings | KnowledgeStream</title>
+
+  	<title>Java Topic 3 — Arrays & Strings | KnowledgeStream</title>
+
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap');
+		body{font-family:Inter,system-ui;background:#ffffff;color:#0f172a;margin:0}
+		.container{max-width:1100px;margin:0 auto;padding:28px}
+		header{background:rgba(255,255,255,0.8);backdrop-filter:blur(4px);border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10}
+		.card{background:#fbfdff;border-radius:12px;padding:26px;border:1px solid #e6eef6;box-shadow:0 6px 20px rgba(16,24,40,0.04)}
+		pre{background:#f3f7fb;padding:14px;border-radius:8px;overflow-x:auto;font-family:'Roboto Mono',monospace;font-size:0.93rem}
+		code{color:#0b7285}
+		.btn{background:linear-gradient(90deg,#075985,#0369a1);padding:10px 14px;border-radius:10px;font-weight:700;color:white;text-decoration:none;display:inline-block}
+		.btn:hover{opacity:0.9}
+		.term{background:#f8fafc;padding:12px;border-radius:8px;font-family:'Roboto Mono',monospace;font-size:0.9rem}
+		.explain{background:#f8fbff;border-left:4px solid #075985;padding:14px;border-radius:8px;margin-top:10px}
+		.table-responsive{overflow-x:auto}
+		table.data-table{width:100%;border-collapse:collapse;background:white}
+		table.data-table th,table.data-table td{padding:12px;border:1px solid #eef6fd;text-align:left;font-size:0.9rem}
+		table.data-table thead th{background-color:#f8fafc;font-weight:600}
+	</style>
+	<!-- Tailwind CDN -->
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap');
+
+		:root{
+			--bg:#ffffff;
+			--card:#fbfdff;
+			--muted:#6b7280;
+			--accent-1:#075985; /* cyan-blue */
+			--accent-2:#0369a1;
+			--border: #e6eef6;
+			--code-bg: #f3f7fb;
+			--term-bg: #f8fafc;
+		}
+
+		body{
+			font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+			background: var(--bg);
+			color: #0f172a;
+			margin: 0;
+			-webkit-font-smoothing:antialiased;
+			-moz-osx-font-smoothing:grayscale;
+		}
+
+		.container{max-width:1100px;margin:0 auto;padding:28px}
+		@media (max-width:640px){
+			.container{padding:16px}
+		}
+
+		header{background: rgba(255,255,255,0.8);backdrop-filter:saturate(120%) blur(4px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+		.card{
+			background: var(--card);
+			border-radius:12px;
+			padding:26px;
+			border:1px solid var(--border);
+			box-shadow: 0 6px 20px rgba(16,24,40,0.04);
+		}
+		@media (max-width:640px){
+			.card{padding:16px}
+		}
+
+		h1{color:var(--accent-2);font-weight:800}
+		h2{color:var(--accent-1);margin-top:1.5rem;font-weight:700}
+		h3{color:#0b4a6f;font-weight:700}
+
+		pre{
+			background: var(--code-bg);
+			padding:14px;border-radius:8px;overflow-x:auto; /* Ensures horizontal scrolling if code is too long */
+			font-family:'Roboto Mono', monospace;font-size:0.93rem;color:#05281e;border:1px solid #e2edf7;
+		}
+		code{color:#0b7285}
+
+		.muted{color:var(--muted)}
+		.btn{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));padding:10px 14px;border-radius:10px;font-weight:700;color:white;text-decoration:none;display:inline-block;transition:transform 0.1s;box-shadow: 0 4px 10px rgba(3,105,161,0.3)}
+		.btn:hover{transform:translateY(-1px);box-shadow: 0 6px 15px rgba(3,105,161,0.4)}
+
+		.term{background:var(--term-bg);color:#0f172a;padding:12px;border-radius:8px;font-family:'Roboto Mono',monospace;font-size:0.95rem;border:1px solid #e6eef6;white-space:pre-wrap;} /* Added pre-wrap for better mobile output */
+		.explain{background:#f8fbff;border-left:4px solid var(--accent-1);padding:14px;border-radius:8px;margin-top:10px}
+		
+		/* Table Styling for Responsiveness */
+		.table-responsive {
+			overflow-x: auto;
+			width: 100%;
+		}
+		table.data-table {
+			width:100%;
+			border-collapse:collapse;
+			background:white;
+			min-width: 600px; /* Ensure table doesn't get squished too much on mobile */
+		}
+		table.data-table th, table.data-table td {padding:12px;border:1px solid #eef6fd;text-align:left;font-size:0.9rem}
+		table.data-table thead th {background-color: #f8fafc; font-weight: 600;}
+
+		summary{cursor:pointer;list-style: none;}
+		details summary::-webkit-details-marker{display:none}
+		details[open] summary::before {
+			content: "▼";
+			transform: rotate(0deg);
+		}
+		details summary::before {
+			content: "▶";
+			margin-right: 0.5rem;
+			font-size: 0.8rem;
+			transition: transform 0.2s;
+		}
+
+		.kbd{background:#f1f5f9;padding:4px 8px;border-radius:6px;font-family:'Roboto Mono',monospace}
+		.diagram{font-family:'Roboto Mono',monospace;background:#fbfeff;padding:10px;border-radius:6px;border:1px dashed #d9eef9;overflow-x:auto;}
+	</style>
+</head>
+<body>
+	<header class="container">
+		<div class="flex items-center justify-between py-4">
+			<a href="#" class="text-2xl font-extrabold" style="color:var(--accent-2)">KnowledgeStream — Java</a>
+			<!-- Navigation adjusted to highlight Topic 3 (current page content) -->
+			<nav class="flex gap-4 items-center">
+				<a href="java-topic1.html" class="muted hover:text-black hidden sm:inline">Topic 1</a>
+				<a href="java-topic2.html" class="muted hover:text-black hidden sm:inline">Topic 2</a>
+				<!-- Highlighted current topic -->
+				<span class="text-white font-bold bg-cyan-700/80 px-3 py-1.5 rounded-lg text-sm hidden sm:inline" style="background-color:var(--accent-1)">Topic 3</span>
+				<a class="btn text-sm" href="java-topic4.html">Next: OOP →</a>
+			</nav>
+		</div>
+	</header>
+
+	<main class="container my-6">
+		<div class="card">
+			<h1 class="text-3xl mb-2">📦 3. Arrays & Strings</h1>
+			<p class="muted mb-4 text-sm sm:text-base">1D, 2D & Jagged arrays • Array operations • Arrays utility • String basics & comparison • StringBuilder / Buffer • Immutability • Character handling</p>
+
+			<!-- Quick Summary Table -->
+			<section class="mb-6">
+				<h2>Quick Summary</h2>
+				<div class="table-responsive">
+					<table class="data-table mb-3">
+						<thead>
+							<tr>
+								<th>Topic</th>
+								<th>Properties</th>
+								<th>When to use</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><strong>1D Array</strong></td>
+								<td>Fixed-size, indexed (0..n-1), contiguous references</td>
+								<td>Simple collections of same-type primitives/objects</td>
+							</tr>
+							<tr>
+								<td><strong>2D / Jagged</strong></td>
+								<td>Array of arrays; jagged rows can vary in length</td>
+								<td>Matrices, tables, or irregular row lengths</td>
+							</tr>
+							<tr>
+								<td><strong>Arrays Utility</strong></td>
+								<td>Sorting, searching, copy, fill, equality check</td>
+								<td>Use built-in methods for safe, fast operations</td>
+							</tr>
+							<tr>
+								<td><strong>String</strong></td>
+								<td>Immutable sequence of characters; use <code>.equals()</code> for content</td>
+								<td>Text data, keys, labels — when immutability is beneficial</td>
+							</tr>
+							<tr>
+								<td><strong>StringBuilder / Buffer</strong></td>
+								<td>Mutable string-like objects; Buffer is synchronized (thread-safe)</td>
+								<td>Frequent concatenation/modification (especially in loops)</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<!-- START NEW DEFINITION SECTION -->
+			<section id="def-compare" class="mb-6">
+				<h2>Defining the Data Structures </h2>
+
+				<div class="flex flex-col md:flex-row gap-6">
+					<!-- Array Definition Card -->
+					<div class="md:w-1/2 p-4 border rounded-xl shadow-sm" style="border-color:var(--border); background:#fff">
+						<h3 class="text-xl mb-2" style="color:#2563eb">Array Definition</h3>
+						<p class="muted mb-2 text-sm">An **Array** is a linear data structure used to store a **fixed-size** sequential collection of elements of the **same data type**. It is a fundamental object in Java.</p>
+						<div class="explain p-3 mt-3">
+							<h4 class="font-semibold" style="color:#0b4a6f">Key Usage: Brackets (<code>[]</code>)</h4>
+							<p class="muted text-sm">Use **square brackets** (<span class="kbd">[]</span>) for declaration (<code>int[] arr</code>), initialization, and, crucially, for accessing elements via an **index** (e.g., <code class="text-sm">myArray[2]</code>).</p>
+						</div>
+					</div>
+
+					<!-- String Definition Card -->
+					<div class="md:w-1/2 p-4 border rounded-xl shadow-sm" style="border-color:var(--border); background:#fff">
+						<h3 class="text-xl mb-2" style="color:#2563eb">String Definition</h3>
+						<p class="muted mb-2 text-sm">A **String** is a sequence of characters, used for text manipulation. In Java, it is treated as an object and is **immutable** (cannot be changed after creation).</p>
+						<div class="explain p-3 mt-3">
+							<h4 class="font-semibold" style="color:#0b4a6f">Key Usage: Quotes & Methods</h4>
+							<p class="muted text-sm">Defined using **double quotes** (e.g., <code class="text-sm">"Hello"</code>). Elements are accessed using methods like <code class="text-sm">myString.charAt(i)</code>, **not** square brackets.</p>
+						</div>
+					</div>
+				</div>
+
+				<h2 class="mt-6">Array vs. String: Core Differences</h2>
+				<div class="table-responsive">
+					<table class="data-table mb-3">
+						<thead>
+							<tr>
+								<th>Feature</th>
+								<th>Array</th>
+								<th>String</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><strong>Content</strong></td>
+								<td>Holds any data type (<code>int[]</code>, <code>String[]</code>, etc.)</td>
+								<td>Holds only character data (text)</td>
+							</tr>
+							<tr>
+								<td><strong>Mutability</strong></td>
+								<td>**Mutable**: Elements can be changed after creation.</td>
+								<td>**Immutable**: Cannot be changed (modification creates a new object).</td>
+							</tr>
+							<tr>
+								<td><strong>Size Property</strong></td>
+								<td>**Fixed-size** (property <code>.length</code>).</td>
+								<td>Variable (method <code>.length()</code>).</td>
+							</tr>
+							<tr>
+								<td><strong>Access</strong></td>
+								<td>Index Brackets (<code>arr[i]</code>)</td>
+								<td>Method access (<code>str.charAt(i)</code>)</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+			<!-- END NEW DEFINITION SECTION -->
+
+
+			<!-- 🌟 ARRAYS IN JAVA — Complete Illustrated Explanation -->
+<section id="arrays" class="mt-10 mb-8">
+  <h1 class="text-3xl font-bold text-indigo-700 mb-4">📦 Arrays in Java</h1>
+  <p class="muted mb-4 leading-relaxed">
+    In Java, an <b>Array</b> is a <b>collection of similar data elements</b> stored in <b>contiguous memory locations</b>.  
+    Each element is identified by an <b>index</b>, starting from <code>0</code>.  
+    Arrays are useful when you need to store multiple values of the same type (e.g., integers, floats, strings) under a single variable name.
+  </p>
+
+  <div class="bg-gray-50 border-l-4 border-indigo-500 p-4 mb-6 rounded">
+    <p class="text-sm"><b>Syntax:</b></p>
+    <pre><code>dataType[] arrayName = new dataType[size];  // Declaration with size
+dataType[] arrayName = { val1, val2, val3 }; // Declaration with initialization</code></pre>
+  </div>
+
+  <!-- ⚖️ Difference Between Arrays and Strings -->
+  <section id="difference-arr-str" class="mb-8">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-3">📊 Difference Between Arrays and Strings</h2>
+    <table class="w-full border border-gray-300 text-sm text-left mb-4">
+      <thead class="bg-indigo-100">
+        <tr>
+          <th class="border p-2">Aspect</th>
+          <th class="border p-2">Array</th>
+          <th class="border p-2">String</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border p-2">Data Type</td>
+          <td class="border p-2">Can store any primitive or object type.</td>
+          <td class="border p-2">Stores only a sequence of characters.</td>
+        </tr>
+        <tr>
+          <td class="border p-2">Mutability</td>
+          <td class="border p-2">Mutable (values can be changed).</td>
+          <td class="border p-2">Immutable (once created, cannot be modified).</td>
+        </tr>
+        <tr>
+          <td class="border p-2">Declaration</td>
+          <td class="border p-2"><code>int[] arr = {1,2,3};</code></td>
+          <td class="border p-2"><code>String s = "Hello";</code></td>
+        </tr>
+        <tr>
+          <td class="border p-2">Access</td>
+          <td class="border p-2">Using index (e.g., <code>arr[0]</code>).</td>
+          <td class="border p-2">Using methods (e.g., <code>s.charAt(0)</code>).</td>
+        </tr>
+        <tr>
+          <td class="border p-2">Length</td>
+          <td class="border p-2"><code>arr.length</code> (property)</td>
+          <td class="border p-2"><code>s.length()</code> (method)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 1️⃣ 1D ARRAYS -->
+  <section id="one-d" class="section-sep mb-8">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-3">1️⃣ One-Dimensional Arrays</h2>
+    <p class="mb-3">
+      A <b>1D Array</b> represents a list of elements stored in a single row.  
+      It’s the simplest type of array where each element can be accessed by a single index.
+    </p>
+
+<pre><code>// Declaration and Allocation
+int[] arr = new int[5]; // Creates an array [0, 0, 0, 0, 0]
+
+// Initialization using literals
+int[] nums = {10, 20, 30, 40, 50};
+
+// Access and Modify
+nums[0] = 100;
+int x = nums[2]; // → 30
+
+// Iteration - Standard Loop
+for (int i = 0; i &lt; nums.length; i++)
+    System.out.println("nums[" + i + "] = " + nums[i]);
+
+// Enhanced For Loop
+for (int val : nums)
+    System.out.print(val + " ");
+</code></pre>
+
+<div class="diagram mt-3 mb-4 bg-gray-50 p-3 rounded">
+<pre>
+// Memory Representation
+nums → [100][20][30][40][50]
+Index →  0    1    2    3    4
+</pre>
+</div>
+
+<h3 class="text-lg font-semibold text-indigo-700 mb-2">💡 Example Programs</h3>
+<pre><code>// Example 1: Calculate Sum of Array Elements
+int sum = 0;
+for (int val : nums) sum += val;
+System.out.println("Sum = " + sum);
+
+// Example 2: Reverse Array Elements
+for (int i = 0; i &lt; nums.length/2; i++) {
+    int temp = nums[i];
+    nums[i] = nums[nums.length - 1 - i];
+    nums[nums.length - 1 - i] = temp;
+}
+
+// Example 3: Find Maximum Element
+int max = nums[0];
+for (int n : nums)
+    if (n &gt; max) max = n;
+System.out.println("Largest = " + max);
+</code></pre>
+
+<details class="mt-3">
+  <summary class="px-3 py-2 bg-gray-100 border rounded cursor-pointer font-semibold">▶ Show Output</summary>
+  <div class="term mt-2 bg-white border p-3 rounded">
+    nums[0] = 100<br>
+    nums[1] = 20<br>
+    nums[2] = 30<br>
+    nums[3] = 40<br>
+    nums[4] = 50<br>
+    Sum = 240<br>
+    Reversed Array = [50, 40, 30, 20, 100]<br>
+    Largest = 100
+  </div>
+</details>
+  </section>
+
+  <!-- 2️⃣ 2D ARRAYS -->
+  <section id="two-d" class="mb-8">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-3">2️⃣ Two-Dimensional Arrays (Matrix)</h2>
+    <p class="mb-3">
+      A <b>2D Array</b> is an <b>array of arrays</b>, often visualized as a table or matrix.  
+      It is useful for representing data like grids, matrices, and tables.
+    </p>
+
+<pre><code>// Declaration and Initialization
+int[][] matrix = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9}
+};
+
+// Nested Loop Iteration
+for (int r = 0; r &lt; matrix.length; r++) {
+    for (int c = 0; c &lt; matrix[r].length; c++)
+        System.out.print(matrix[r][c] + " ");
+    System.out.println();
+}
+</code></pre>
+
+<div class="diagram mt-3 mb-4 bg-gray-50 p-3 rounded">
+<pre>
+// 2D Matrix Representation
+matrix → [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9]
+]
+</pre>
+</div>
+
+<h3 class="text-lg font-semibold text-indigo-700 mb-2">Jagged Arrays (Uneven Rows)</h3>
+<p class="muted mb-2">In a <b>jagged array</b>, each row can have a different number of columns.</p>
+
+<pre><code>int[][] jagged = new int[3][];
+jagged[0] = new int[]{1, 2};
+jagged[1] = new int[]{3, 4, 5};
+jagged[2] = new int[]{6};
+</code></pre>
+
+<div class="diagram mt-3 mb-4 bg-gray-50 p-3 rounded">
+<pre>
+// Jagged Array Representation
+jagged[0] → [1, 2]
+jagged[1] → [3, 4, 5]
+jagged[2] → [6]
+</pre>
+</div>
+
+<details class="mt-3 mb-6">
+  <summary class="px-3 py-2 bg-gray-100 border rounded cursor-pointer font-semibold">▶ Show 2D Array Output</summary>
+  <div class="term mt-2 bg-white border p-3 rounded">
+    1 2 3<br>
+    4 5 6<br>
+    7 8 9
+  </div>
+</details>
+
+<!-- ⚖️ Difference Between 1D and 2D Arrays -->
+<h2 class="text-2xl font-semibold text-indigo-600 mb-3">📘 Difference Between 1D and 2D Arrays</h2>
+<table class="w-full border border-gray-300 text-sm text-left mb-6">
+  <thead class="bg-indigo-100">
+    <tr>
+      <th class="border p-2">Aspect</th>
+      <th class="border p-2">1D Array</th>
+      <th class="border p-2">2D Array</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="border p-2">Structure</td>
+      <td class="border p-2">Stores data in a single row (linear).</td>
+      <td class="border p-2">Stores data in rows and columns (tabular).</td>
+    </tr>
+    <tr>
+      <td class="border p-2">Declaration</td>
+      <td class="border p-2"><code>int[] arr = new int[5];</code></td>
+      <td class="border p-2"><code>int[][] arr = new int[3][3];</code></td>
+    </tr>
+    <tr>
+      <td class="border p-2">Access</td>
+      <td class="border p-2">Single index (e.g., <code>arr[i]</code>).</td>
+      <td class="border p-2">Two indexes (e.g., <code>arr[i][j]</code>).</td>
+    </tr>
+    <tr>
+      <td class="border p-2">Memory Layout</td>
+      <td class="border p-2">Elements stored sequentially in a single line.</td>
+      <td class="border p-2">Elements stored row by row (array of arrays).</td>
+    </tr>
+    <tr>
+      <td class="border p-2">Visualization</td>
+      <td class="border p-2">[10, 20, 30, 40, 50]</td>
+      <td class="border p-2">[[1,2,3], [4,5,6], [7,8,9]]</td>
+    </tr>
+    <tr>
+      <td class="border p-2">Use Case</td>
+      <td class="border p-2">List of items (marks, prices, IDs, etc.)</td>
+      <td class="border p-2">Grid-like data (matrix, table, chessboard)</td>
+    </tr>
+  </tbody>
+</table>
+  </section>
+
+  <!-- 3️⃣ ARRAYS UTILITY CLASS -->
+  <section id="ops" class="mb-10">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-3">3️⃣ <code>java.util.Arrays</code> Utility Class</h2>
+    <p class="mb-3">
+      Java provides a powerful utility class called <b><code>Arrays</code></b> that includes static methods for performing operations like sorting, searching, copying, and comparing arrays.
+    </p>
+
+<pre><code>import java.util.Arrays;
+
+int[] numbers = {5, 3, 8, 1, 2};
+
+// 1️⃣ Sort Array (ascending order)
+Arrays.sort(numbers); // → [1, 2, 3, 5, 8]
+
+// 2️⃣ Binary Search (array must be sorted)
+int idx = Arrays.binarySearch(numbers, 5); // → 3
+
+// 3️⃣ Copy Array
+int[] copy = Arrays.copyOf(numbers, numbers.length);
+
+// 4️⃣ Fill Array
+int[] filled = new int[5];
+Arrays.fill(filled, 7); // → [7, 7, 7, 7, 7]
+
+// 5️⃣ Compare Arrays
+boolean same = Arrays.equals(numbers, copy);  // true
+boolean ref = (numbers == copy);              // false
+</code></pre>
+
+<div class="explain mt-3">
+  <ul class="muted list-disc ml-5 text-sm leading-relaxed">
+    <li><code>Arrays.sort()</code> — Sorts array in ascending order (in-place).</li>
+    <li><code>Arrays.binarySearch()</code> — Returns the index of an element (requires sorted array).</li>
+    <li><code>Arrays.copyOf()</code> — Creates a shallow copy (new memory).</li>
+    <li><code>Arrays.fill()</code> — Replaces all elements with a single value.</li>
+    <li><code>Arrays.equals()</code> — Checks element-by-element equality.</li>
+  </ul>
+</div>
+
+<details class="mt-3">
+  <summary class="px-3 py-2 bg-gray-100 border rounded cursor-pointer font-semibold">▶ Show Output</summary>
+  <div class="term mt-2 bg-white border p-3 rounded">
+    Sorted → [1, 2, 3, 5, 8]<br>
+    Index of 5 → 3<br>
+    Copied Array → [1, 2, 3, 5, 8]<br>
+    Filled Array → [7, 7, 7, 7, 7]<br>
+    Equal Content → true<br>
+    Same Reference → false
+  </div>
+</details>
+  </section>
+</section>
+
+
+			<!-- 🔍 Binary Search Interpretation -->
+<section id="algos" class="mb-10">
+  <h2 class="text-2xl font-semibold text-indigo-700 mb-3">🔍 Binary Search Result Interpretation</h2>
+
+  <div class="bg-indigo-50 border-l-4 border-indigo-500 p-3 mb-4 rounded">
+    <p class="text-sm">
+      <b>Note:</b> The method <code>Arrays.binarySearch()</code> returns:
+    </p>
+    <ul class="list-disc ml-6 text-sm leading-relaxed">
+      <li><b>Index</b> (0 or positive) → if the key is <b>found</b>.</li>
+      <li><b>Negative value</b> → if the key is <b>not found</b>.</li>
+    </ul>
+    <p class="text-sm mt-2">
+      You can use this negative value to determine the <b>insertion point</b> — 
+      where the element would appear if added to the array.
+    </p>
+  </div>
+
+  <pre><code>// Assume the array is sorted
+int[] numbers = {1, 2, 3, 5, 8};
+
+// Searching for an element that doesn't exist
+int pos = Arrays.binarySearch(numbers, 4); 
+
+if (pos >= 0) {
+    System.out.println("Found at index: " + pos);
+} else {
+    // Formula to find insertion position
+    int insertPoint = -pos - 1;
+    System.out.println("Not found. Insertion point: " + insertPoint);
+}
+</code></pre>
+
+  <div class="diagram bg-gray-50 p-3 rounded mt-3 mb-4 text-sm font-mono leading-relaxed">
+<pre>
+numbers → [1] [2] [3] [5] [8]
+index →     0   1   2   3   4
+
+Search Key = 4 ❌ (Not Found)
+Position lies between 3 and 5 → insertion index = 3
+</pre>
+  </div>
+
+  <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4 rounded text-sm">
+    <b>Formula Explanation:</b>  
+    If <code>Arrays.binarySearch()</code> returns a negative number <code>r</code>:
+    <br>
+    👉 <code>Insertion Point = -r - 1</code>
+  </div>
+
+  <details class="mt-3">
+    <summary class="px-3 py-2 bg-gray-100 border rounded cursor-pointer font-semibold">
+      ▶ Show Output (Simulated)
+    </summary>
+    <div class="term mt-2 bg-white border p-3 rounded font-mono text-sm leading-relaxed">
+      Not found. Insertion point: 3
+    </div>
+  </details>
+</section>
+
+
+		<!-- 🌈 STRINGS IN JAVA — Detailed & Visual -->
+<section id="strings" class="mb-10">
+  <h1 class="text-3xl font-bold text-indigo-700 mb-4">🧵 Strings in Java</h1>
+  <p class="muted mb-3">
+    A <b>String</b> in Java is a sequence of characters enclosed in double quotes (<code>"..."</code>).
+    Strings are <b>immutable</b> — once created, their content cannot be changed.
+    Java provides several utilities to manipulate, compare, and efficiently handle strings.
+  </p>
+
+  <div class="bg-indigo-50 border-l-4 border-indigo-500 p-3 rounded mb-6">
+    <b>Definition:</b>  
+    <code>String</code> is a <b>class</b> in <code>java.lang</code> package that represents a sequence of characters.
+  </div>
+
+  <!-- 1️⃣ String Basics -->
+  <section id="string-basics" class="mb-8">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-3">1️⃣ String Creation & Comparison</h2>
+
+<pre><code>// String creation
+String s1 = "Hello";              // Stored in String Pool
+String s2 = new String("Hello");  // Created in Heap
+String s3 = "Hello";              // Reuses same pool reference as s1
+
+// Comparison examples
+boolean refEq12 = (s1 == s2);      // false → different objects
+boolean refEq13 = (s1 == s3);      // true  → same String Pool object
+boolean valueEq = s1.equals(s2);   // true  → content is same
+
+System.out.println("s1 == s2 ? " + refEq12);
+System.out.println("s1 == s3 ? " + refEq13);
+System.out.println("s1.equals(s2)? " + valueEq);
+</code></pre>
+
+<div class="diagram bg-gray-50 p-3 rounded mb-4 font-mono text-sm leading-relaxed">
+<pre>
+// ☕ Memory Representation
+String Pool:  "Hello"  ← s1, s3 point here
+Heap Object:  "Hello"  ← created separately for s2
+</pre>
+</div>
+
+<div class="explain text-sm leading-relaxed">
+  <ul class="list-disc ml-5">
+    <li><b>String literals</b> (e.g., <code>"Hello"</code>) go into the <b>String Pool</b>.</li>
+    <li>Using <code>new String("...")</code> creates a new object on the heap.</li>
+    <li><b>==</b> compares memory references, while <b>.equals()</b> compares actual content.</li>
+  </ul>
+</div>
+
+<details class="mt-3">
+  <summary class="px-3 py-2 bg-gray-100 border rounded cursor-pointer font-semibold">▶ Show Output</summary>
+  <div class="term mt-2 bg-white border p-3 rounded font-mono text-sm leading-relaxed">
+    s1 == s2 ? false<br>
+    s1 == s3 ? true<br>
+    s1.equals(s2)? true
+  </div>
+</details>
+  </section>
+
+  <!-- 2️⃣ String Immutability & Methods -->
+  <section id="string-methods" class="mb-8">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-3">2️⃣ String Immutability & Common Methods</h2>
+
+<pre><code>String word = "Hello";
+
+// Immutability demo
+String upper = word.toUpperCase();  // returns new "HELLO"
+String lower = word.toLowerCase();  // returns new "hello"
+System.out.println(word);           // prints "Hello" (unchanged)
+
+// Useful String methods
+int len = word.length();             // → 5
+char ch = word.charAt(1);            // → 'e'
+String sub = word.substring(0, 3);   // → "Hel" (end index exclusive)
+boolean starts = word.startsWith("He"); // → true
+boolean ends = word.endsWith("lo");     // → true
+</code></pre>
+
+<div class="diagram bg-gray-50 p-3 rounded mb-4 font-mono text-sm leading-relaxed">
+<pre>
+// 📘 Concept Visualization
+word  → "Hello"
+upper → "HELLO"
+lower → "hello"
+↑
+Original 'word' remains unchanged → Immutability
+</pre>
+</div>
+
+<div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded text-sm mb-4">
+  <b>Immutability:</b> Any modification method (like <code>toUpperCase()</code> or <code>concat()</code>)
+  creates a <b>new String object</b> — the original String never changes.
+</div>
+
+<details>
+  <summary class="px-3 py-2 bg-gray-100 border rounded cursor-pointer font-semibold">▶ Show Output</summary>
+  <div class="term mt-2 bg-white border p-3 rounded font-mono text-sm leading-relaxed">
+    Hello<br>
+    HELLO<br>
+    hello<br>
+    Length = 5<br>
+    Character at index 1 = e<br>
+    Substring = Hel<br>
+    Starts with "He"? true<br>
+    Ends with "lo"? true
+  </div>
+</details>
+  </section>
+
+  <!-- 3️⃣ Example Programs -->
+  <section id="string-examples" class="mb-8">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-3">3️⃣ Example Programs</h2>
+
+<pre><code>// 🧮 Example 1: Count vowels in a string
+String str = "Education";
+int count = 0;
+for (char c : str.toLowerCase().toCharArray()) {
+    if ("aeiou".indexOf(c) != -1) count++;
+}
+System.out.println("Vowel count = " + count);
+
+// 🔁 Example 2: Reverse a string
+String rev = "";
+for (int i = str.length() - 1; i >= 0; i--) {
+    rev += str.charAt(i);
+}
+System.out.println("Reversed = " + rev);
+
+// 🔤 Example 3: Palindrome check
+String s = "madam";
+String revS = new StringBuilder(s).reverse().toString();
+System.out.println(s.equals(revS) ? "Palindrome" : "Not Palindrome");
+</code></pre>
+
+  </section>
+
+  <!-- 4️⃣ StringBuilder / StringBuffer -->
+  <section id="sb" class="mb-10">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-3">4️⃣ StringBuilder & StringBuffer — Mutable Alternatives</h2>
+
+  <div class="bg-indigo-50 border-l-4 border-indigo-500 p-3 rounded mb-4 text-sm">
+    <b>Definition:</b>  
+    <code>StringBuilder</code> and <code>StringBuffer</code> are <b>mutable classes</b> that allow in-place string modification without creating new objects.
+  </div>
+
+<pre><code>// 1️⃣ Using StringBuilder (fast, not thread-safe)
+StringBuilder sb = new StringBuilder("Java");
+sb.append(" Programming");     // adds text
+sb.insert(4, " Language");     // inserts substring
+sb.delete(0, 5);               // removes part
+System.out.println(sb.toString());
+
+// 2️⃣ Using StringBuffer (thread-safe)
+StringBuffer sbuf = new StringBuffer("Hello");
+sbuf.append(" World!");
+System.out.println(sbuf.toString());
+</code></pre>
+
+<div class="explain text-sm leading-relaxed">
+  <ul class="list-disc ml-5">
+    <li><b>StringBuilder</b> → Non-synchronized (faster, single-threaded apps).</li>
+    <li><b>StringBuffer</b> → Synchronized (safe for multi-threaded apps).</li>
+    <li>Both modify content <b>in-place</b>, unlike immutable Strings.</li>
+    <li>Use <code>.toString()</code> when finished to get a regular String.</li>
+  </ul>
+</div>
+
+<div class="diagram bg-gray-50 p-3 rounded mt-4 font-mono text-sm leading-relaxed">
+<pre>
+// ⚙️ Mutable Behavior Visualization
+StringBuilder sb = new StringBuilder("Hi");
+sb.append(" There");
+// Memory changes inside same object → efficient
+</pre>
+</div>
+
+<details class="mt-3">
+  <summary class="px-3 py-2 bg-gray-100 border rounded cursor-pointer font-semibold">▶ Show Output</summary>
+  <div class="term mt-2 bg-white border p-3 rounded font-mono text-sm leading-relaxed">
+    Java Language Programming<br>
+    Hello World!
+  </div>
+</details>
+  </section>
+</section>
+
+<!-- 🌟 CHARACTER HANDLING SECTION -->
+<section id="char" class="mb-10">
+  <h2>Character Handling — Using the <code>Character</code> Class</h2>
+
+  <p class="muted mb-3">
+    The <code>Character</code> class is a **wrapper class** for primitive <code>char</code> values.  
+    It provides many **static helper methods** to classify, convert, and validate characters.
+  </p>
+
+  <pre><code>// 🧩 Example: Character checks and conversions
+char ch = 'A';
+
+// Classification checks
+boolean isLetter = Character.isLetter(ch);         // true — 'A' is a letter
+boolean isDigit  = Character.isDigit('9');         // true — '9' is a digit
+boolean isSpace  = Character.isWhitespace(' ');    // true — space detected
+
+// Case conversion
+char lower = Character.toLowerCase('Z');           // 'z'
+char upper = Character.toUpperCase('b');           // 'B'
+
+// 🧮 Example: Counting digits in a String
+String s = "Test123Test";
+int digitCount = 0;
+for (int i = 0; i < s.length(); i++) {
+    char c = s.charAt(i);                          // extract each character
+    if (Character.isDigit(c)) {                    // check if numeric
+        digitCount++;
+    }
+}
+System.out.println("Total Digits: " + digitCount);
+</code></pre>
+
+  <div class="explain">
+    <h3 class="text-base font-semibold mb-2">🔍 Code Breakdown</h3>
+    <ul class="muted list-disc ml-5 text-sm">
+      <li><b>Character Wrapper:</b> Allows you to use methods like <code>isLetter()</code> and <code>toUpperCase()</code> on a <code>char</code>.</li>
+      <li><b>Classification:</b> Detect whether a char is a letter, digit, whitespace, etc.</li>
+      <li><b>Case Conversion:</b> Change a single character’s case without affecting others.</li>
+      <li><b>Practical Use:</b> Helpful for text parsing, validation, and pre-processing (like counting digits, spaces, or letters).</li>
+    </ul>
+  </div>
+
+  <details class="mt-3">
+    <summary class="px-3 py-2 bg-white border rounded cursor-pointer">Show Output (simulated)</summary>
+    <div class="term mt-2">
+      isLetter('A'): true<br>
+      toLowerCase('Z'): 'z'<br>
+      Total Digits: 3
+    </div>
+  </details>
+</section>
+
+<!-- 🧠 EXTRA MINI PROGRAM: Check character type -->
+<section class="mb-10">
+  <h3>Try It Yourself</h3>
+  <pre><code>char x = '#';
+if (Character.isLetterOrDigit(x)) {
+    System.out.println("Letter or Digit");
+} else {
+    System.out.println("Special Character");
+}</code></pre>
+  <details class="mt-2">
+    <summary class="px-3 py-2 bg-white border rounded cursor-pointer">Output (simulated)</summary>
+    <div class="term mt-2">
+      Special Character
+    </div>
+  </details>
+</section>
+
+<!-- 🧩 EXERCISES SECTION -->
+<section id="ex" class="mb-10">
+  <h2>Practice Exercises — Arrays & Strings</h2>
+  <p class="muted text-sm mb-3">These problems combine your understanding of arrays, strings, and character handling.</p>
+
+  <ol class="ml-5 muted list-decimal text-sm space-y-2">
+    <li><b>Palindrome Check:</b> Write a program to verify if a given string is a palindrome (same forward and backward), ignoring case and non-alphanumeric characters.</li>
+    <li><b>Maximum Subarray Sum:</b> Implement Kadane’s Algorithm for 1D array to find the maximum sum subarray in <code>O(n)</code> time.</li>
+    <li><b>Rotate Array:</b> Rotate an array right by <code>k</code> positions using the reverse algorithm (reverse whole array → reverse first <code>k</code> → reverse remaining).</li>
+    <li><b>Matrix Transpose:</b> For a given rectangular 2D array, print its transpose (rows become columns).</li>
+  </ol>
+
+  <div class="mt-4 p-3 bg-gray-50 border rounded">
+    <strong>💡 Tip:</strong> Start with small examples on paper — visualize index movements for loops and array shifts.
+  </div>
+</section>
+
+<!-- 📘 CHEAT SHEET SECTION -->
+<section id="cheats" class="mb-10">
+  <h2>Cheat Sheet — Key Rules to Remember</h2>
+
+  <div class="explain">
+    <ul class="muted list-disc ml-5 text-sm space-y-2">
+      <li><b>Arrays:</b> Fixed-size, homogeneous data. Use <code>arr.length</code> (property) to get its size.</li>
+      <li><b>Strings:</b> Immutable sequences of characters. Use <code>str.length()</code> (method). Never use <code>==</code> for comparison — use <code>.equals()</code>.</li>
+      <li><b>Performance:</b> For multiple string edits (especially inside loops), use <code>StringBuilder</code> instead of <code>String</code>.</li>
+      <li><b>2D Arrays:</b> <code>arr.length</code> = number of rows; <code>arr[i].length</code> = number of columns in row <code>i</code>.</li>
+      <li><b>Character Utility:</b> Use <code>Character.isDigit()</code>, <code>isLetter()</code>, <code>toUpperCase()</code> for robust text validation.</li>
+    </ul>
+  </div>
+
+  <div class="mt-5 p-3 border rounded bg-white">
+    <h3 class="font-semibold">🧾 Quick Visual Recap</h3>
+    <pre><code>Array:   [10, 20, 30]
+Index:    0   1   2
+
+String:  "HELLO"
+Index:    0 1 2 3 4</code></pre>
+  </div>
+</section>
+
+
+			<!-- Navigation -->
+			<div class="flex justify-between items-center mt-6">
+				<a class="btn text-sm" href="java-topic2.html">&larr; Previous: Control Flow</a>
+				<a class="btn text-sm" href="java-topic4.html">Next: OOP Concepts &rarr;</a>
+			</div>
+		</div>
+
+
+	<section id="quiz" class="mt-10 border-t border-gray-200 pt-6">
+			<h2 class="text-2xl font-bold text-sky-700 mb-2">🎯 Topic 3 AI Quiz: Arrays, Strings & Builders</h2>
+			<p class="text-gray-600 mb-4">Answer 15 questions correctly (90 % or above) to unlock “Mark as Completed”.</p>
+
+			<div id="quiz-container" class="bg-white border rounded-lg shadow-md p-6"></div>
+
+			<div class="text-center mt-6">
+				<button id="submit-quiz"
+					class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-5 rounded-full transition">
+					🚀 Submit Quiz
+				</button>
+				<p id="quiz-result" class="mt-4 text-gray-600 font-semibold"></p>
+			</div>
+		</section>
+
+		<!-- ✅ COMPLETION BUTTON -->
+		<div class="text-center mt-10">
+			<button id="complete-btn" onclick="markTopicComplete()"
+				class="bg-gray-400 text-white font-semibold py-2 px-4 rounded-full shadow-md cursor-not-allowed"
+				disabled>🔒 Mark as Completed (Locked)</button>
+
+			<p id="completion-status" class="text-gray-400 mt-4 hidden">
+				🎉 Topic marked as completed! Next topic unlocked 🔓
+			</p>
+		</div>
+
+		<div class="flex justify-between mt-10">
+			<a class="btn text-sm" href="java-topic2.html">&larr; Previous: Control Flow</a>
+			<a class="btn text-sm" href="java-topic4.html">Next: OOP Concepts →</a>
+		</div>
+	</div>
+</main>
+
+<footer class="container text-center mt-8 text-gray-500 border-t border-gray-200 py-4">
+	© 2025 KnowledgeStream — Java Mastery
+</footer>
+
+<script>
+/* ========== QUIZ QUESTIONS ========== */
+const questions=[
+ {q:"What is the default index base for Java arrays?",o:["1","0","Depends","2"],a:1},
+ {q:"Which property gives array length?",o:["length()","length","size()","count"],a:1},
+ {q:"Arrays in Java are ____ in size.",o:["Dynamic","Fixed","Unlimited","Adjustable"],a:1},
+ {q:"String objects in Java are:",o:["Mutable","Immutable","Volatile","Thread-safe"],a:1},
+ {q:"Which method compares content of two strings?",o:["==",".equals()",".compare()",".match()"],a:1},
+ {q:"Method to get number of characters in a String?",o:[".count()",".size()",".length()",".len"],a:2},
+ {q:"Which class provides mutable string operations (not thread-safe)?",o:["String","StringBuilder","StringBuffer","CharSequence"],a:1},
+ {q:"StringBuffer is:",o:["Not thread-safe","Thread-safe","Immutable","Static"],a:1},
+ {q:"Character.isDigit('9') returns?",o:["false","true","error","9"],a:1},
+ {q:"How to access element at index 2 in array arr?",o:["arr(2)","arr.2","arr[2]","arr.get(2)"],a:2},
+ {q:"Arrays.sort() belongs to which package?",o:["java.lang","java.io","java.util","java.array"],a:2},
+ {q:"Arrays.binarySearch() requires array to be:",o:["Unsorted","Random","Sorted","Jagged"],a:2},
+ {q:"Which converts String to array of chars?",o:["toCharArray()","split()","getChars()","chars()"],a:0},
+ {q:"StringBuilder sb = new StringBuilder(\"Hi\"); sb.append(\" there\"); Output?",o:["Hithere","Hi there","Error","there"],a:1},
+ {q:"Character.toUpperCase('b') gives:",o:["b","B","true","error"],a:1}
+];
+
+/* Generate quiz */
+const container=document.getElementById("quiz-container");
+questions.forEach((q,i)=>{
+ const div=document.createElement("div");
+ div.className="mb-4";
+ div.innerHTML=`<p class='font-semibold'>${i+1}. ${q.q}</p>`+
+  q.o.map((opt,j)=>`<label class='block cursor-pointer'>
+    <input type='radio' name='q${i}' value='${j}' class='mr-2'> ${opt}
+  </label>`).join('');
+ container.appendChild(div);
+});
+
+document.getElementById("submit-quiz").addEventListener("click",()=>{
+ enableWebcamMonitoring();
+ let correct=0;
+ questions.forEach((q,i)=>{
+  const chosen=document.querySelector(`input[name=q${i}]:checked`);
+  if(chosen && parseInt(chosen.value)===q.a) correct++;
+ });
+ const percent=Math.round((correct/questions.length)*100);
+ const result=document.getElementById("quiz-result");
+ result.textContent=`You scored ${percent}% (${correct}/${questions.length})`;
+ if(percent>=90){
+   result.classList.add("text-green-600");
+   unlockCompletion();
+ }else{
+   result.classList.add("text-red-600");
+   showSecurityAlert("⚠️ You need at least 90% to unlock completion.");
+ }
+});
+
+/* Unlock button */
+function unlockCompletion(){
+ const btn=document.getElementById("complete-btn");
+ btn.disabled=false;
+ btn.classList.remove("bg-gray-400","cursor-not-allowed");
+ btn.classList.add("bg-sky-600","hover:bg-sky-700");
+ btn.textContent="✅ Mark as Completed";
+}
+
+/* Completion save */
+function markTopicComplete(){
+ const match=window.location.pathname.match(/topic(\d+)/);
+ if(match){
+  const topicNum=parseInt(match[1]);
+  localStorage.setItem("latestCompleted",topicNum);
+  const s=document.getElementById("completion-status");
+  s.classList.remove("hidden");
+  s.classList.add("text-sky-500","font-semibold");
+  const b=document.getElementById("complete-btn");
+  b.disabled=true;b.textContent="✅ Completed!";b.classList.add("bg-green-600","cursor-not-allowed");
+ }
+}
+
+/* ========== ANTI-CHEAT SYSTEM ========== */
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("selectstart",e=>e.preventDefault());
+document.addEventListener("copy",e=>e.preventDefault());
+document.addEventListener("keydown",e=>{
+ if((e.ctrlKey&&['c','u','s','a','p'].includes(e.key.toLowerCase()))||e.key==='PrintScreen'||e.key==='F12'){
+  e.preventDefault();showSecurityAlert("🚫 Action blocked");
+ }
+});
+document.addEventListener("visibilitychange",()=>{
+ if(document.hidden)showSecurityAlert("🚨 Tab switched!");
+});
+function showSecurityAlert(msg){
+ const box=document.createElement("div");
+ box.textContent=msg;
+ Object.assign(box.style,{position:"fixed",bottom:"20px",right:"20px",background:"#dc2626",color:"#fff",
+  padding:"10px 16px",borderRadius:"8px",fontSize:"0.9rem",fontWeight:"600",zIndex:"9999",
+  boxShadow:"0 4px 8px rgba(0,0,0,0.2)",opacity:"0",transition:"opacity 0.3s"});
+ document.body.appendChild(box);
+ requestAnimationFrame(()=>box.style.opacity="1");
+ setTimeout(()=>box.remove(),4000);
+}
+
+/* ========== CAMERA ALERT ========== */
+function showCameraAlert(){
+ const alert=document.createElement("div");
+ alert.textContent="🎥 AI Proctoring Active — Camera Monitoring Enabled";
+ Object.assign(alert.style,{position:"fixed",top:"20px",right:"20px",background:"#2563eb",color:"#fff",
+  padding:"10px 16px",borderRadius:"8px",fontWeight:"600",zIndex:"9999",animation:"fadeInOut 6s ease"});
+ document.body.appendChild(alert);
+ setTimeout(()=>alert.remove(),6000);
+}
+async function enableWebcamMonitoring(){
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({video:true});
+  const video=document.createElement("video");
+  video.srcObject=stream;video.autoplay=true;video.muted=true;
+  Object.assign(video.style,{position:"fixed",bottom:"10px",left:"10px",width:"120px",
+   border:"2px solid #22c55e",borderRadius:"8px",boxShadow:"0 2px 8px rgba(0,0,0,0.3)",zIndex:"9999"});
+  document.body.appendChild(video);
+  showCameraAlert();
+ }catch(err){showSecurityAlert("⚠️ Camera access denied.");}
+}
+window.onbeforeunload=()=>"Progress may be lost!";
+</script>
+
+<style>
+@keyframes fadeInOut{0%{opacity:0;transform:translateY(-10px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+</style>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Topic Quiz</title>
+    <style>
+        body { font-family: Arial; padding: 30px; background: #f4f6f9; }
+        .card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; }
+        button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
+        .submit-btn { background: #4f46e5; color: white; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<h2>🚀 Topic Quiz</h2>
+
+<div id="quiz-container"></div>
+
+<button class="submit-btn" onclick="submitQuiz()">Submit Quiz</button>
+
+<!-- SAFE JSON INJECTION -->
+{{ quiz.questions_json|json_script:"quiz-data" }}
+
+
+<!-- SAFE DATA -->
+<script id="quiz-id-data" type="application/json">
+{{ quiz.id }}
+</script>
+
+{{ quiz.questions_json|json_script:"quiz-data" }}
+
+<script>
+const quizId = JSON.parse(
+    document.getElementById("quiz-id-data").textContent
+);
+
+const questions = JSON.parse(
+    document.getElementById("quiz-data").textContent
+);
+
+let answers = { mcq: [], fill: [] };
+
+function renderQuiz() {
+    const container = document.getElementById("quiz-container");
+
+    if (!questions.mcq || questions.mcq.length === 0) {
+        container.innerHTML = "<p>No questions available.</p>";
+        return;
+    }
+
+    questions.mcq.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <h4>${q.question}</h4>
+            ${q.options.map(opt => `
+                <label>
+                    <input type="radio" name="mcq${index}" value="${opt}">
+                    ${opt}
+                </label><br>
+            `).join("")}
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+function collectAnswers() {
+    answers.mcq = [];
+
+    questions.mcq.forEach((q, index) => {
+        const selected = document.querySelector(
+            `input[name="mcq${index}"]:checked`
+        );
+        answers.mcq.push(selected ? selected.value : null);
+    });
+}
+
+async function submitQuiz() {
+    collectAnswers();
+
+    const response = await fetch("/api/submit-quiz/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+            quiz_id: quizId,
+            answers: answers
+        })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+        alert("Error: " + data.error);
+        return;
+    }
+
+    alert("Score: " + data.score + "%");
+
+    window.location.href = "/dashboard/";
+}
+
+renderQuiz();
+</script>
+
+
+</body>
+</html>

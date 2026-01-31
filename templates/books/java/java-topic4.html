@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KnowledgeStream - Java OOP Concepts</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap');
+body{font-family:'Inter',sans-serif;background:#ffffff;color:#0f172a;margin:0;}
+.container{max-width:1100px;margin:0 auto;padding:1.5rem;}
+h1{color:#0369a1;font-weight:800;}
+h2{color:#0369a1;font-weight:700;margin-top:2rem;}
+pre{background:#f8fafc;padding:1rem;border-radius:0.5rem;border:1px solid #e2eef6;font-family:'Roboto Mono',monospace;}
+.btn{background:linear-gradient(90deg,#0369a1,#075985);padding:10px 14px;border-radius:10px;color:white;font-weight:700;display:inline-block;}
+.btn:hover{opacity:0.9;}
+</style>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap');
+    :root {
+        --bg: #ffffff;
+        --card-bg: #fbfdff;
+        --text-color: #0f172a;
+        --muted-text: #64748b;
+        --accent-color: #0369a1; /* Cyan-700 */
+        --code-bg: #f8fafc;
+        --border-color: #e2eef6;
+    }
+    body {
+        background: var(--bg);
+        color: var(--text-color);
+        font-family: 'Inter', sans-serif;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
+    header { border-bottom: 1px solid var(--border-color); }
+    h1 { color: var(--accent-color); font-weight: 800; }
+    h2 { color: var(--accent-color); font-weight: 700; margin-top: 2rem; }
+    h3 { color: #0f172a; font-weight: 600; }
+
+    pre {
+        background: var(--code-bg);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.95rem;
+    }
+    code { color: #0f766e; } /* Teal for code snippets */
+    .concept-box {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-top: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+    .diagram {
+        font-family: 'Roboto Mono', monospace;
+        background: #f8fbff;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+        white-space: pre;
+        border: 1px dashed var(--border-color);
+        color: var(--text-color);
+    }
+    .explanation li {
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+        color: var(--muted-text);
+        font-size: 0.9rem;
+    }
+    a.nav-btn {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+    a.nav-btn:hover { color: #075985; }
+</style>
+</head>
+<body>
+<header class="bg-white/90 backdrop-blur-md text-gray-800 sticky top-0 z-50 shadow-sm">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <a href="#" class="text-3xl font-extrabold" style="color:var(--accent-color)">KnowledgeStream — Java</a>
+        <nav class="space-x-6 hidden md:block">
+            <a href="java-topic3.html" class="text-gray-600 hover:text-gray-900">Topic 3</a>
+            <span class="text-white font-bold px-3 py-1.5 rounded-lg text-sm" style="background-color:var(--accent-color)">Topic 4</span>
+            <a href="java-topic5.html" class="nav-btn">Next Topic →</a>
+        </nav>
+    </div>
+</header>
+
+<section class="container mx-auto px-6 py-10">
+    <h1 class="text-4xl mb-6">🧱 4. Object-Oriented Programming (OOP)</h1>
+
+    <p class="text-gray-600 text-lg mb-4">Java is a pure Object-Oriented Programming language. Everything revolves around **classes** and **objects** that model real-world entities.</p>
+
+    <!-- 1. Classes, Objects, and Members -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">✅ Classes, Objects, and Members</h2>
+        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+        <p class="text-gray-700">A **Class** is a logical blueprint or template defining the structure and behavior of entities. An **Object** is a run-time entity, a specific instance of a class that occupies memory.</p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">5 Key Points</h3>
+        <ul class="list-disc pl-6 text-gray-700 space-y-1 text-sm">
+            <li>A Class does not consume memory; an Object consumes memory upon creation (instantiation).</li>
+            <li>Class Members are **fields** (data/state) and **methods** (behavior).</li>
+            <li>Objects are created using the `new` keyword, which allocates memory on the heap.</li>
+            <li>Each object has its own unique set of non-static instance variables.</li>
+            <li>**Real-Life Use Case:** The Class is the **design plan for a house**, and the Objects are the **actual, physical houses** built from that plan.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Example Program</h3>
+        <pre><code>// Line 1: Define the Blueprint (Class)
+class Dog {
+  // Line 2: Field/State (Instance variable)
+  String breed; 
+  // Line 3: Method/Behavior
+  void bark() {
+    System.out.println(breed + " says Woof!");
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    // Line 4: Create Object 1 (Instance)
+    Dog myDog = new Dog(); 
+    // Line 5: Set state
+    myDog.breed = "Golden Retriever"; 
+    // Line 6: Call behavior
+    myDog.bark(); 
+  }
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Line-by-Line Explanation</h3>
+        <ul class="explanation list-decimal pl-6">
+            <li>`class Dog {` : Starts the blueprint definition.</li>
+            <li>`String breed;` : Defines a piece of state unique to every `Dog` object.</li>
+            <li>`void bark() { ... }` : Defines the behavior that all `Dog` objects can perform.</li>
+            <li>`Dog myDog = new Dog();` : Instantiates the class, creating an object named `myDog` in memory.</li>
+            <li>`myDog.breed = "Golden Retriever";` : Accesses the `breed` field of the specific `myDog` object and sets its value.</li>
+            <li>`myDog.bark();` : Invokes the `bark` method on the `myDog` object.</li>
+        </ul>
+    </div>
+
+    <!-- 2. Constructors -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">✅ Constructors (types, overloading)</h2>
+        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+        <p class="text-gray-700">A **constructor** is a special type of method used to initialize an object when it is created. It ensures that the object starts in a valid, ready-to-use state.</p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">5 Key Points</h3>
+        <ul class="list-disc pl-6 text-gray-700 space-y-1 text-sm">
+            <li>It must have the **exact same name** as its class.</li>
+            <li>It has **no explicit return type** (not even `void`).</li>
+            <li>If no constructor is defined, Java provides a **default constructor**.</li>
+            <li>Constructors can be **overloaded** (multiple constructors with different parameters).</li>
+            <li>**Real-Life Use Case:** When you sign up for a service, a constructor initializes your **User object** with mandatory fields like `userID` and the current `timestamp`.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Example Program</h3>
+        <pre><code>// Line 1: Define the Class
+class Account {
+  String type;
+  double balance;
+
+  // Line 2: Default Constructor (Initializes to default state)
+  Account() {
+    this.type = "Savings";
+    this.balance = 0.0;
+  }
+
+  // Line 3: Parameterized Constructor (Allows custom initialization)
+  Account(String type, double initialBalance) {
+    this.type = type;
+    this.balance = initialBalance;
+  }
+
+  // Line 4: Displays account state
+  void showDetails() {
+    System.out.println(this.type + " Account, Balance: $" + this.balance);
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    // Line 5: Use Default Constructor
+    Account acc1 = new Account(); 
+    // Line 6: Use Parameterized Constructor
+    Account acc2 = new Account("Checking", 500.75); 
+    acc1.showDetails();
+    acc2.showDetails();
+  }
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Line-by-Line Explanation</h3>
+        <ul class="explanation list-decimal pl-6">
+            <li>`class Account { ... }` : Defines the account blueprint.</li>
+            <li>`Account() { ... }` : The default constructor, providing basic initialization for `acc1`.</li>
+            <li>`Account(String type, double initialBalance) { ... }` : The parameterized constructor, allowing the user to specify initial values for `acc2`.</li>
+            <li>`void showDetails() { ... }` : A simple method to print the object's current state.</li>
+            <li>`Account acc1 = new Account();` : Creates an object using the default (no-argument) constructor.</li>
+            <li>`Account acc2 = new Account("Checking", 500.75);` : Creates an object using the two-argument constructor.</li>
+        </ul>
+    </div>
+
+    <!-- 3. this, super, and static keywords -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">✅ this, super, and static keywords</h2>
+        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+        <p class="text-gray-700">These are utility keywords used for referencing, scope management, and memory control within classes and objects.</p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">5 Key Points</h3>
+        <ul class="list-disc pl-6 text-gray-700 space-y-1 text-sm">
+            <li>`this` is a reference to the **current object** (instance) of the method or constructor.</li>
+            <li>`super` is a reference to the **immediate parent class** object.</li>
+            <li>`static` members belong to the **class** rather than any specific object.</li>
+            <li>`static` methods can only access other `static` members; they cannot use `this` or `super`.</li>
+            <li>**Real-Life Use Case:** `static` is used extensively in **Utility classes** like `java.lang.Math` (e.g., `Math.sqrt(x)`). You never create a `Math` object; you use the class directly.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Example Program</h3>
+        <pre><code>// Line 1: Parent Class
+class Parent {
+  int x = 10;
+  Parent(int x) { this.x = x; } // 'this' resolves ambiguity
+}
+
+// Line 2: Child Class
+class Child extends Parent {
+  int x = 20;
+  // Line 3: Static variable, shared across all Child objects
+  static int count = 0; 
+
+  Child() {
+    // Line 4: Call parent constructor
+    super(5); 
+    Child.count++; 
+  }
+
+  void display() {
+    // Line 5: Access current object's field
+    System.out.println("Child x: " + this.x); 
+    // Line 6: Access parent's field (hidden by Child's x)
+    System.out.println("Parent x: " + super.x); 
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    new Child().display();
+    new Child();
+    // Line 7: Access static member via class name
+    System.out.println("Total Children: " + Child.count); 
+  }
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Line-by-Line Explanation</h3>
+        <ul class="explanation list-decimal pl-6">
+            <li>`class Parent { ... }` : Defines the base class with field `x` and a constructor using `this` to assign the parameter value to the instance variable.</li>
+            <li>`class Child extends Parent { ... }` : Defines the subclass, introducing its own `x` and the shared `count`.</li>
+            <li>`static int count = 0;` : Declares a field shared by all `Child` objects; tracks how many objects were created.</li>
+            <li>`super(5);` : Must be the first line in the constructor, calling the matching parameterized constructor in the `Parent` class.</li>
+            <li>`System.out.println("Child x: " + this.x);` : `this.x` refers to the `x` variable declared in the `Child` class (value 20).</li>
+            <li>`System.out.println("Parent x: " + super.x);` : `super.x` refers to the `x` variable inherited from the `Parent` class (value 5, set by `super(5)`).</li>
+            <li>`System.out.println("Total Children: " + Child.count);` : Accesses the `static` variable directly using the class name, without needing an object.</li>
+        </ul>
+    </div>
+
+    <!-- 4. Access Modifiers (Briefing the table) -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">🔒 Access Modifiers (public, private, protected, default)</h2>
+        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+        <p class="text-gray-700">Access modifiers control the **visibility** and **scope** of a class, field, method, or constructor, acting as a gatekeeper for access from other classes or packages.</p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">5 Key Points</h3>
+        <ul class="list-disc pl-6 text-gray-700 space-y-1 text-sm">
+            <li>**`public`**: Accessible from anywhere in the Java application.</li>
+            <li>**`private`**: Accessible only within its own class (key to Encapsulation).</li>
+            <li>**`protected`**: Accessible within the same package AND by subclasses in any package.</li>
+            <li>**Default (no keyword)**: Accessible only within the same package.</li>
+            <li>**Real-Life Use Case:** Your personal bank account **PIN** is `private`, while the **ATM machine** itself is `public`.</li>
+        </ul>
+        
+        <table class="w-full text-sm border-collapse border border-gray-300 mt-4">
+            <thead class="bg-blue-50">
+                <tr><th class="border p-2">Modifier</th><th class="border p-2">Same Class</th><th class="border p-2">Same Package</th><th class="border p-2">Subclass (Different Package)</th><th class="border p-2">Everywhere Else</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="border p-2">public</td><td class="border p-2">Yes</td><td class="border p-2">Yes</td><td class="border p-2">Yes</td><td class="border p-2">Yes</td></tr>
+                <tr><td class="border p-2">private</td><td class="border p-2">Yes</td><td class="border p-2">No</td><td class="border p-2">No</td><td class="border p-2">No</td></tr>
+                <tr><td class="border p-2">protected</td><td class="border p-2">Yes</td><td class="border p-2">Yes</td><td class="border p-2">Yes</td><td class="border p-2">No</td></tr>
+                <tr><td class="border p-2">default</td><td class="border p-2">Yes</td><td class="border p-2">Yes</td><td class="border p-2">No</td><td class="border p-2">No</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 5. Encapsulation -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">🔐 Encapsulation (Getters/Setters)</h2>
+        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+        <p class="text-gray-700">Encapsulation is the mechanism of **bundling data (fields) and the code that operates on the data (methods)** into a single unit (the class), and restricting direct access to the data (often using the `private` keyword).</p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">5 Key Points</h3>
+        <ul class="list-disc pl-6 text-gray-700 space-y-1 text-sm">
+            <li>Achieved primarily by making instance variables `private`.</li>
+            <li>Public methods (Getters/Setters) are provided to read and modify the private data.</li>
+            <li>The internal data representation can change without affecting outside code.</li>
+            <li>Allows for **data validation** and security checks inside Setter methods.</li>
+            <li>**Real-Life Use Case:** A **Car's Gear System**. The driver interacts with a public lever (the Setter method), but the complex gears and clutches inside the transmission (the private data) are hidden and protected.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Example Program</h3>
+        <pre><code>// Line 1: Class with private data
+class UserProfile {
+  private int age; 
+
+  // Line 2: Public Setter with validation logic
+  public void setAge(int age) {
+    if (age > 0 &amp;&amp; age < 120) {
+      this.age = age; // Data is set only if valid
+    } else {
+      System.out.println("Invalid age provided.");
+    }
+  }
+
+  // Line 3: Public Getter
+  public int getAge() {
+    return age; 
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    UserProfile user = new UserProfile();
+    user.setAge(25); // Valid
+    user.setAge(-5);  // Invalid, rejected by Setter logic
+    System.out.println("Current Age: " + user.getAge()); 
+  }
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Line-by-Line Explanation</h3>
+        <ul class="explanation list-decimal pl-6">
+            <li>`private int age;` : Hides the data from direct external modification.</li>
+            <li>`public void setAge(int age) { ... }` : The control point. It validates the input (`age > 0 && age < 120`). If the validation fails, the internal `age` field is not updated.</li>
+            <li>`public int getAge() { ... }` : Allows read-only access to the private data.</li>
+        </ul>
+    </div>
+
+    <!-- 6. Inheritance -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">🧬 Inheritance (Single, Multilevel, Hierarchical)</h2>
+        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+        <p class="text-gray-700">Inheritance is the process where one class (the **Child** or subclass) acquires the properties (fields and methods) of another class (the **Parent** or superclass), establishing an **"is-a"** relationship.</p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">5 Key Points</h3>
+        <ul class="list-disc pl-6 text-gray-700 space-y-1 text-sm">
+            <li>Uses the `extends` keyword in the class definition.</li>
+            <li>Promotes **code reusability** by avoiding duplicate code in subclasses.</li>
+            <li>Only **single inheritance** (one parent) is supported for classes in Java.</li>
+            <li>The parent's constructor is implicitly or explicitly called via `super()`.</li>
+            <li>**Real-Life Use Case:** A **Bank Account** system. `SavingsAccount` and `CheckingAccount` both **extend** the base `Account` class to reuse common logic like `deposit()` and `withdraw()`.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Example Program (Multi-level Inheritance)</h3>
+        <pre><code>// Line 1: Grandparent Class
+class Device {
+  void powerOn() { System.out.println("Device is ON."); }
+}
+
+// Line 2: Parent Class (inherits from Device)
+class SmartPhone extends Device {
+  void call() { System.out.println("Phone calling..."); }
+}
+
+// Line 3: Child Class (inherits from SmartPhone)
+class AndroidPhone extends SmartPhone {
+  void installApp() { System.out.println("Installing Android app."); }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    AndroidPhone myPhone = new AndroidPhone();
+    // Line 4: Method from Grandparent
+    myPhone.powerOn(); 
+    // Line 5: Method from Parent
+    myPhone.call(); 
+    // Line 6: Method from Child
+    myPhone.installApp(); 
+  }
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Line-by-Line Explanation</h3>
+        <ul class="explanation list-decimal pl-6">
+            <li>`class Device { ... }` : Base class with the most general behavior.</li>
+            <li>`class SmartPhone extends Device { ... }` : Inherits `powerOn()`.</li>
+            <li>`class AndroidPhone extends SmartPhone { ... }` : Inherits both `powerOn()` and `call()` (Multi-level inheritance).</li>
+            <li>`myPhone.powerOn();` : Accesses the method inherited from `Device`.</li>
+            <li>`myPhone.call();` : Accesses the method inherited from `SmartPhone`.</li>
+            <li>`myPhone.installApp();` : Accesses the method defined in `AndroidPhone`.</li>
+        </ul>
+    </div>
+
+    <!-- 7. Polymorphism -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">🎭 Polymorphism (Compile & Runtime)</h2>
+        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+        <p class="text-gray-700">Polymorphism means **"many forms"**. It is the ability of a method to act differently based on the number/type of its parameters (**Compile-time**) or the actual object type at runtime (**Runtime**).</p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">5 Key Points</h3>
+        <ul class="list-disc pl-6 text-gray-700 space-y-1 text-sm">
+            <li>**Compile-time Polymorphism** is achieved through **Method Overloading**.</li>
+            <li>**Runtime Polymorphism** is achieved through **Method Overriding**.</li>
+            <li>Method Overloading requires different method signatures (parameters).</li>
+            <li>Runtime Polymorphism relies on the JVM deciding which overridden method to execute during execution (Dynamic Method Dispatch).</li>
+            <li>**Real-Life Use Case:** A **Speaker System**. The `play()` method behaves differently depending on the input: `play(CD)` plays music, `play(RadioStation)` tunes in, and `play(BluetoothDevice)` streams audio.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Example Program (Runtime Polymorphism - Overriding)</h3>
+        <pre><code>// Line 1: Parent Class
+class Payment {
+  void process() { 
+    System.out.println("Processing general payment..."); 
+  }
+}
+
+// Line 2: Subclass 1
+class CreditCard extends Payment {
+  // Line 3: Overriding the parent method
+  @Override 
+  void process() { 
+    System.out.println("Processing payment via Credit Card."); 
+  }
+}
+
+// Line 4: Subclass 2
+class PayPal extends Payment {
+  // Line 5: Overriding the parent method
+  @Override 
+  void process() { 
+    System.out.println("Processing payment via PayPal wallet."); 
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    // Line 6: Reference of Parent type, but object of Child type
+    Payment p1 = new CreditCard(); 
+    Payment p2 = new PayPal();
+    
+    // Line 7: The same method call executes different logic based on the object type
+    p1.process(); 
+    p2.process(); 
+  }
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Line-by-Line Explanation</h3>
+        <ul class="explanation list-decimal pl-6">
+            <li>`class Payment { ... }` : The base class, defining the contract (`process()`).</li>
+            <li>`class CreditCard extends Payment { ... }` : Subclass inheriting from `Payment`.</li>
+            <li>`@Override void process() { ... }` : Replaces the parent's implementation with credit card-specific logic.</li>
+            <li>`class PayPal extends Payment { ... }` : Another subclass providing its own implementation.</li>
+            <li>`@Override void process() { ... }` : Replaces the parent's implementation with PayPal-specific logic.</li>
+            <li>`Payment p1 = new CreditCard();` : This is the core of Runtime Polymorphism: the reference type is `Payment`, but the object type is `CreditCard`.</li>
+            <li>`p1.process();` : The JVM looks at the **actual object** (`CreditCard`) and executes its overridden `process()` method, not the `Payment` version.</li>
+        </ul>
+    </div>
+
+    <!-- 8. Abstract Class & Interface -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">🧱 Abstract Class & Interface (Abstraction)</h2>
+        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+        <p class="text-gray-700">**Abstraction** is the principle of hiding the complex implementation details and showing only the essential features. It is achieved in Java using **Abstract Classes** (partial abstraction) and **Interfaces** (100% abstraction).</p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">5 Key Points</h3>
+        <ul class="list-disc pl-6 text-gray-700 space-y-1 text-sm">
+            <li>An **Abstract Class** can have both implemented (concrete) methods and unimplemented (`abstract`) methods.</li>
+            <li>An Abstract Class must be defined with the `abstract` keyword and **cannot be instantiated**.</li>
+            <li>An **Interface** only specifies method signatures (contracts); pre-Java 8, it couldn't have method bodies.</li>
+            <li>Classes **extend** abstract classes but **implement** interfaces.</li>
+            <li>**Real-Life Use Case:** The **Abstract Class** could be a `RemoteControl` (defining `powerOn`, `changeChannel`). Different **Interfaces** like `SmartDevice` or `Infrared` could be implemented by the control to handle varying connections.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Example Program</h3>
+        <pre><code>// Line 1: Interface (100% abstract contract)
+interface Connectable {
+  void connect(); // Abstract and public by default
+}
+
+// Line 2: Abstract Class (Partial implementation)
+abstract class Device {
+  void displayInfo() { // Concrete method
+    System.out.println("Displaying device information..."); 
+  }
+  abstract void turnOff(); // Abstract method (no body)
+}
+
+// Line 3: Concrete Class implements Interface and extends Abstract Class
+class Laptop extends Device implements Connectable {
+  @Override
+  public void connect() { // Implements Connectable contract
+    System.out.println("Laptop connected to Wi-Fi.");
+  }
+  @Override
+  void turnOff() { // Implements Device contract
+    System.out.println("Laptop shutting down.");
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    Laptop myLaptop = new Laptop();
+    myLaptop.displayInfo();
+    myLaptop.connect();
+    myLaptop.turnOff();
+  }
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Line-by-Line Explanation</h3>
+        <ul class="explanation list-decimal pl-6">
+            <li>`interface Connectable { ... }` : Defines a behavioral contract that any implementing class must fulfill (`connect()`).</li>
+            <li>`abstract class Device { ... }` : Defines a base that provides some common logic (`displayInfo()`) but forces subclasses to define how they turn off (`turnOff()`).</li>
+            <li>`class Laptop extends Device implements Connectable { ... }` : The concrete class that must provide the bodies for `connect()` and `turnOff()`.</li>
+        </ul>
+    </div>
+
+    <!-- 9. Final, Static, and Abstract Modifiers - Combined Summary -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">🚫 Final, Static, and Abstract Modifiers</h2>
+        <p class="text-gray-700">These non-access modifiers govern the characteristics of class members or classes themselves.</p>
+
+        <div class="flex space-x-6 mt-4">
+            <div class="w-1/3">
+                <h3 class="text-xl font-semibold mb-2">Final</h3>
+                <ul class="list-disc pl-4 text-gray-700 space-y-1 text-sm">
+                    <li>Variable: Makes it a **constant**.</li>
+                    <li>Method: Prevents **overriding**.</li>
+                    <li>Class: Prevents **inheritance**.</li>
+                </ul>
+            </div>
+            <div class="w-1/3">
+                <h3 class="text-xl font-semibold mb-2">Static</h3>
+                <ul class="list-disc pl-4 text-gray-700 space-y-1 text-sm">
+                    <li>Member: Belongs to the **class**, shared by all objects.</li>
+                    <li>Block: Executed only once when the class is loaded.</li>
+                    <li>Used for utility functions (e.g., `main` method).</li>
+                </ul>
+            </div>
+            <div class="w-1/3">
+                <h3 class="text-xl font-semibold mb-2">Abstract</h3>
+                <ul class="list-disc pl-4 text-gray-700 space-y-1 text-sm">
+                    <li>Method: Signature only (no body); forces implementation.</li>
+                    <li>Class: Cannot be instantiated; meant only for extension.</li>
+                    <li>Enforces **abstraction**.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Object Class Methods -->
+    <div class="concept-box">
+        <h2 class="text-2xl mb-3">✨ The <code>Object</code> Class: <code>equals()</code>, <code>hashCode()</code>, etc.</h2>
+        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+        <p class="text-gray-700">The `java.lang.Object` class is the root of the Java class hierarchy. Every class is a descendant of `Object` and automatically inherits its non-private methods, such as `equals()`, `hashCode()`, and `toString()`.</p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">5 Key Points</h3>
+        <ul class="list-disc pl-6 text-gray-700 space-y-1 text-sm">
+            <li>The default `equals()` checks for **reference equality** (if two variables point to the same memory location).</li>
+            <li>The default `hashCode()` returns a unique integer based on the object's memory address.</li>
+            <li>It is crucial to override both `equals()` and `hashCode()` for **content equality** when using objects in collections (e.g., `HashMap`, `HashSet`).</li>
+            <li>The `toString()` method is used to provide a human-readable representation of an object.</li>
+            <li>**Real-Life Use Case:** When comparing two products in an e-commerce cart. You don't care if they are the exact same physical object in memory; you care if they have the same **Product ID** and **Options**. This requires overriding `equals()`.</li>
+        </ul>
+        
+        <h3 class="text-xl font-semibold mt-4 mb-2">Example Program (Custom Equality)</h3>
+        <pre><code>import java.util.Objects;
+
+// Line 1: Define a Product class
+public class Product {
+  private final int productId;
+  private final String name;
+
+  public Product(int productId, String name) {
+    this.productId = productId;
+    this.name = name;
+  }
+
+  // Line 2: Override equals() to check only for productId equality
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true; // Same object reference
+    if (o == null || getClass() != o.getClass()) return false;
+    
+    Product product = (Product) o;
+    // Line 3: Two products are equal if their IDs match
+    return productId == product.productId; 
+  }
+
+  // Line 4: Override hashCode() using only the productId
+  @Override
+  public int hashCode() {
+    return Objects.hash(productId);
+  }
+
+  // Optional: Override toString() for better readability
+  @Override
+  public String toString() {
+    return "Product ID: " + productId + ", Name: " + name;
+  }
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Line-by-Line Explanation</h3>
+        <ul class="explanation list-decimal pl-6">
+            <li>`public class Product { ... }` : Defines the class containing the data defining equality (`productId`).</li>
+            <li>`@Override public boolean equals(Object o) { ... }` : Defines the custom rule for equality, replacing the default memory address check.</li>
+            <li>`return productId == product.productId;` : The custom equality rule: only compare the ID, ignoring the `name` field.</li>
+            <li>`@Override public int hashCode() { ... }` : Returns a hash code generated *only* from the fields used in `equals()` (`productId`), maintaining the crucial contract.</li>
+        </ul>
+
+        <div class="diagram text-gray-700 text-sm mt-4">
+            <h3 class="font-bold mb-1">Equals/HashCode Contract (Crucial Rule)</h3>
+            <ul class="list-disc ml-5 space-y-1">
+                <li>If `a.equals(b)` is **TRUE**, then `a.hashCode()` **MUST** equal `b.hashCode()`.</li>
+                <li>If you override `equals()`, you **MUST** override `hashCode()`, and vice versa.</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="concept-box">
+        <h2 class="text-xl font-bold text-cyan-700 mb-3">💡 Practice</h2>
+        <ul class="list-disc pl-6 text-gray-700">
+            <li>Create a `Person` class and demonstrate all four access modifiers (public, private, protected, default).</li>
+            <li>Create an abstract class `Animal` with an abstract method `makeSound()` and concrete classes like `Dog` and `Cat` that extend it.</li>
+        </ul>
+    </div>
+
+    <div class="flex justify-between mt-10">
+        <a href="java-topic3.html" class="nav-btn">← Previous Topic</a>
+        <a href="java-topic5.html" class="nav-btn">Next Topic →</a>
+    </div>
+</section>
+ <!-- Wrap up -->
+      <section class="mt-6 mb-6">
+        <h2 class="text-xl font-semibold">Summary & Best Practices</h2>
+        <ul class="muted list-disc ml-5">
+          <li>Design classes with single responsibility — one clear purpose.</li>
+          <li>Prefer composition over inheritance for flexible designs.</li>
+          <li>Use encapsulation to validate and protect internal state.</li>
+          <li>Override equals/hashCode when objects are value-like and will be used in collections.</li>
+          <li>Favor interfaces for capability contracts and abstract classes for shared code.</li>
+        </ul>
+      </section>
+
+     
+ 
+<!-- ✅ QUIZ SECTION -->
+<section id="quiz" class="mt-10 border-t border-gray-200 pt-6">
+  <h2 class="text-2xl font-bold text-sky-700 mb-2">🎯 Topic 4 AI Quiz: OOP Mastery</h2>
+  <p class="text-gray-600 mb-4">Answer 15 questions (90 % required) to unlock “Mark as Completed”.</p>
+  <div id="quiz-container" class="bg-white border rounded-lg shadow-md p-6"></div>
+  <div class="text-center mt-6">
+    <button id="submit-quiz" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-5 rounded-full">🚀 Submit Quiz</button>
+    <p id="quiz-result" class="mt-4 text-gray-600 font-semibold"></p>
+  </div>
+</section>
+
+<!-- ✅ COMPLETION BUTTON -->
+<div class="text-center mt-10">
+  <button id="complete-btn" onclick="markTopicComplete()" disabled class="bg-gray-400 text-white font-semibold py-2 px-4 rounded-full shadow-md cursor-not-allowed">🔒 Mark as Completed (Locked)</button>
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">🎉 Topic marked as completed! Next topic unlocked 🔓</p>
+</div>
+
+<div class="flex justify-between mt-10">
+ <a class="btn" href="java-topic3.html">&larr; Previous: Arrays & Strings</a>
+ <a class="btn" href="java-topic5.html">Next: Advanced Topics →</a>
+</div>
+</main>
+
+<footer class="text-center text-gray-500 py-4 border-t border-gray-200">© 2025 KnowledgeStream — Java Mastery</footer>
+
+<script>
+/* ========== QUIZ QUESTIONS ========== */
+const questions=[
+ {q:"What does OOP stand for?",o:["Object-Oriented Programming","Overloaded Operations Paradigm","Object-Oriented Process","Original Object Pattern"],a:0},
+ {q:"Which keyword is used to inherit a class?",o:["super","import","extends","implements"],a:2},
+ {q:"Which concept ensures data hiding in Java?",o:["Inheritance","Polymorphism","Encapsulation","Abstraction"],a:2},
+ {q:"An abstract class can:",o:["Be instantiated","Contain both abstract and concrete methods","Have only abstract methods","None"],a:1},
+ {q:"Interfaces achieve:",o:["Encapsulation","Partial Abstraction","Full Abstraction","No Abstraction"],a:2},
+ {q:"Static members belong to:",o:["Object","Class","Package","Parent"],a:1},
+ {q:"Which access modifier allows access within same package?",o:["private","protected","public","default"],a:3},
+ {q:"Method overloading occurs during:",o:["Compile time","Run time","Both","None"],a:0},
+ {q:"Method overriding occurs during:",o:["Compile time","Run time","Compilation error","None"],a:1},
+ {q:"Which keyword refers to current object?",o:["this","super","self","own"],a:0},
+ {q:"Which cannot be inherited?",o:["final method","public field","protected method","default class"],a:0},
+ {q:"Which class is root of Java class hierarchy?",o:["Main","Object","Base","Root"],a:1},
+ {q:"Which ensures code reusability?",o:["Encapsulation","Abstraction","Inheritance","Polymorphism"],a:2},
+ {q:"Which allows same method name with different signatures?",o:["Overriding","Overloading","Extending","Shadowing"],a:1},
+ {q:"Which keyword prevents method overriding?",o:["static","private","final","protected"],a:2}
+];
+
+/* Generate Quiz */
+const container=document.getElementById("quiz-container");
+questions.forEach((q,i)=>{
+ const div=document.createElement("div");
+ div.className="mb-4";
+ div.innerHTML=`<p class='font-semibold'>${i+1}. ${q.q}</p>`+
+ q.o.map((opt,j)=>`<label class='block cursor-pointer'><input type='radio' name='q${i}' value='${j}' class='mr-2'>${opt}</label>`).join('');
+ container.appendChild(div);
+});
+
+/* Submit logic */
+document.getElementById("submit-quiz").addEventListener("click",()=>{
+ enableWebcamMonitoring();
+ let correct=0;
+ questions.forEach((q,i)=>{
+  const chosen=document.querySelector(`input[name=q${i}]:checked`);
+  if(chosen && parseInt(chosen.value)===q.a) correct++;
+ });
+ const percent=Math.round((correct/questions.length)*100);
+ const result=document.getElementById("quiz-result");
+ result.textContent=`You scored ${percent}% (${correct}/${questions.length})`;
+ if(percent>=90){
+   result.classList.add("text-green-600");
+   unlockCompletion();
+ }else{
+   result.classList.add("text-red-600");
+   showSecurityAlert("⚠️ Score below 90 %. Try again!");
+ }
+});
+
+/* Unlock button */
+function unlockCompletion(){
+ const btn=document.getElementById("complete-btn");
+ btn.disabled=false;
+ btn.classList.remove("bg-gray-400","cursor-not-allowed");
+ btn.classList.add("bg-sky-600","hover:bg-sky-700");
+ btn.textContent="✅ Mark as Completed";
+}
+
+/* Save completion */
+function markTopicComplete(){
+ const match=window.location.pathname.match(/topic(\d+)/);
+ if(match){
+  const topicNum=parseInt(match[1]);
+  localStorage.setItem("latestCompleted",topicNum);
+  const s=document.getElementById("completion-status");
+  s.classList.remove("hidden");
+  s.classList.add("text-sky-500","font-semibold");
+  const b=document.getElementById("complete-btn");
+  b.disabled=true;b.textContent="✅ Completed!";b.classList.add("bg-green-600","cursor-not-allowed");
+ }
+}
+
+/* ========== ANTI-CHEAT ========== */
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("selectstart",e=>e.preventDefault());
+document.addEventListener("copy",e=>e.preventDefault());
+document.addEventListener("keydown",e=>{
+ if((e.ctrlKey&&['c','u','s','a','p'].includes(e.key.toLowerCase()))||e.key==='F12'||e.key==='PrintScreen'){
+  e.preventDefault();showSecurityAlert("🚫 Action blocked");
+ }
+});
+document.addEventListener("visibilitychange",()=>{
+ if(document.hidden)showSecurityAlert("🚨 Tab switched!");
+});
+function showSecurityAlert(msg){
+ const box=document.createElement("div");
+ box.textContent=msg;
+ Object.assign(box.style,{position:"fixed",bottom:"20px",right:"20px",background:"#dc2626",color:"#fff",
+ padding:"10px 16px",borderRadius:"8px",fontSize:"0.9rem",fontWeight:"600",zIndex:"9999"});
+ document.body.appendChild(box);
+ setTimeout(()=>box.remove(),4000);
+}
+
+/* ========== CAMERA ALERT ========== */
+function showCameraAlert(){
+ const alert=document.createElement("div");
+ alert.textContent="🎥 AI Proctoring Active — Camera Monitoring Enabled";
+ Object.assign(alert.style,{position:"fixed",top:"20px",right:"20px",background:"#2563eb",color:"#fff",
+ padding:"10px 16px",borderRadius:"8px",fontWeight:"600",zIndex:"9999"});
+ document.body.appendChild(alert);
+ setTimeout(()=>alert.remove(),6000);
+}
+async function enableWebcamMonitoring(){
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({video:true});
+  const video=document.createElement("video");
+  video.srcObject=stream;video.autoplay=true;video.muted=true;
+  Object.assign(video.style,{position:"fixed",bottom:"10px",left:"10px",width:"120px",
+   border:"2px solid #22c55e",borderRadius:"8px",boxShadow:"0 2px 8px rgba(0,0,0,0.3)",zIndex:"9999"});
+  document.body.appendChild(video);
+  showCameraAlert();
+ }catch(err){showSecurityAlert("⚠️ Camera access denied.");}
+}
+window.onbeforeunload=()=>"Progress may be lost!";
+</script>
+</body>
+</html>

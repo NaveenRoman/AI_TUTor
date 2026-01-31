@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>KnowledgeStream – Design Patterns & Best Practices (Beginner → Pro)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+  --bg:#ffffff; --muted:#6b7280; --accent:#0ea5e9; --accent-700:#0284c7; --card:#fbfeff; --code-bg:#f3f7fb;
+}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:var(--bg);color:#0f172a;margin:0;}
+.container{max-width:980px;margin:0 auto;padding:2rem}
+header{background:#ffffff;box-shadow:0 4px 14px rgba(2,6,23,0.06);position:sticky;top:0;z-index:60}
+.brand{color:var(--accent);font-weight:800}
+h1{color:#075985}
+.card{background:var(--card);border:1px solid #eef2f7;border-radius:.75rem;padding:1.25rem;margin-bottom:1.25rem;box-shadow:0 6px 18px rgba(2,6,23,0.04)}
+.code-card{background:var(--code-bg);border:1px solid #e6eef8;padding:1rem;border-radius:.6rem}
+pre{background:transparent;margin:0;white-space:pre-wrap;overflow:auto;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace}
+code{color:#0f172a}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .7rem;border-radius:.45rem;font-weight:700;border:1px solid transparent;cursor:pointer}
+.btn-run{background:linear-gradient(90deg,var(--accent),var(--accent-700));color:white}
+.btn-copy{background:#f8fafc;border:1px solid #e6eef8;color:#0f172a}
+.meta{font-size:.92rem;color:var(--muted)}
+details summary{cursor:pointer;font-weight:700;color:#075985}
+.diagram{background:#f8fafc;border:1px solid #e6eef8;padding:.9rem;border-radius:.5rem}
+.small{font-size:.94rem;color:var(--muted)}
+.table{width:100%;border-collapse:collapse;margin-top:.75rem}
+.table th,.table td{padding:.6rem;border:1px solid #eef2f7;text-align:left}
+.table th{background:#eef9ff;color:#0369a1;font-weight:700}
+.callout{background:#fffbeb;border-left:4px solid #facc15;padding:.75rem;border-radius:.5rem;color:#854d0e;margin-top:.8rem}
+.footer{margin-top:2rem;color:var(--muted);font-size:.92rem;text-align:center;padding:1.5rem 0}
+#toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:white;padding:.6rem 1rem;border-radius:.5rem;box-shadow:0 6px 18px rgba(2,6,23,0.2);display:none;z-index:1000}
+@media (max-width:860px){ .container{padding:1rem} }
+</style>
+</head>
+<body>
+  <header>
+    <div class="container flex items-center justify-between py-4">
+      <a href="index.html" class="brand text-2xl">KnowledgeStream</a>
+      <nav class="meta">
+        <a href="java-topic13.html" class="hover:underline">← Prev</a> <span class="mx-2">|</span>
+        <a href="java-topic15.html" class="hover:underline">Next →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="text-3xl font-bold mb-2">🧮 Design Patterns & Best Practices — Beginner → Pro</h1>
+    <p class="small mb-4">Step-wise explanations (Beginner → Intermediate → Pro) for each pattern, interactive code examples, diagrams, use-cases, pitfalls and interview notes.</p>
+
+    <!-- Pattern card template repeated for each topic -->
+    <!-- 1) Singleton -->
+    <section class="card" id="singleton-section">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🏠 Singleton Pattern</h2>
+          <p class="small mt-1">Ensure only one instance of a class and provide a global access point.</p>
+        </div>
+        <div class="meta small">Creational • Simplicity: Easy to understand</div>
+      </div>
+
+      <div class="mt-4 code-card" id="code-singleton">
+<pre id="singleton-code"><code>public class Singleton {
+  private static Singleton instance;
+  private Singleton() {}
+  public static Singleton getInstance() {
+    if (instance == null) instance = new Singleton();
+    return instance;
+  }
+}</code></pre>
+
+        <div class="mt-3">
+          <button class="btn btn-copy" data-codeid="singleton-code">📋 Copy</button>
+          <button class="btn btn-run" data-codeid="singleton-code">▶ Run</button>
+          <span class="meta ml-3">Example (lazy init)</span>
+        </div>
+      </div>
+
+      <details class="mt-3"><summary>📘 Beginner — What it does</summary>
+        <div class="small mt-2">A class with a private constructor and one static method that returns the single instance. Useful for central managers (logging, config).</div>
+      </details>
+
+      <details class="mt-2"><summary>📗 Intermediate — Thread-safety & Variants</summary>
+        <div class="small mt-2">
+          <p><b>Problems:</b> the lazy example above is not thread-safe.</p>
+          <pre class="mt-2"><code>// Thread-safe (eager init)
+public class SingletonEager {
+  private static final SingletonEager INSTANCE = new SingletonEager();
+  private SingletonEager(){}
+  public static SingletonEager getInstance(){ return INSTANCE; }
+}</code></pre>
+          <p class="small mt-2">Or use double-checked locking with volatile for lazy but thread-safe init.</p>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>🧠 Pro — When to use & pitfalls</summary>
+        <div class="mt-2 small">
+          <ul class="list-disc ml-6">
+            <li><b>Use:</b> cross-cutting managers (logging, metrics) where global single instance makes sense.</li>
+            <li><b>Avoid:</b> using singleton for everything — it creates hidden global state and makes unit testing harder.</li>
+            <li><b>Test tip:</b> provide a package-private reset method or use dependency injection for testability.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>💡 Interview Notes</summary>
+        <div class="small mt-2">Know eager vs lazy initialization, thread-safe implementations (synchronized, volatile, enum-singleton), and testing implications.</div>
+      </details>
+    </section>
+
+    <!-- 2) Factory -->
+    <section class="card" id="factory-section">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🏭 Factory Pattern</h2>
+          <p class="small mt-1">Encapsulate object creation — client asks factory for an interface, not concrete class.</p>
+        </div>
+        <div class="meta small">Creational • Good for decoupling</div>
+      </div>
+
+      <div class="mt-4 code-card" id="code-factory">
+<pre id="factory-code"><code>interface Shape { void draw(); }
+class Circle implements Shape { public void draw(){ System.out.println("Circle"); } }
+class Square implements Shape { public void draw(){ System.out.println("Square"); } }
+
+class ShapeFactory {
+  public Shape getShape(String type){
+    if ("circle".equalsIgnoreCase(type)) return new Circle();
+    if ("square".equalsIgnoreCase(type)) return new Square();
+    throw new IllegalArgumentException("Unknown");
+  }
+}</code></pre>
+
+        <div class="mt-3">
+          <button class="btn btn-copy" data-codeid="factory-code">📋 Copy</button>
+          <button class="btn btn-run" data-codeid="factory-code">▶ Run</button>
+          <span class="meta ml-3">Simple factory</span>
+        </div>
+      </div>
+
+      <details class="mt-3"><summary>📘 Beginner — Why factories?</summary>
+        <div class="small mt-2">Factories centralize creation logic so clients don't depend on concrete classes — helps swapping implementations later.</div>
+      </details>
+
+      <details class="mt-2"><summary>📗 Intermediate — Factory vs AbstractFactory</summary>
+        <div class="small mt-2">
+          <p>Factory: creates objects of related family. Abstract Factory: produces families of related objects (e.g., GUI theme factories that produce buttons, menus).</p>
+          <div class="diagram mt-2">Client → Factory → Product</div>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>🧠 Pro — Best practices & pitfalls</summary>
+        <div class="small mt-2">
+          <ul class="list-disc ml-6">
+            <li>Prefer dependency injection frameworks (Spring) for complex wiring.</li>
+            <li>Avoid huge switch/if chains — use registration (map of creators) or reflection + config.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>💡 Interview Notes</summary>
+        <div class="small mt-2">Explain why factories decouple clients from implementation and discuss trade-offs vs direct newing and DI frameworks.</div>
+      </details>
+    </section>
+
+    <!-- 3) Builder -->
+    <section class="card" id="builder-section">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🏗️ Builder Pattern</h2>
+          <p class="small mt-1">Create complex objects step-by-step; avoids telescoping constructors.</p>
+        </div>
+        <div class="meta small">Creational • Fluent APIs</div>
+      </div>
+
+      <div class="mt-4 code-card" id="code-builder">
+<pre id="builder-code"><code>class Computer {
+  private String cpu, ram, storage;
+  private Computer(Builder b){ cpu=b.cpu; ram=b.ram; storage=b.storage; }
+
+  public static class Builder {
+    private String cpu, ram, storage;
+    public Builder cpu(String c){ this.cpu=c; return this; }
+    public Builder ram(String r){ this.ram=r; return this; }
+    public Builder storage(String s){ this.storage=s; return this; }
+    public Computer build(){ return new Computer(this); }
+  }
+}</code></pre>
+
+        <div class="mt-3">
+          <button class="btn btn-copy" data-codeid="builder-code">📋 Copy</button>
+          <button class="btn btn-run" data-codeid="builder-code">▶ Run</button>
+          <span class="meta ml-3">Immutable builder</span>
+        </div>
+      </div>
+
+      <details class="mt-3"><summary>📘 Beginner — Why Builder?</summary>
+        <div class="small mt-2">Builder makes object construction readable and flexible — especially when many optional parameters exist.</div>
+      </details>
+
+      <details class="mt-2"><summary>📗 Intermediate — Fluent APIs & Validation</summary>
+        <div class="small mt-2">Builder can perform validation in build(), support defaults, and be used with method chaining (fluent style).</div>
+      </details>
+
+      <details class="mt-2"><summary>🧠 Pro — When to prefer Builder</summary>
+        <div class="small mt-2">
+          <ul class="list-disc ml-6">
+            <li>Immutable domain objects (DTOs) where readability and safe construction are important.</li>
+            <li>Combine with static factory methods for named constructors (e.g., Builder.forTesting()).</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>💡 Interview Notes</summary>
+        <div class="small mt-2">Be ready to describe telescoping constructor anti-pattern and how Builder solves it.</div>
+      </details>
+    </section>
+
+    <!-- 4) Prototype & Cloning -->
+    <section class="card" id="prototype-section">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🧬 Prototype (Cloning)</h2>
+          <p class="small mt-1">Create new objects by copying existing ones (clone). Useful when creating from scratch is costly.</p>
+        </div>
+        <div class="meta small">Creational • Copying</div>
+      </div>
+
+      <div class="mt-4 code-card" id="code-prototype">
+<pre id="prototype-code"><code>class Person implements Cloneable {
+  String name; Address addr; // Address is mutable
+  public Person(String n, Address a){ name=n; addr=a; }
+  public Object clone() throws CloneNotSupportedException {
+    Person p = (Person)super.clone();
+    p.addr = (Address) addr.clone(); // deep copy
+    return p;
+  }
+}</code></pre>
+
+        <div class="mt-3">
+          <button class="btn btn-copy" data-codeid="prototype-code">📋 Copy</button>
+          <button class="btn btn-run" data-codeid="prototype-code">▶ Run</button>
+          <span class="meta ml-3">Deep copy example</span>
+        </div>
+      </div>
+
+      <details class="mt-3"><summary>📘 Beginner — Shallow vs Deep copy</summary>
+        <div class="small mt-2">Shallow copy duplicates references; deep copy duplicates referenced objects too. Deep copy is safer for complex mutable graphs.</div>
+      </details>
+
+      <details class="mt-2"><summary>🧠 Pro — When to avoid clone()</summary>
+        <div class="small mt-2">
+          <ul class="list-disc ml-6">
+            <li>Cloneable and Object.clone() have pitfalls (protected visibility, copy semantics).</li>
+            <li>Prefer copy constructors or serialization-based copying for clarity.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>💡 Interview Notes</summary>
+        <div class="small mt-2">Explain deep vs shallow copy, why Cloneable is considered broken by some, and alternatives (copy constructor, factory, serialization).</div>
+      </details>
+    </section>
+
+    <!-- 5) MVC -->
+    <section class="card" id="mvc-section">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🧩 MVC — Model / View / Controller</h2>
+          <p class="small mt-1">Separates concerns: Model (state), View (UI), Controller (input & flow).</p>
+        </div>
+        <div class="meta small">Architectural • Web & Desktop</div>
+      </div>
+
+      <div class="diagram mt-3">
+        <svg viewBox="0 0 720 120" width="100%" height="120" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="30" width="180" height="60" rx="8" fill="#fff" stroke="#e6eef8"/><text x="110" y="65" text-anchor="middle" fill="#0369a1">Model (Data)</text>
+          <rect x="270" y="5" width="180" height="110" rx="8" fill="#fff" stroke="#e6eef8"/><text x="360" y="60" text-anchor="middle" fill="#0369a1">Controller (Business Logic)</text>
+          <rect x="520" y="30" width="180" height="60" rx="8" fill="#fff" stroke="#e6eef8"/><text x="610" y="65" text-anchor="middle" fill="#0369a1">View (UI)</text>
+          <path d="M200 60 H270 M450 60 H520" stroke="#0ea5e9" stroke-width="3" marker-end="url(#m)"/>
+          <defs><marker id="m" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#0ea5e9"/></marker></defs>
+        </svg>
+      </div>
+
+      <details class="mt-3"><summary>📘 Beginner — Why MVC?</summary>
+        <div class="small mt-2">Clear separation enables parallel development (UI designers vs backend devs), easier testing and maintainability.</div>
+      </details>
+
+      <details class="mt-2"><summary>📗 Intermediate — MVC in Java</summary>
+        <div class="small mt-2">Web: Spring MVC / Servlets. Desktop: Swing/JavaFX separates model and view with controller glue code. Use DTOs to move data between layers.</div>
+      </details>
+
+      <details class="mt-2"><summary>🧠 Pro — Pitfalls & Alternatives</summary>
+        <div class="small mt-2">
+          <ul class="list-disc ml-6">
+            <li>Overusing fat controllers — push business logic into services.</li>
+            <li>Consider MVVM or Hexagonal architecture for complex apps.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>💡 Interview Notes</summary>
+        <div class="small mt-2">Be ready to compare MVC with MVVM and explain how controllers coordinate models and views, and where services/business logic should live.</div>
+      </details>
+    </section>
+
+    <!-- 6) DAO -->
+    <section class="card" id="dao-section">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">💾 DAO — Data Access Object</h2>
+          <p class="small mt-1">Abstracts and encapsulates all access to the data source (DB, web service, file).</p>
+        </div>
+        <div class="meta small">Structural • Persistence</div>
+      </div>
+
+      <div class="mt-4 code-card" id="code-dao">
+<pre id="dao-code"><code>public class Student {
+  private int id; private String name;
+  // getters/setters
+}
+public interface StudentDAO {
+  void save(Student s);
+  Student findById(int id);
+}
+public class JdbcStudentDAO implements StudentDAO {
+  public void save(Student s) { /* JDBC code */ }
+  public Student findById(int id) { return null; }
+}</code></pre>
+
+        <div class="mt-3">
+          <button class="btn btn-copy" data-codeid="dao-code">📋 Copy</button>
+          <button class="btn btn-run" data-codeid="dao-code">▶ Run</button>
+          <span class="meta ml-3">DAO interface + JDBC impl</span>
+        </div>
+      </div>
+
+      <details class="mt-3"><summary>📘 Beginner — Why DAO?</summary>
+        <div class="small mt-2">DAO decouples persistence detail from business logic. Tests can mock DAOs not DBs.</div>
+      </details>
+
+      <details class="mt-2"><summary>📗 Intermediate — Patterns with DAO</summary>
+        <div class="small mt-2">Use DTOs for transfers, transactions in service layer, and connection pooling for performance.</div>
+      </details>
+
+      <details class="mt-2"><summary>🧠 Pro — When using ORMs</summary>
+        <div class="small mt-2">With Hibernate or JPA you still can use DAO/Repository patterns to keep business logic independent from ORM specifics and for unit testing.</div>
+      </details>
+
+      <details class="mt-2"><summary>💡 Interview Notes</summary>
+        <div class="small mt-2">Explain how DAO improves testability and how you'd handle transactions and batching at the DAO/service boundary.</div>
+      </details>
+    </section>
+
+    <!-- 7) Memory & GC -->
+    <section class="card" id="gc-section">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🧹 Memory Management & Garbage Collection</h2>
+          <p class="small mt-1">Java's GC automatically frees unused objects — but developers must design to avoid leaks and excessive allocation.</p>
+        </div>
+        <div class="meta small">Runtime • Performance</div>
+      </div>
+
+      <div class="diagram mt-3">
+        <svg viewBox="0 0 640 90" width="100%" height="90" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="20" width="200" height="50" rx="6" fill="#fff" stroke="#e6eef8"/><text x="110" y="50" text-anchor="middle" fill="#0369a1">Young Gen (Eden + Survivor)</text>
+          <rect x="230" y="20" width="200" height="50" rx="6" fill="#fff" stroke="#e6eef8"/><text x="330" y="50" text-anchor="middle" fill="#0369a1">Old Gen</text>
+          <rect x="450" y="20" width="160" height="50" rx="6" fill="#fff" stroke="#e6eef8"/><text x="530" y="50" text-anchor="middle" fill="#0369a1">Perm/Meta (classes)</text>
+        </svg>
+      </div>
+
+      <details class="mt-3"><summary>📘 Beginner — GC basics</summary>
+        <div class="small mt-2">
+          <ul class="list-disc ml-6">
+            <li>Objects with no live references become eligible for GC.</li>
+            <li>Try-with-resources ensures determinisitic resource closure for Closeable objects.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>📗 Intermediate — GC tuning</summary>
+        <div class="small mt-2">
+          <ul class="list-disc ml-6">
+            <li>Know common collectors: G1 (default in modern JVMs), Parallel, CMS, Shenandoah, ZGC.</li>
+            <li>Observe GC with flags: -Xms, -Xmx, -XX:+UseG1GC, -Xlog:gc* (JDK versions vary).</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>🧠 Pro — Leak detection & profiling</summary>
+        <div class="small mt-2">
+          <ul class="list-disc ml-6">
+            <li>Use profilers (VisualVM, Flight Recorder) to find retained instances and memory leaks.</li>
+            <li>Pitfalls: static collections, listeners not removed, caches without eviction.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>💡 Interview Notes</summary>
+        <div class="small mt-2">Discuss GC ergonomics, how to debug OOM (heap dump), and when to tune allocations vs GC collector selection.</div>
+      </details>
+    </section>
+
+    <!-- 8) Clean Code & SOLID -->
+    <section class="card" id="clean-section">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🧠 Clean Code & SOLID Principles</h2>
+          <p class="small mt-1">Guidelines that help build maintainable, extensible and testable software.</p>
+        </div>
+        <div class="meta small">Design • Maintainability</div>
+      </div>
+
+      <div class="mt-4">
+        <table class="table">
+          <tr><th>Principle</th><th>Meaning</th><th>Beginner → Pro Tip</th></tr>
+          <tr><td>S</td><td>Single Responsibility</td><td>Start: keep classes small. Pro: extract cohesive services and use composition.</td></tr>
+          <tr><td>O</td><td>Open/Closed</td><td>Start: prefer extension over modification. Pro: plugin architectures & strategy pattern.</td></tr>
+          <tr><td>L</td><td>Liskov Substitution</td><td>Start: subclass contracts must hold. Pro: use interfaces and prefer composition.</td></tr>
+          <tr><td>I</td><td>Interface Segregation</td><td>Start: small interfaces. Pro: create adapter layers for legacy APIs.</td></tr>
+          <tr><td>D</td><td>Dependency Inversion</td><td>Start: depend on interfaces. Pro: inversion via DI frameworks and modules.</td></tr>
+        </table>
+      </div>
+
+      <details class="mt-3"><summary>📘 Beginner — DRY & KISS</summary>
+        <div class="small mt-2">DRY: avoid duplicate logic. KISS: prefer simple readable solutions over clever hacks.</div>
+      </details>
+
+      <details class="mt-2"><summary>🧠 Pro — Code smells & refactoring</summary>
+        <div class="small mt-2">
+          <ul class="list-disc ml-6">
+            <li>Recognize smells: large classes, long methods, duplicated logic.</li>
+            <li>Refactor with tests: extract method, introduce parameter object, replace conditionals with strategy.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="mt-2"><summary>💡 Interview Notes</summary>
+        <div class="small mt-2">Explain SOLID with examples. Show how patterns (Strategy, Decorator) help adhere to these principles.</div>
+      </details>
+    </section>
+
+    <!-- Comparison: Factory vs Builder -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">⚖️ Pattern Comparison: Factory vs Builder vs Prototype</h2>
+      <table class="table">
+        <tr><th>Aspect</th><th>Factory</th><th>Builder</th><th>Prototype</th></tr>
+        <tr><td>Purpose</td><td>Encapsulate object creation</td><td>Build complex objects stepwise</td><td>Clone existing objects</td></tr>
+        <tr><td>When to use</td><td>Choose concrete impl at runtime</td><td>Many optional params, readable creation</td><td>Costly construction or prototype-based</td></tr>
+        <tr><td>Example</td><td>ShapeFactory</td><td>Computer.Builder</td><td>Cloning a configured object</td></tr>
+      </table>
+      <details class="mt-3"><summary>📘 Learn More</summary>
+        <div class="small mt-2">Pick Builder for object complexity and Fluent APIs; Factory for decoupling creation; Prototype when copy semantics are cheaper than create.</div>
+      </details>
+    </section>
+
+    <!-- Quick hands-on examples index -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🚀 Hands-on Examples Index</h2>
+      <ul class="list-disc ml-6 small">
+        <li>Singleton: build thread-safe lazy using enum or double-checked locking.</li>
+        <li>Factory: implement registration map to avoid if/switch chains.</li>
+        <li>Builder: validate in build() and return immutable object.</li>
+        <li>Prototype: prefer copy constructors or serialization-based deep copy in complex cases.</li>
+      </ul>
+    </section>
+
+    <!-- Quiz -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🧠 Quick Quiz (auto-check)</h2>
+      <div class="small mt-2">
+        <p class="font-semibold">Q1. Which pattern helps build immutable objects with many optional parameters?</p>
+        <label><input type="radio" name="q1" value="A"> A. Factory</label><br>
+        <label><input type="radio" name="q1" value="B"> B. Builder</label><br>
+
+        <p class="font-semibold mt-3">Q2. Which approach is safest for deep copying complex object graphs?</p>
+        <label><input type="radio" name="q2" value="A"> A. Object.clone()</label><br>
+        <label><input type="radio" name="q2" value="B"> B. Copy constructor / Serialization deep copy</label><br>
+
+        <div class="mt-3">
+          <button id="check-quiz" class="btn btn-run">Check Answers</button>
+          <button id="reset-quiz" class="btn btn-copy">Reset</button>
+          <div id="quiz-result" class="mt-3 font-semibold"></div>
+        </div>
+
+        <details id="quiz-explain" class="mt-3"><summary>Answers & Explanations</summary>
+          <div class="small mt-2">
+            <p><b>Q1:</b> B — Builder is designed for constructing complex immutable objects.</p>
+            <p><b>Q2:</b> B — Cloneable can be tricky; copy constructors or serialization-based deep copy provide clearer semantics.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+    <footer class="footer">
+      © 2025 KnowledgeStream — Design Patterns & Best Practices. Want downloadable `.java` examples or a printable PDF? Ask and I’ll generate them.
+    </footer>
+  </main>
+
+  <div id="toast">Copied to clipboard</div>
+
+<script>
+  // Toast helper
+  function showToast(msg){
+    const t = document.getElementById('toast'); t.textContent = msg; t.style.display='block';
+    setTimeout(()=> t.style.display='none', 2000);
+  }
+
+  // Copy & Run handlers
+  const JDoodleURL = 'https://www.jdoodle.com/online-java-compiler/';
+
+  document.querySelectorAll('.btn-copy').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.getAttribute('data-codeid');
+      const pre = id ? document.getElementById(id) : btn.closest('.code-card')?.querySelector('pre');
+      const text = pre ? pre.innerText : '';
+      if(!text){ showToast('No code found'); return; }
+      try { await navigator.clipboard.writeText(text); showToast('Code copied to clipboard'); }
+      catch(e){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); showToast('Copied (fallback)'); }
+    });
+  });
+
+  document.querySelectorAll('.btn-run').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.getAttribute('data-codeid');
+      const pre = id ? document.getElementById(id) : btn.closest('.code-card')?.querySelector('pre');
+      const text = pre ? pre.innerText : '';
+      if(!text){ showToast('No code found'); return; }
+      try { await navigator.clipboard.writeText(text); window.open(JDoodleURL,'_blank'); showToast('Copied & opened JDoodle — paste & run'); }
+      catch(e){ window.open(JDoodleURL,'_blank'); alert('Opened JDoodle — paste & run'); }
+    });
+  });
+
+  // Quiz
+  (function(){
+    const answers = { q1: 'B', q2: 'B' };
+    document.getElementById('check-quiz').addEventListener('click', ()=>{
+      let total=0, score=0;
+      for(const k in answers){ total++; const sel = document.querySelector('input[name="'+k+'"]:checked'); if(sel && sel.value === answers[k]) score++; }
+      document.getElementById('quiz-result').innerText = 'Score: ' + score + ' / ' + total;
+      document.getElementById('quiz-explain').open = true;
+    });
+    document.getElementById('reset-quiz').addEventListener('click', ()=>{
+      ['q1','q2'].forEach(n=>{ document.querySelectorAll('input[name="'+n+'"]').forEach(i=>i.checked=false); });
+      document.getElementById('quiz-result').innerText = ''; document.getElementById('quiz-explain').open=false;
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sign in — AiTutor</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --accent:#6366f1; --muted:#6b7280; --bg:#f3f4f9; }
+    body{font-family:Inter,system-ui;background:var(--bg);margin:0}
+    .wrap{max-width:920px;margin:48px auto;padding:24px}
+    .card{background:#fff;border-radius:14px;padding:28px;box-shadow:0 8px 30px rgba(2,6,23,0.06)}
+    h1{margin:0 0 8px;font-size:22px}
+    p.muted{color:var(--muted);margin:0 0 20px}
+    form {display:grid;gap:12px}
+    input[type=text],input[type=password]{
+      padding:12px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);font-size:15px;width:100%;
+    }
+    button{background:var(--accent);color:white;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer}
+    a{color:var(--accent);text-decoration:none}
+    .small{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="card">
+    <h1>Welcome back</h1>
+    <p class="muted">Sign in to your AiTutor account to continue learning.</p>
+
+    {% if form.errors %}
+      <div style="background:#ffefef;border:1px solid #ffd1d1;padding:10px;border-radius:8px;margin-bottom:12px;color:#7a1f1f">
+        Invalid username or password.
+      </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+
+      <!-- IMPORTANT: preserve redirect -->
+      {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+      {% endif %}
+
+      <label class="small">Username</label>
+      <input type="text" name="username" autofocus required>
+
+      <label class="small">Password</label>
+      <input type="password" name="password" required>
+
+      <button type="submit">Sign in</button>
+
+      <div class="small" style="margin-top:12px">
+        New to AiTutor? <a href="{% url 'signup' %}">Create an account</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

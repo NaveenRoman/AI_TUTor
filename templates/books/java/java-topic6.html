@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KnowledgeStream - Inheritance, Polymorphism & Packages (Pro Mode + Tutor)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --brand:#1e40af;
+      --muted:#6b7280;
+      --accent:#0ea5a2;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;background:#f8fafc;color:#0f172a}
+    pre code{font-family:'Roboto Mono',ui-monospace,monospace;font-size:0.9rem}
+    .focus-ring:focus{outline:2px solid rgba(99,102,241,0.12);box-shadow:0 0 0 4px rgba(99,102,241,0.08)}
+    /* Progress bar */
+    .progress-track{background:linear-gradient(90deg,#e6eefc,#eefbf9);border-radius:999px;height:14px;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--brand),#06b6d4);width:0%;transition:width .36s ease}
+    /* Tutor chat */
+    .tutor-toggle{position:fixed;right:20px;bottom:20px;z-index:60}
+    .tutor-card{width:360px;max-width:92vw;height:520px;display:flex;flex-direction:column;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.12);overflow:hidden;background:white}
+    .tutor-messages{flex:1;overflow:auto;padding:12px;gap:8px;display:flex;flex-direction:column}
+    .bubble{max-width:84%;padding:10px 12px;border-radius:10px;box-shadow:0 1px 1px rgba(2,6,23,0.04);font-size:0.95rem}
+    .bubble.user{align-self:flex-end;background:#dcfce7;color:#064e3b;border-bottom-right-radius:4px}
+    .bubble.ai{align-self:flex-start;background:#f1f5f9;color:#0f172a;border-bottom-left-radius:4px}
+    .tiny{font-size:0.82rem;color:var(--muted)}
+    /* Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.5);display:flex;align-items:center;justify-content:center;z-index:70}
+    .modal{width:96%;max-width:920px;background:white;border-radius:12px;padding:18px;box-shadow:0 20px 60px rgba(2,6,23,0.4);max-height:86vh;overflow:auto}
+    /* small responsive tweaks */
+    @media (max-width:640px){
+      .tutor-card{width:100%;right:10px;left:10px;bottom:10px;height:60vh}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="bg-white/95 sticky top-0 z-40 border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-4">
+      <div class="flex items-center gap-4">
+        <a href="#" class="text-2xl font-extrabold text-blue-700">KnowledgeStream</a>
+        <div class="hidden sm:block text-sm text-gray-600">Java — Topic 6</div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="text-sm text-gray-600 tiny">Pro Mode</div>
+        <div style="width:220px" aria-hidden>
+          <div class="progress-track" title="Learning progress">
+            <div id="progressFill" class="progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+        <div id="progressLabel" class="text-xs text-gray-500 tiny">0 / 5 sections</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- HERO -->
+    <section class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-blue-800">⚙️ Inheritance, Polymorphism & Packages — Topic 6 (Pro + Tutor)</h1>
+      <p class="mt-3 text-gray-600 max-w-3xl">Complete the sections, try the quiz, and ask the AI Tutor for explanations — your progress is saved locally.</p>
+    </section>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Content (left, wide) -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- Section Template: each has a mark-done toggle -->
+        <!-- Inheritance -->
+        <section id="inheritance" class="bg-white rounded-xl p-6 border border-blue-100 shadow-sm">
+          <div class="flex items-start justify-between">
+            <h2 class="text-2xl font-bold text-blue-700 mb-3">1. The Power of Inheritance (The "is-a" Relationship)</h2>
+            <div class="flex flex-col items-end">
+              <button data-section="inheritance" onclick="toggleDone(this)" class="px-3 py-1 rounded-md bg-gray-100 text-sm">Mark done</button>
+              <div class="tiny mt-1 text-gray-500" id="time-inheritance">Time: 0s</div>
+            </div>
+          </div>
+
+          <p class="text-gray-700 mb-4">Inheritance creates a hierarchy where one class (subclass) inherits the properties and behaviors of another (superclass).</p>
+
+          <ul class="list-disc pl-5 text-gray-700 space-y-2 mb-4">
+            <li><strong>Keyword:</strong> The <code class="px-1 py-0.5 bg-gray-100 rounded">extends</code> keyword establishes inheritance.</li>
+            <li><strong>Single Inheritance:</strong> Each class can have only one direct superclass.</li>
+            <li><strong>Root:</strong> Every class in Java inherits from <code class="px-1 py-0.5 bg-gray-100 rounded">java.lang.Object</code>.</li>
+            <li><strong>Inherited Members:</strong> Subclasses inherit all <strong>public</strong> and <strong>protected</strong> members.</li>
+          </ul>
+
+          <div class="mt-4 bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-sm">
+            <strong class="text-yellow-800">Analogy:</strong> The Parent class is a base cookie recipe; the Child inherits it and adds chocolate chips.
+          </div>
+
+          <div class="diagram bg-blue-50 text-blue-800 p-4 rounded-md border border-blue-100 font-mono text-sm mt-4">
+/* Inheritance Hierarchy */
+Base Class: Vehicle
+  ├── Car
+  │    └── SportsCar
+  └── Bicycle
+          </div>
+        </section>
+
+        <!-- super -->
+        <section id="super" class="bg-white rounded-xl p-6 border border-blue-100 shadow-sm">
+          <div class="flex items-start justify-between">
+            <h2 class="text-2xl font-bold text-blue-700 mb-3">2. The <code class="px-1 py-0.5 bg-gray-100 rounded">super</code> Keyword: Calling the Parent</h2>
+            <div class="flex flex-col items-end">
+              <button data-section="super" onclick="toggleDone(this)" class="px-3 py-1 rounded-md bg-gray-100 text-sm">Mark done</button>
+              <div class="tiny mt-1 text-gray-500" id="time-super">Time: 0s</div>
+            </div>
+          </div>
+
+          <p class="text-gray-700 mb-4"><code class="px-1 py-0.5 bg-gray-100 rounded">super</code> refers to the immediate parent class — useful for constructor chaining and accessing hidden members.</p>
+
+          <ul class="list-disc pl-5 text-gray-700 space-y-2 mb-4">
+            <li><strong>Constructor Chaining:</strong> <code class="px-1 py-0.5 bg-gray-100 rounded">super()</code> must be first in subclass constructor.</li>
+            <li><strong>Accessing Hidden Methods:</strong> <code>super.methodName()</code> invokes parent implementation.</li>
+            <li><strong>Accessing Hidden Fields:</strong> Use <code>super.fieldName</code> for shadowed variables.</li>
+          </ul>
+
+          <div class="relative">
+            <button onclick="copyCode(this)" class="absolute right-2 top-2 z-10 bg-white border px-3 py-1 text-sm rounded-md shadow-sm hover:bg-gray-50">Copy</button>
+            <pre class="mt-4 rounded-md border border-blue-100 bg-gradient-to-b from-white to-blue-50 p-4 overflow-x-auto"><code>class Parent {
+    int value;
+    public Parent(int v) {
+        this.value = v;
+        System.out.println("Parent initialized with value: " + v);
+    }
+}
+
+class Child extends Parent {
+    int childValue;
+
+    public Child(int v, int cv) {
+        super(v); // <-- Must be the first line to call Parent's constructor
+        this.childValue = cv;
+        System.out.println("Child initialized with value: " + cv);
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- Polymorphism -->
+        <section id="polymorphism" class="bg-white rounded-xl p-6 border border-blue-100 shadow-sm">
+          <div class="flex items-start justify-between">
+            <h2 class="text-2xl font-bold text-blue-700 mb-3">3. Polymorphism: Many Forms (One Interface, Multiple Actions)</h2>
+            <div class="flex flex-col items-end">
+              <button data-section="polymorphism" onclick="toggleDone(this)" class="px-3 py-1 rounded-md bg-gray-100 text-sm">Mark done</button>
+              <div class="tiny mt-1 text-gray-500" id="time-polymorphism">Time: 0s</div>
+            </div>
+          </div>
+
+          <p class="text-gray-600 mb-4">Polymorphism allows a single method name to represent multiple implementations — compile-time (overloading) and runtime (overriding).</p>
+
+          <h4 class="text-lg font-semibold text-blue-600 mt-4 mb-2">A. Compile-time Polymorphism (Method Overloading)</h4>
+          <ul class="list-disc pl-5 text-gray-700 mb-4">
+            <li>Same method name, different parameter lists — resolved at <strong>compile-time</strong>.</li>
+            <li>Example: <code class="px-1 py-0.5 bg-gray-100 rounded">add(int,int)</code> vs <code class="px-1 py-0.5 bg-gray-100 rounded">add(int,int,int)</code>.</li>
+          </ul>
+
+          <h4 class="text-lg font-semibold text-blue-600 mt-4 mb-2">B. Runtime Polymorphism (Dynamic Method Dispatch)</h4>
+          <ul class="list-disc pl-5 text-gray-700 mb-4">
+            <li>Subclass redefines a parent method — resolved at <strong>runtime</strong> based on actual object.</li>
+            <li>Use <code class="px-1 py-0.5 bg-gray-100 rounded">@Override</code> to ensure proper overriding.</li>
+          </ul>
+
+          <div class="mt-4 bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-sm">
+            <strong class="text-yellow-800">Key Mental Model:</strong> A universal remote (reference type) pointing to a TV (actual object). Pressing a button triggers the device-specific behavior.
+          </div>
+
+          <div class="relative mt-4">
+            <button onclick="copyCode(this)" class="absolute right-2 top-2 z-10 bg-white border px-3 py-1 text-sm rounded-md shadow-sm hover:bg-gray-50">Copy</button>
+            <pre class="mt-2 rounded-md border border-blue-100 bg-white p-4 overflow-x-auto"><code>class Animal {
+    public void sound() { System.out.println("Animal generic sound"); }
+}
+class Dog extends Animal {
+    @Override public void sound(){ System.out.println("Dog barks"); }
+}
+public class Main {
+    public static void main(String[] args){
+        Animal a = new Dog();
+        a.sound(); // Dog barks
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- Practice -->
+        <section id="practice" class="bg-gradient-to-b from-blue-50 to-white rounded-xl p-6 border border-blue-100 shadow-sm">
+          <div class="flex items-start justify-between">
+            <h2 class="text-2xl font-extrabold text-blue-800 mb-3">🛠️ Practice Problems</h2>
+            <div class="flex flex-col items-end">
+              <button data-section="practice" onclick="toggleDone(this)" class="px-3 py-1 rounded-md bg-gray-100 text-sm">Mark done</button>
+              <div class="tiny mt-1 text-gray-500" id="time-practice">Time: 0s</div>
+            </div>
+          </div>
+
+          <p class="text-gray-700 mb-4">Try these tasks — solutions toggle below each problem.</p>
+
+          <!-- Problem 1 -->
+          <article class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm mb-4">
+            <h3 class="text-lg font-semibold text-blue-700">1. Constructor Chain (Person → Student)</h3>
+            <p class="text-gray-600 mt-2">Create Person(name, age) and Student extends Person; Student must call super(...)</p>
+            <div class="mt-4 flex gap-3">
+              <button onclick="toggleSolution('solution-1', this)" aria-expanded="false" class="solution-toggle-btn px-4 py-2 bg-blue-500 text-white rounded-lg">Show Solution</button>
+            </div>
+            <div id="solution-1" class="hidden mt-4 pt-4 border-t border-gray-100 solution-area">
+              <pre class="rounded-md border border-blue-100 bg-white p-4 overflow-x-auto"><code>class Person {...}
+class Student extends Person {
+  public Student(String name,int age,String sid,String major){
+    super(name,age);
+    ...
+  }
+}</code></pre>
+            </div>
+          </article>
+
+          <!-- Problem 2 -->
+          <article class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm mb-4">
+            <h3 class="text-lg font-semibold text-blue-700">2. Dynamic Interest Rates</h3>
+            <p class="text-gray-600 mt-2">Bank superclass with SBI and ICICI overriding getRateOfInterest()</p>
+            <div class="mt-4 flex gap-3">
+              <button onclick="toggleSolution('solution-2', this)" aria-expanded="false" class="solution-toggle-btn px-4 py-2 bg-blue-500 text-white rounded-lg">Show Solution</button>
+            </div>
+            <div id="solution-2" class="hidden mt-4 pt-4 border-t border-gray-100 solution-area">
+              <pre class="rounded-md border border-blue-100 bg-white p-4 overflow-x-auto"><code>class Bank {...}
+class SBI extends Bank{ @Override public double getRateOfInterest(){ return 8.4; } }
+class ICICI extends Bank{ @Override public double getRateOfInterest(){ return 7.3; } }</code></pre>
+            </div>
+          </article>
+
+          <!-- Problem 3 -->
+          <article class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <h3 class="text-lg font-semibold text-blue-700">3. Inter-Package Protected Access</h3>
+            <p class="text-gray-600 mt-2">Showprotected accessibility from a subclass in a different package.</p>
+            <div class="mt-4 flex gap-3">
+              <button onclick="toggleSolution('solution-3', this)" aria-expanded="false" class="solution-toggle-btn px-4 py-2 bg-blue-500 text-white rounded-lg">Show Solution</button>
+            </div>
+            <div id="solution-3" class="hidden mt-4 pt-4 border-t border-gray-100 solution-area">
+              <pre class="rounded-md border border-blue-100 bg-white p-4 overflow-x-auto"><code>// package com.app.data;
+public class BaseData { protected void logData(String d){...} }
+// package com.app.service;
+public class DataService extends BaseData { public void process... { logData(...); } }</code></pre>
+            </div>
+          </article>
+        </section>
+
+        <!-- Packages & Access Control -->
+        <section id="packages-access-control" class="bg-white rounded-xl p-6 border border-blue-100 shadow-sm">
+          <div class="flex items-start justify-between">
+            <h2 class="text-2xl font-bold text-blue-700 mb-3">4. Packages & Access Control</h2>
+            <div class="flex flex-col items-end">
+              <button data-section="packages-access-control" onclick="toggleDone(this)" class="px-3 py-1 rounded-md bg-gray-100 text-sm">Mark done</button>
+              <div class="tiny mt-1 text-gray-500" id="time-packages-access-control">Time: 0s</div>
+            </div>
+          </div>
+
+          <p class="text-gray-600 mb-4">Packages organize code and define access levels (private, default, protected, public).</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="rounded p-4 border bg-gray-50">
+              <h3 class="font-semibold text-blue-700 mb-2">Built-in Packages</h3>
+              <ul class="list-disc pl-5 text-gray-700">
+                <li><code>java.lang</code> — auto imported</li>
+                <li><code>java.util</code>, <code>java.io</code> — commonly used</li>
+              </ul>
+            </div>
+            <div class="rounded p-4 border bg-red-50">
+              <h3 class="font-semibold text-blue-700 mb-2">Access Specifiers</h3>
+              <p class="mt-2 text-gray-700 bg-red-100 border border-red-200 p-3 rounded-lg text-sm">
+                <strong>Analogy:</strong> private=diary, default=family, protected=family+relatives, public=mailbox.
+              </p>
+            </div>
+          </div>
+
+          <div class="overflow-auto mt-4">
+            <table class="w-full text-left text-sm border border-gray-200 rounded">
+              <thead class="bg-blue-700 text-white">
+                <tr><th class="px-3 py-2">Modifier</th><th class="px-3 py-2">Same Class</th><th class="px-3 py-2">Same Package</th><th class="px-3 py-2">Subclass (Diff. Pkg)</th><th class="px-3 py-2">Other Package</th></tr>
+              </thead>
+              <tbody>
+                <tr class="bg-white border-t"><td class="px-3 py-2 font-semibold text-red-700">private</td><td class="px-3 py-2">✅</td><td class="px-3 py-2">❌</td><td class="px-3 py-2">❌</td><td class="px-3 py-2">❌</td></tr>
+                <tr class="bg-gray-50 border-t"><td class="px-3 py-2 font-semibold text-yellow-700">default</td><td class="px-3 py-2">✅</td><td class="px-3 py-2">✅</td><td class="px-3 py-2">❌</td><td class="px-3 py-2">❌</td></tr>
+                <tr class="bg-white border-t"><td class="px-3 py-2 font-semibold text-green-700">protected</td><td class="px-3 py-2">✅</td><td class="px-3 py-2">✅</td><td class="px-3 py-2">✅</td><td class="px-3 py-2">❌</td></tr>
+                <tr class="bg-gray-50 border-t"><td class="px-3 py-2 font-semibold text-blue-700">public</td><td class="px-3 py-2">✅</td><td class="px-3 py-2">✅</td><td class="px-3 py-2">✅</td><td class="px-3 py-2">✅</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-6 bg-white rounded border p-4">
+            <h3 class="font-semibold text-blue-700">Static Import</h3>
+            <p class="text-gray-600 mt-2">Use <code>import static</code> to access static members without class qualifiers.</p>
+            <div class="relative mt-3">
+              <button onclick="copyCode(this)" class="absolute right-2 top-2 z-10 bg-white border px-3 py-1 text-sm rounded-md shadow-sm hover:bg-gray-50">Copy</button>
+              <pre class="rounded-md border border-blue-100 bg-white p-4 overflow-x-auto"><code>import static java.lang.Math.*;
+public class StaticDemo { public static void main(String[] args){ double p = pow(2,10); double r = PI; System.out.println(p + ", " + r); }}</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quiz trigger / analytics -->
+        <div class="flex items-center justify-between mt-6 gap-4">
+          <div class="flex items-center gap-4">
+            <button id="openQuiz" class="px-4 py-2 bg-red-600 text-white rounded-md shadow hover:bg-red-700">Take Topic Quiz (15 Qs)</button>
+            <button id="resetProgress" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md">Reset Progress</button>
+          </div>
+
+          <div class="text-right tiny text-gray-600">
+            <div>Quiz status: <span id="quizStatus">Not attempted</span></div>
+            <div>Best score: <span id="bestScore">—</span></div>
+          </div>
+        </div>
+
+        <!-- Learning Analytics Panel -->
+        <section id="analytics" class="bg-white rounded-xl p-4 border border-blue-50 shadow-sm mt-6">
+          <h3 class="font-semibold text-gray-800">Learning Analytics</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 text-sm">
+            <div class="p-3 border rounded">
+              <div class="tiny text-gray-500">Sections Completed</div>
+              <div id="analytics-completed" class="font-bold text-lg text-blue-700">0 / 5</div>
+            </div>
+            <div class="p-3 border rounded">
+              <div class="tiny text-gray-500">Total Time Spent</div>
+              <div id="analytics-time" class="font-bold text-lg text-blue-700">0s</div>
+            </div>
+            <div class="p-3 border rounded">
+              <div class="tiny text-gray-500">Quiz Attempts</div>
+              <div id="analytics-attempts" class="font-bold text-lg text-blue-700">0</div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right: small TOC -->
+      <aside class="hidden lg:block">
+        <div class="sticky top-28 space-y-4">
+          <div class="bg-white rounded-lg border p-4 shadow-sm">
+            <h4 class="font-semibold text-sm text-gray-600">On this page</h4>
+            <ul class="mt-3 text-sm space-y-2">
+              <li><a href="#inheritance" class="text-blue-700 hover:underline">Inheritance</a></li>
+              <li><a href="#super" class="text-blue-700 hover:underline">super</a></li>
+              <li><a href="#polymorphism" class="text-blue-700 hover:underline">Polymorphism</a></li>
+              <li><a href="#practice" class="text-blue-700 hover:underline">Practice</a></li>
+              <li><a href="#packages-access-control" class="text-blue-700 hover:underline">Packages</a></li>
+            </ul>
+          </div>
+
+          <div class="bg-white rounded-lg border p-4 shadow-sm text-sm text-gray-600">
+            <strong>Tips</strong>
+            <ul class="list-disc pl-5 mt-2">
+              <li>Use <code>@Override</code> to avoid mistakes when overriding.</li>
+              <li>Prefer composition over inheritance when appropriate.</li>
+              <li>Call <code>super(...)</code> when the parent lacks a default constructor.</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+  </main>
+
+  <!-- Tutor widget (floating) -->
+   <!-- Tutor widget (floating) -->
+  <div class="tutor-toggle">
+    <button id="open-tutor-floating" title="Open AI Tutor"
+      class="bg-sky-600 text-white px-4 py-3 rounded-full shadow-md">
+      💬 AI Tutor
+    </button>
+  </div>
+
+  <!-- Corrected Tutor Card -->
+  <div id="ai-tutor" class="hidden fixed right-5 bottom-5 z-50">
+    <div class="tutor-card border border-gray-200">
+      <div class="p-3 bg-gradient-to-r from-sky-50 to-white border-b flex justify-between items-center">
+        <div>
+          <div class="font-semibold text-sky-700">AI Tutor — Friendly Mode 🤖</div>
+          <div class="tiny text-gray-500">Ask about Inheritance, Polymorphism & Packages</div>
+        </div>
+        <div class="flex gap-2">
+          <button id="ai-clear" class="tiny px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">Clear</button>
+          <button id="ai-close" class="tiny px-2 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200">Close</button>
+        </div>
+      </div>
+
+      <div id="ai-messages" class="tutor-messages bg-gray-50">
+        <div class="tiny text-gray-400">
+          Tutor ready — ask a question like "Explain runtime polymorphism".
+        </div>
+      </div>
+
+      <form id="ai-form" class="p-3 border-t bg-white flex gap-2">
+        <input id="ai-input" class="flex-1 px-3 py-2 border rounded focus-ring"
+               placeholder="Type your question here..." />
+        <select id="ai-tone" class="border rounded px-2 text-sm text-gray-600">
+          <option value="friendly" selected>Friendly</option>
+          <option value="formal">Formal</option>
+        </select>
+        <button id="ai-send" type="button"
+                class="px-3 py-2 bg-sky-600 text-white rounded hover:bg-sky-700">Ask</button>
+      </form>
+
+      <div class="p-2 border-t bg-gray-50 flex justify-between items-center text-xs text-gray-500">
+        <button id="ai-download" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">
+          Download Chat
+        </button>
+        <span>Powered by KnowledgeStream</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Tutor card (hidden initially) -->
+  <div id="tutorCard" style="display:none;position:fixed;right:20px;bottom:20px;z-index:60;">
+    <div class="tutor-card">
+      <div class="p-3 bg-gradient-to-r from-white to-sky-50 border-b">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-semibold">AI Tutor</div>
+            <div class="tiny text-gray-500">Ask questions about Topic 6</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="tutorClear" title="Clear chat" class="tiny px-2 py-1 bg-gray-100 rounded">Clear</button>
+            <button id="tutorClose" title="Close" class="tiny px-2 py-1 bg-red-50 text-red-600 rounded">Close</button>
+          </div>
+        </div>
+      </div>
+      <div id="tutorMessages" class="tutor-messages">
+        <div class="tiny text-gray-400">Tutor ready. Ask anything about inheritance, polymorphism, or packages.</div>
+      </div>
+      <form id="tutorForm" class="p-3 border-t bg-white flex gap-2">
+        <input id="tutorInput" class="flex-1 px-3 py-2 border rounded focus-ring" placeholder="Example: What's runtime polymorphism?" />
+        <button type="submit" class="px-3 py-2 bg-sky-600 text-white rounded">Ask</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Quiz Modal -->
+  <div id="quizModal" class="modal-backdrop" style="display:none;">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="quizTitle">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 id="quizTitle" class="text-lg font-bold">Topic 6 — Quiz (15 Questions)</h2>
+          <div class="tiny text-gray-500">Score ≥ 90% to unlock Topic 7</div>
+        </div>
+        <div>
+          <button id="quizClose" class="px-3 py-1 rounded-md bg-gray-100">Close</button>
+        </div>
+      </div>
+
+      <hr class="my-3">
+
+      <div id="quizContent" style="max-height:58vh; overflow:auto; padding-right:8px;">
+        <!-- Questions inserted by JS -->
+      </div>
+
+      <div class="mt-4 flex items-center justify-between">
+        <div class="tiny text-gray-600">Answered: <span id="quizAnswered">0</span>/15</div>
+        <div class="flex gap-2">
+          <button id="quizPrev" class="px-3 py-1 bg-gray-100 rounded" disabled>Previous</button>
+          <button id="quizNext" class="px-3 py-1 bg-gray-100 rounded" disabled>Next</button>
+          <button id="quizStart" class="px-3 py-1 bg-green-600 text-white rounded">Begin Quiz</button>
+          <button id="quizSubmit" class="px-3 py-1 bg-blue-600 text-white rounded" disabled>Submit</button>
+        </div>
+      </div>
+
+      <div class="tiny text-gray-400 mt-2">Focus monitored. Copy/paste disabled while quiz active (best-effort).</div>
+    </div>
+  </div>
+
+  <!-- Result Modal -->
+  <div id="resultModal" class="modal-backdrop" style="display:none;">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold">Quiz Result</h3>
+        <button id="resultClose" class="px-3 py-1 bg-gray-100 rounded">Close</button>
+      </div>
+      <hr class="my-3">
+      <div id="resultBody" class="text-sm"></div>
+      <div class="mt-4 flex justify-end gap-2">
+        <button id="downloadJSON" class="px-3 py-1 bg-gray-100 rounded">Download JSON</button>
+        <button id="finishBtn" class="px-3 py-1 bg-green-600 text-white rounded">Finish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t mt-10">
+    <div class="max-w-7xl mx-auto px-4 py-8 text-center text-sm text-gray-600">
+      <p>&copy; 2025 <strong class="text-blue-700">KnowledgeStream</strong>. All content preserved — full-length topic content included.</p>
+    </div>
+  </footer>
+
+<script>
+/* =========================
+   Topic 6 — Pro Mode + Quiz + Tutor JS
+   - Section progress tracking (5 sections)
+   - Time tracking per section
+   - Progress bar + analytics
+   - 15-question quiz (local)
+   - AI Tutor POST to /api/ask (frontend expects backend)
+   ========================= */
+
+/* ---------- Config & State ---------- */
+const SECTIONS = [
+  'inheritance',
+  'super',
+  'polymorphism',
+  'practice',
+  'packages-access-control'
+];
+
+const STATE_KEY = 'ks_topic6_state_v1';
+const QUIZ_KEY = 'ks_topic6_quiz_v1';
+
+let state = {
+  done: {},           // section -> boolean
+  time: {},           // section -> seconds spent
+  activeStart: null,  // section currently in view start timestamp
+  activeSection: null,
+  quiz: null,         // quiz metadata
+  analytics: { attempts: 0 }
+};
+
+/* ---------- Restore saved state if any ---------- */
+try {
+  const saved = JSON.parse(localStorage.getItem(STATE_KEY) || 'null');
+  if (saved) state = Object.assign(state, saved);
+} catch(e) { console.warn('parse state', e); }
+
+/* ---------- Utilities ---------- */
+function saveState() {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e){}
+  renderProgress();
+  renderAnalytics();
+}
+
+function secondsToHuman(s) {
+  if (!s) return '0s';
+  if (s < 60) return s + 's';
+  const m = Math.floor(s/60);
+  const sec = s % 60;
+  return `${m}m ${sec}s`;
+}
+
+/* ---------- Section Marking & Time Tracking ---------- */
+function toggleDone(btn) {
+  const section = btn.dataset.section;
+  const current = !!state.done[section];
+  state.done[section] = !current;
+  // visual
+  btn.innerText = state.done[section] ? 'Done ✅' : 'Mark done';
+  btn.classList.toggle('bg-green-100', state.done[section]);
+  saveState();
+}
+
+function initSectionButtons() {
+  document.querySelectorAll('[data-section]').forEach(btn=>{
+    const s = btn.dataset.section;
+    if (state.done[s]) {
+      btn.innerText = 'Done ✅';
+      btn.classList.add('bg-green-100');
+    } else {
+      btn.innerText = 'Mark done';
+      btn.classList.remove('bg-green-100');
+    }
+  });
+}
+
+/* Track time when a section is visible — simple heuristic using IntersectionObserver */
+function initTimeTracking() {
+  const options = { root: null, rootMargin: '0px', threshold: 0.6 }; // 60% visible
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const id = entry.target.id;
+      if (!SECTIONS.includes(id)) return;
+      if (entry.isIntersecting) {
+        // start timer for this section
+        state.activeSection = id;
+        state.activeStart = Date.now();
+      } else {
+        // stop if it was active
+        if (state.activeSection === id && state.activeStart) {
+          const elapsed = Math.round((Date.now() - state.activeStart)/1000);
+          state.time[id] = (state.time[id] || 0) + elapsed;
+          state.activeStart = null;
+          state.activeSection = null;
+          document.getElementById('time-' + id).innerText = 'Time: ' + secondsToHuman(state.time[id]);
+          saveState();
+        }
+      }
+    });
+  }, options);
+
+  // observe each section element
+  SECTIONS.forEach(s=>{
+    const el = document.getElementById(s);
+    if (el) observer.observe(el);
+    // initialize display
+    const tEl = document.getElementById('time-' + s);
+    if (tEl) tEl.innerText = 'Time: ' + secondsToHuman(state.time[s] || 0);
+  });
+
+  // On page unload, flush active timer
+  window.addEventListener('beforeunload', ()=>{
+    if (state.activeSection && state.activeStart) {
+      const elapsed = Math.round((Date.now() - state.activeStart)/1000);
+      state.time[state.activeSection] = (state.time[state.activeSection] || 0) + elapsed;
+      state.activeStart = null;
+      state.activeSection = null;
+      saveState();
+    }
+  });
+}
+
+/* ---------- Render progress bar and analytics ---------- */
+function renderProgress() {
+  const completed = Object.keys(state.done).filter(k=>state.done[k]).length;
+  const total = SECTIONS.length;
+  const percent = Math.round((completed / total) * 100);
+  const fill = document.getElementById('progressFill');
+  if (fill) fill.style.width = percent + '%';
+  const label = document.getElementById('progressLabel');
+  if (label) label.innerText = `${completed} / ${total} sections`;
+  const analyticsCompleted = document.getElementById('analytics-completed');
+  if (analyticsCompleted) analyticsCompleted.innerText = `${completed} / ${total}`;
+}
+
+function renderAnalytics() {
+  const totalSec = Object.values(state.time).reduce((a,b)=>a+(b||0), 0);
+  document.getElementById('analytics-time').innerText = secondsToHuman(totalSec);
+  document.getElementById('analytics-attempts').innerText = (state.analytics.attempts || 0);
+  document.getElementById('analytics-completed').innerText = `${Object.keys(state.done).filter(k=>state.done[k]).length} / ${SECTIONS.length}`;
+}
+
+/* Reset progress */
+document.getElementById('resetProgress').addEventListener('click', ()=>{
+  if (!confirm('Reset all local progress for Topic 6?')) return;
+  state = { done:{}, time:{}, activeStart:null, activeSection:null, quiz:null, analytics:{ attempts:0 } };
+  try{ localStorage.removeItem(STATE_KEY); localStorage.removeItem(QUIZ_KEY); } catch(e){}
+  initSectionButtons();
+  renderProgress();
+  renderAnalytics();
+  document.getElementById('bestScore').innerText = '—';
+  document.getElementById('quizStatus').innerText = 'Not attempted';
+  location.reload();
+});
+
+/* ---------- copyCode helper used by many code blocks ---------- */
+function copyCode(btn) {
+  try {
+    const pre = btn.parentElement.querySelector('pre code');
+    if (!pre) return;
+    const code = pre.innerText;
+    navigator.clipboard.writeText(code);
+    btn.innerText = 'Copied ✓';
+    setTimeout(()=> btn.innerText = 'Copy', 1500);
+  } catch(e) { console.warn(e); }
+}
+
+/* ---------- Toggle solution for practice problems ---------- */
+function toggleSolution(id, btn) {
+  const el = document.getElementById(id);
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  if (expanded) {
+    el.classList.add('hidden');
+    btn.setAttribute('aria-expanded','false');
+    btn.textContent = 'Show Solution';
+    btn.classList.remove('bg-red-500');
+    btn.classList.add('bg-blue-500');
+  } else {
+    el.classList.remove('hidden');
+    btn.setAttribute('aria-expanded','true');
+    btn.textContent = 'Hide Solution';
+    btn.classList.remove('bg-blue-500');
+    btn.classList.add('bg-red-500');
+  }
+}
+
+/* ---------- Initialize UI ---------- */
+initSectionButtons();
+renderProgress();
+renderAnalytics();
+initTimeTracking();
+
+/* ---------- QUIZ Implementation (15 Qs) ---------- */
+
+const QUIZ_QUESTIONS = [
+  { id:1, q:"Which keyword creates inheritance in Java?", options:["implements","extends","inherits","superclass"], a:1 },
+  { id:2, q:"Which class is the root of the class hierarchy?", options:["java.lang.Class","java.lang.Object","java.lang.Root","java.lang.Top"], a:1 },
+  { id:3, q:"super() must be the ___ statement in a constructor.", options:["last","first","middle","optional"], a:1 },
+  { id:4, q:"What is runtime polymorphism?", options:["Method overloading","Method overriding selected at runtime","Compile-time overloading","Multiple inheritance"], a:1 },
+  { id:5, q:"Which annotation helps ensure correct overriding?", options:["@Overload","@Override","@Inherited","@Deprecated"], a:1 },
+  { id:6, q:"Protected members are accessible to:", options:["Only same class","Package classes and subclasses","Only subclasses in same package","Everyone"], a:1 },
+  { id:7, q:"Which is true about single inheritance in Java?", options:["A class can extend multiple classes","A class can extend only one direct class","Interfaces cannot be used","Subclasses cannot implement interfaces"], a:1 },
+  { id:8, q:"Which construct auto-closes resources (Java 7+)?", options:["try-finally","try-with-resources","finally-only","automatic-closer"], a:1 },
+  { id:9, q:"Which modifier restricts access to the same class only?", options:["protected","private","default","public"], a:1 },
+  { id:10, q:"Dynamic method dispatch uses which type to decide method to run?", options:["Reference type only","Actual object type at runtime","Compiler type only","Return type"], a:1 },
+  { id:11, q:"Static import is used to:", options:["Import instance fields","Import private members","Import static members without class name","Make methods static"], a:2 },
+  { id:12, q:"When overriding, method signature must be:", options:["Different name","Same signature (parameters)","More parameters","Less parameters"], a:1 },
+  { id:13, q:"Which access allows access across packages and to subclasses?", options:["private","default","protected","none"], a:2 },
+  { id:14, q:"What happens if parent has no default constructor and child doesn't call super(...)?", options:["Compile error","Runtime exception","Works fine","JVM provides default call"], a:0 },
+  { id:15, q:"Which is best practice?", options:["Use empty catch blocks","Handle specific exceptions and log","Catch Exception everywhere","Ignore checked exceptions"], a:1 },
+];
+
+// quiz runtime state
+let quizState = {
+  started: false,
+  answers: Array(QUIZ_QUESTIONS.length).fill(null),
+  current: 0,
+  cameraStream: null,
+  integrityEvents: 0,
+  startTime: null,
+};
+
+// Render quiz questions into DOM (but keep options disabled until start)
+function renderQuizUI() {
+  const container = document.getElementById('quizContent');
+  container.innerHTML = '';
+  QUIZ_QUESTIONS.forEach((q, idx)=>{
+    const wrapper = document.createElement('div');
+    wrapper.className = 'p-3 border rounded mb-3';
+    wrapper.id = 'q-'+idx;
+    const title = document.createElement('div');
+    title.className = 'font-semibold mb-2';
+    title.innerText = (idx+1)+'. '+q.q;
+    wrapper.appendChild(title);
+    const opts = document.createElement('div');
+    opts.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
+    q.options.forEach((opt, i)=>{
+      const oBtn = document.createElement('button');
+      oBtn.className = 'text-left p-2 border rounded option disabled:opacity-60';
+      oBtn.innerText = String.fromCharCode(65+i)+'. '+opt;
+      oBtn.dataset.q = idx;
+      oBtn.dataset.opt = i;
+      oBtn.disabled = true;
+      oBtn.addEventListener('click', ()=>{
+        if (!quizState.started) return;
+        quizState.answers[idx] = i;
+        updateOptionUI(idx);
+        document.getElementById('quizAnswered').innerText = quizState.answers.filter(x=>x!==null).length;
+        document.getElementById('quizSubmit').disabled = quizState.answers.filter(x=>x!==null).length < QUIZ_QUESTIONS.length;
+      });
+      opts.appendChild(oBtn);
+    });
+    wrapper.appendChild(opts);
+    container.appendChild(wrapper);
+  });
+}
+renderQuizUI();
+
+/* Navigation controls */
+const quizModal = document.getElementById('quizModal');
+document.getElementById('openQuiz').addEventListener('click', ()=>{
+  quizModal.style.display = 'flex';
+  if (!quizState.started) {
+    // initial focus
+    setTimeout(()=> document.getElementById('quizStart').focus(), 120);
+  }
+});
+
+document.getElementById('quizClose').addEventListener('click', () => {
+  if (quizState.started && !confirm('Quiz in progress — close will preserve answers but stop proctoring. Close anyway?')) return;
+  stopQuizCamera();
+  quizModal.style.display = 'none';
+});
+
+/* Start quiz: enable options, optional camera permission */
+document.getElementById('quizStart').addEventListener('click', async ()=>{
+  if (quizState.started) return;
+  quizState.started = true;
+  quizState.startTime = Date.now();
+  // enable options
+  document.querySelectorAll('#quizContent .option').forEach(btn=>{
+    btn.disabled = false;
+    btn.classList.remove('opacity-60');
+  });
+  document.getElementById('quizStart').disabled = true;
+  document.getElementById('quizNext').disabled = false;
+  document.getElementById('quizPrev').disabled = false;
+  // proctor: optional camera
+  try {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:false});
+      quizState.cameraStream = stream;
+      console.log('Camera granted for quiz proctoring (optional)');
+    }
+  } catch(e){
+    console.log('Camera not available/denied');
+  }
+  // record attempt
+  state.analytics.attempts = (state.analytics.attempts || 0) + 1;
+  saveState();
+  renderAnalytics();
+});
+
+/* Update option UI (highlight choices) */
+function updateOptionUI(qidx) {
+  const wrapper = document.getElementById('q-'+qidx);
+  if (!wrapper) return;
+  wrapper.querySelectorAll('.option').forEach(btn=>{
+    btn.classList.remove('bg-green-100','ring-2','ring-green-300');
+    const chosen = quizState.answers[qidx];
+    if (chosen !== null && parseInt(btn.dataset.opt) === chosen) {
+      btn.classList.add('bg-green-100','ring-2','ring-green-300');
+    }
+  });
+}
+
+/* Prev / Next navigation scroll into view */
+document.getElementById('quizNext').addEventListener('click', ()=>{
+  quizState.current = Math.min(quizState.current+1, QUIZ_QUESTIONS.length-1);
+  document.getElementById('q-'+quizState.current).scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('quizPrev').disabled = quizState.current === 0;
+  document.getElementById('quizNext').disabled = quizState.current === QUIZ_QUESTIONS.length-1;
+});
+document.getElementById('quizPrev').addEventListener('click', ()=>{
+  quizState.current = Math.max(quizState.current-1, 0);
+  document.getElementById('q-'+quizState.current).scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('quizPrev').disabled = quizState.current === 0;
+  document.getElementById('quizNext').disabled = quizState.current === QUIZ_QUESTIONS.length-1;
+});
+
+/* Submit quiz */
+document.getElementById('quizSubmit').addEventListener('click', ()=>{
+  if (!confirm('Submit your quiz?')) return;
+  // finalize timers
+  if (state.activeSection && state.activeStart) {
+    const elapsed = Math.round((Date.now() - state.activeStart)/1000);
+    state.time[state.activeSection] = (state.time[state.activeSection] || 0) + elapsed;
+    state.activeStart = null;
+    state.activeSection = null;
+  }
+  saveState();
+  // compute score
+  const correct = QUIZ_QUESTIONS.reduce((acc, q, i) => acc + (quizState.answers[i] === q.a ? 1 : 0), 0);
+  const percentage = Math.round((correct / QUIZ_QUESTIONS.length) * 100);
+  const passed = percentage >= 90;
+  quizState.endedAt = new Date().toISOString();
+  // store quiz results
+  const quizPayload = {
+    total: QUIZ_QUESTIONS.length, correct, percentage, passed, answers: quizState.answers.slice(), timeSpentSec: Math.round((Date.now()-quizState.startTime)/1000), timestamp: new Date().toISOString()
+  };
+  try {
+    localStorage.setItem(QUIZ_KEY, JSON.stringify(quizPayload));
+    // update global state best score
+    if (!state.quiz || (quizPayload.percentage > (state.quiz.percentage || 0))) {
+      state.quiz = quizPayload;
+    }
+    saveState();
+  } catch(e){ console.warn('save quiz', e); }
+
+  // show results modal
+  showResultModal(quizPayload);
+  // stop camera
+  stopQuizCamera();
+  // update UI
+  document.getElementById('quizStatus').innerText = passed ? `Passed (${percentage}%)` : `Not passed (${percentage}%)`;
+  document.getElementById('bestScore').innerText = (state.quiz && state.quiz.percentage) ? state.quiz.percentage + '%' : (percentage + '%');
+  // if passed, unlock next topic (simulate)
+  if (passed) {
+    try {
+      const next = 7;
+      localStorage.setItem('ks_latest_unlocked', String(next));
+      flashToast('Congrats! Topic 7 unlocked 🎉');
+    } catch(e){}
+  }
+  // close quiz modal
+  quizModal.style.display = 'none';
+});
+
+/* stop quiz camera */
+function stopQuizCamera(){
+  if (quizState.cameraStream) {
+    try { quizState.cameraStream.getTracks().forEach(t=>t.stop()); } catch(e){}
+    quizState.cameraStream = null;
+  }
+  quizState.started = false;
+  // disable options again
+  document.querySelectorAll('#quizContent .option').forEach(btn=>{ btn.disabled = true; btn.classList.remove('bg-green-100','ring-2','ring-green-300'); });
+  document.getElementById('quizStart').disabled = false;
+  document.getElementById('quizSubmit').disabled = true;
+  document.getElementById('quizAnswered').innerText = '0';
+}
+
+/* Show result modal with details */
+function showResultModal(payload) {
+  const body = document.getElementById('resultBody');
+  body.innerHTML = '';
+  const summary = document.createElement('div');
+  summary.innerHTML = `<div class="tiny text-gray-600">Questions: ${payload.total} — Correct: ${payload.correct} — Score: ${payload.percentage}%</div>`;
+  body.appendChild(summary);
+
+  const details = document.createElement('div');
+  details.className = 'mt-3';
+  QUIZ_QUESTIONS.forEach((q, i)=>{
+    const chosen = payload.answers[i];
+    const ok = chosen === q.a;
+    const row = document.createElement('div');
+    row.className = 'p-2 border rounded mb-2';
+    row.innerHTML = `<strong>Q${i+1}:</strong> ${q.q}
+      <div class="tiny mt-1">Your: ${chosen===null?'<em>Not answered</em>':String.fromCharCode(65+chosen)+'. '+q.options[chosen]} — <strong style="color:${ok? 'green' : '#ef4444'}">${ok? 'Correct' : 'Wrong'}</strong></div>
+      <div class="tiny text-gray-500 mt-1">Correct: ${String.fromCharCode(65+q.a)}. ${q.options[q.a]}</div>`;
+    details.appendChild(row);
+  });
+  body.appendChild(details);
+
+  document.getElementById('resultModal').style.display = 'flex';
+
+  document.getElementById('downloadJSON').onclick = ()=>{
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'topic6-quiz-result.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  };
+}
+
+/* result modal close */
+document.getElementById('resultClose').addEventListener('click', ()=> document.getElementById('resultModal').style.display = 'none');
+document.getElementById('finishBtn').addEventListener('click', ()=> {
+  document.getElementById('resultModal').style.display = 'none';
+  flashToast('Progress saved locally.');
+});
+
+/* Small helper to flash toast messages */
+function flashToast(msg){
+  const t = document.createElement('div');
+  t.innerText = msg;
+  t.style.position='fixed'; t.style.bottom='22px'; t.style.left='50%'; t.style.transform='translateX(-50%)';
+  t.style.background='#111827'; t.style.color='white'; t.style.padding='10px 14px'; t.style.borderRadius='8px'; t.style.zIndex='120';
+  t.style.opacity='0'; t.style.transition='opacity .18s ease';
+  document.body.appendChild(t);
+  requestAnimationFrame(()=> t.style.opacity='1');
+  setTimeout(()=> { t.style.opacity='0'; setTimeout(()=> t.remove(),200); }, 1800);
+};
+/* ===========================
+   AI Tutor: API + Fallback
+   =========================== */
+/* ===========================
+   AI Tutor: API + Fallback (Fixed IDs)
+   =========================== */
+const AI = (() => {
+  const API_URL = '/api/ask';
+  const API_TIMEOUT_MS = 2500;
+  let messages = [];
+
+  // elements
+  const tutorEl = document.getElementById('ai-tutor');
+  const messagesEl = document.getElementById('ai-messages');
+  const inputEl = document.getElementById('ai-input');
+  const sendBtn = document.getElementById('ai-send');
+  const toneSel = document.getElementById('ai-tone');
+  const downloadBtn = document.getElementById('ai-download');
+  const clearBtn = document.getElementById('ai-clear');
+  const closeBtn = document.getElementById('ai-close');
+  const openFloatBtn = document.getElementById('open-tutor-floating');
+
+  function escHTML(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function render(){messagesEl.innerHTML='';
+    messages.slice(-50).forEach(m=>{
+      const d=document.createElement('div');
+      d.className='bubble '+(m.role==='user'?'user':'ai');
+      d.innerHTML=escHTML(m.text);
+      messagesEl.appendChild(d);
+    });
+    messagesEl.scrollTop=messagesEl.scrollHeight;
+  }
+  function showTyping(){
+    const e=document.createElement('div');
+    e.id='typing';e.className='bubble ai';
+    e.innerHTML='<span class="animate-pulse">Tutor is typing...</span>';
+    messagesEl.appendChild(e);messagesEl.scrollTop=messagesEl.scrollHeight;
+  }
+  function hideTyping(){const e=document.getElementById('typing');if(e)e.remove();}
+
+  async function queryApi(prompt,ctx){
+    const c=new AbortController();const t=setTimeout(()=>c.abort(),API_TIMEOUT_MS);
+    try{
+      const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({prompt,context:ctx}),signal:c.signal});
+      clearTimeout(t);const j=await r.json();
+      return {ok:true,text:j.answer||j.reply||JSON.stringify(j)};
+    }catch(e){clearTimeout(t);return{ok:false,error:e.message};}
+  }
+
+  function fallback(p){
+    p=p.toLowerCase();
+    if(p.includes('inheritance'))return"Inheritance lets one class reuse another’s code using `extends`.";
+    if(p.includes('super'))return"`super` calls the parent constructor or methods — must be first in the child’s constructor.";
+    if(p.includes('polymorphism'))return"Polymorphism allows one interface to have many forms via overriding and dynamic dispatch.";
+    if(p.includes('package'))return"Packages group related classes and control visibility using access modifiers.";
+    if(p.includes('protected'))return"`protected` means visible within the package and to subclasses even in other packages.";
+    return"Ask me about inheritance, super, polymorphism, or packages for detailed help.";
+  }
+
+  async function send(prompt){
+    if(!prompt.trim())return;
+    messages.push({role:'user',text:prompt});render();showTyping();
+    const ctx={section:'Topic6',tone:toneSel.value};
+    const res=await queryApi(prompt,ctx);
+    hideTyping();
+    if(res.ok)messages.push({role:'assistant',text:res.text});
+    else messages.push({role:'assistant',text:fallback(prompt)+' (fallback mode)'});
+    render();
+  }
+
+  sendBtn.onclick=()=>{const v=inputEl.value.trim();if(!v)return;inputEl.value='';send(v);};
+  inputEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendBtn.click();}});
+  clearBtn.onclick=()=>{messages=[];render();};
+  closeBtn.onclick=()=>tutorEl.classList.add('hidden');
+  openFloatBtn.onclick=()=>{
+    tutorEl.classList.remove('hidden');
+    if(!messages.length)
+      messages.push({role:'assistant',text:"👋 Hi! I'm your friendly AI Tutor — ask me anything about this topic."});
+    render();
+  };
+  downloadBtn.onclick=()=>{
+    const b=new Blob([JSON.stringify(messages,null,2)],{type:'application/json'});
+    const u=URL.createObjectURL(b);
+    const a=document.createElement('a');
+    a.href=u;a.download='topic6-chat.json';
+    document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);
+  };
+
+  render();
+})();
+
+
+/* ---------- Restore quiz state if exists ---------- */
+try {
+  const savedQuiz = JSON.parse(localStorage.getItem(QUIZ_KEY) || 'null');
+  if (savedQuiz) {
+    state.quiz = savedQuiz;
+    document.getElementById('bestScore').innerText = savedQuiz.percentage + '%';
+    document.getElementById('quizStatus').innerText = (savedQuiz.passed ? 'Passed' : 'Not passed') + ' (' + savedQuiz.percentage + '%)';
+  }
+} catch(e){}
+
+/* ---------- Prevent copy while tutor/quiz open (best-effort) ---------- */
+document.addEventListener('copy', (e)=>{
+  if (document.getElementById('quizModal').style.display === 'flex') {
+    e.preventDefault();
+    flashToast('Copy disabled during quiz');
+  }
+});
+
+/* ---------- Keyboard accessibility to close tutor with Escape ---------- */
+window.addEventListener('keydown', (e)=>{
+  if (e.key === 'Escape') {
+    if (document.getElementById('resultModal').style.display === 'flex') {
+      document.getElementById('resultModal').style.display = 'none';
+    } else if (document.getElementById('quizModal').style.display === 'flex') {
+      if (quizState.started) flashToast('Submit or finish quiz before closing (or confirm close).');
+      else document.getElementById('quizModal').style.display = 'none';
+    } else if (tutorCard.style.display === 'block') {
+      tutorCard.style.display = 'none';
+      tutorOpenBtn.style.display = 'inline-block';
+    }
+  }
+});
+
+/* ---------- On load: little hints ---------- */
+window.addEventListener('load', ()=>{
+  setTimeout(()=> flashToast('Pro Mode active — progress saved locally.'), 600);
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KnowledgeStream — Java Course</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #020617, #000000);
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    .index-box {
+      background: rgba(17, 25, 40, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      margin-top: 4rem;
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.15);
+      max-width: 920px;
+      margin-left: auto;
+      margin-right: auto;
+      backdrop-filter: blur(20px);
+    }
+    .index-item {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 1rem;
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 1rem;
+      transition: all 0.4s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border: 1px solid rgba(59, 130, 246, 0.15);
+    }
+    .index-item.unlocked:hover {
+      background: rgba(30, 58, 138, 0.3);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+    }
+    .index-item.locked {
+      opacity: 0.45;
+      filter: blur(0.5px);
+      cursor: not-allowed;
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="bg-black/60 backdrop-blur-md text-white sticky top-0 z-50 shadow-lg">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="/" class="text-3xl font-extrabold text-sky-400">KnowledgeStream</a>
+      <nav class="space-x-6 text-lg hidden md:block">
+        <a href="/" class="hover:text-sky-300">Home</a>
+        <a href="/categories/" class="hover:text-sky-300">Categories</a>
+        <a href="/ai-tutor/" class="hover:text-sky-300">AI Tutor</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="container mx-auto px-6 py-10 min-h-screen">
+    <div class="index-box">
+      <h2 class="text-4xl font-extrabold text-sky-300 mb-3">☕ Java Learning Path</h2>
+      <p class="text-lg text-gray-400 mb-8 border-b border-gray-700 pb-4">
+        Explore the complete Java journey — unlocked one chapter at a time!
+      </p>
+
+      <div id="topics"></div>
+    </div>
+  </section>
+
+  <script>
+    // ---- Your 20 top topics ----
+  const topics = [
+  { title: "Getting Started with Java", file: "topic/java/java-topic1/" },
+  { title: "Java Basics", file: "topic/java/java-topic2/" },
+  { title: "Methods and Recursion", file: "topic/java/java-topic3/" },
+  { title: "Arrays and Strings", file: "topic/java/java-topic4/" },
+  { title: "OOP", file: "topic/java/java-topic5/" },
+  { title: "Constructors", file: "topic/java/java-topic6/" },
+  { title: "Packages", file: "topic/java/java-topic7/" },
+  { title: "Exception Handling", file: "topic/java/java-topic8/" },
+  { title: "JCF", file: "topic/java/java-topic9/" },
+  { title: "Generics", file: "topic/java/java-topic10/" },
+  { title: "Multithreading", file: "topic/java/java-topic11/" },
+  { title: "File Handling", file: "topic/java/java-topic12/" },
+  { title: "GUI", file: "topic/java/java-topic13/" },
+  { title: "JDBC", file: "topic/java/java-topic14/" },
+  { title: "Projects", file: "topic/java/java-topic15/" },
+  { title: "Interview", file: "topic/java/java-topic16/" },
+  { title: "Developer Essentials", file: "topic/java/java-topic17/" },
+  { title: "JVM Internals", file: "topic/java/java-topic18/" },
+  { title: "API", file: "topic/java/java-topic19/" },
+  { title: "Reactive", file: "topic/java/java-topic20/" },
+  { title: "Certificate", file: "topic/java/java-topic21c/" }
+];
+
+
+    let completedIndex = parseInt(localStorage.getItem("completedIndex") || 0);
+    const topicContainer = document.getElementById("topics");
+
+    function renderTopics() {
+      topicContainer.innerHTML = "";
+      topics.forEach((topic, index) => {
+        const unlocked = index <= completedIndex;
+
+        let html = `
+        <div class="index-item ${unlocked ? "unlocked" : "locked"}">
+          <h3 class="text-xl text-white">${topic.title}</h3>
+        `;
+
+        if (unlocked) {
+          html += `<a href="/${topic.file}" class="text-sky-400">Go to Topic →</a>`;
+        } else {
+          html += `<span class="text-gray-500">🔒 Locked</span>`;
+        }
+
+        html += `</div>`;
+        topicContainer.innerHTML += html;
+      });
+    }
+
+    renderTopics();
+  </script>
+
+</body>
+</html>

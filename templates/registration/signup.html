@@ -1,0 +1,62 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Create account — AiTutor</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--accent:#6366f1;--muted:#6b7280;--bg:#f3f4f9}
+    body{font-family:Inter,system-ui;background:var(--bg);margin:0}
+    .wrap{max-width:920px;margin:48px auto;padding:24px}
+    .card{background:#fff;border-radius:14px;padding:28px;box-shadow:0 8px 30px rgba(2,6,23,0.06)}
+    h1{margin:0 0 8px;font-size:22px}
+    p.muted{color:var(--muted);margin:0 0 16px}
+    form{display:grid;gap:12px}
+    input{padding:12px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);font-size:15px}
+    button{background:var(--accent);color:white;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer}
+    .small{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Create your account</h1>
+      <p class="muted">Register to track books, progress and take quizzes.</p>
+
+     
+     <form method="post" action="{% url 'signup' %}">
+  {% csrf_token %}
+
+  <!-- SHOW ALL ERRORS -->
+  {% if form.errors %}
+    <div style="background:#ffecec;padding:10px;border-radius:8px;color:#8b0000">
+      {{ form.errors }}
+    </div>
+  {% endif %}
+
+  <label>Username</label>
+  {{ form.username }}
+
+  <label>Email</label>
+  {{ form.email }}
+
+  <label>Password</label>
+  {{ form.password1 }}
+
+  <label>Confirm Password</label>
+  {{ form.password2 }}
+
+  <button type="submit">Create account</button>
+</form>
+
+
+
+      <div style="margin-top:12px" class="small">
+        Already have an account? <a href="{% url 'login' %}">Sign in</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

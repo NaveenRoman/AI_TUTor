@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>KnowledgeStream – Projects Section (Console, GUI, JDBC, File, Problem Solving)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+  --bg:#ffffff; --muted:#6b7280; --accent:#0ea5e9; --accent-700:#0284c7; --card:#fbfeff; --code-bg:#f3f7fb;
+}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:var(--bg);color:#0f172a;margin:0;}
+.container{max-width:1100px;margin:0 auto;padding:2rem}
+header{background:#ffffff;box-shadow:0 4px 14px rgba(2,6,23,0.06);position:sticky;top:0;z-index:60}
+.brand{color:var(--accent);font-weight:800}
+h1{color:#075985}
+.card{background:var(--card);border:1px solid #eef2f7;border-radius:.75rem;padding:1.25rem;margin-bottom:1.25rem;box-shadow:0 6px 18px rgba(2,6,23,0.04)}
+.preview{height:140px;background:linear-gradient(180deg,#f8fafc,#eef2f8);border-radius:.5rem;display:flex;align-items:center;justify-content:center;color:#0f172a;border:1px dashed #e6eef8}
+.badge{display:inline-block;padding:.25rem .6rem;border-radius:.5rem;font-weight:700;font-size:.85rem}
+.badge-green{background:#dcfce7;color:#065f46}
+.badge-yellow{background:#fffbeb;color:#92400e}
+.badge-red{background:#fee2e2;color:#7f1d1d}
+.code-card{background:var(--code-bg);border:1px solid #e6eef8;padding:1rem;border-radius:.6rem}
+pre{background:transparent;margin:0;white-space:pre-wrap;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace}
+code{color:#0f172a}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .7rem;border-radius:.45rem;font-weight:700;border:1px solid transparent;cursor:pointer}
+.btn-run{background:linear-gradient(90deg,var(--accent),var(--accent-700));color:white}
+.btn-copy{background:#f8fafc;border:1px solid #e6eef8;color:#0f172a}
+.btn-down{background:#f1f5f9;border:1px solid #e6eef8;color:#0f172a}
+.meta{font-size:.92rem;color:var(--muted)}
+.details summary{cursor:pointer;font-weight:700;color:#075985}
+.diagram{background:#f8fafc;border:1px solid #e6eef8;padding:.9rem;border-radius:.5rem;margin-top:.8rem}
+.small{font-size:.94rem;color:var(--muted)}
+.table{width:100%;border-collapse:collapse;margin-top:.75rem}
+.table th,.table td{padding:.6rem;border:1px solid #eef2f7;text-align:left}
+.table th{background:#eef9ff;color:#0369a1;font-weight:700}
+.footer{margin-top:2rem;color:var(--muted);font-size:.92rem;text-align:center;padding:1.5rem 0}
+#toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:white;padding:.6rem 1rem;border-radius:.5rem;box-shadow:0 6px 18px rgba(2,6,23,0.2);display:none;z-index:1000}
+@media (max-width:900px){ .container{padding:1rem} .preview{height:120px} }
+</style>
+</head>
+<body>
+  <header>
+    <div class="container flex items-center justify-between py-4">
+      <a href="index.html" class="brand text-2xl">KnowledgeStream</a>
+      <nav class="meta">
+        <a href="java-topic14.html" class="hover:underline">← Prev</a> <span class="mx-2">|</span>
+        <a href="java-topic16.html" class="hover:underline">Next →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="text-3xl font-bold mb-2">🧭 Topic 15 — Projects Section</h1>
+    <p class="small mb-6">A hybrid Projects page: each project category includes a portfolio-style preview followed by an interactive code demo (Copy / Run / Download), Beginner → Pro explanations, diagrams, pro tips and interview notes.</p>
+
+    <!-- Category: Console-based Projects -->
+    <section class="card">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🖥️ Console-based Projects</h2>
+          <p class="small mt-1">Beginner-friendly command-line applications to practice core Java: I/O, collections, exceptions, and basic OOP.</p>
+        </div>
+        <div class="text-right">
+          <span class="badge badge-green">Category: Console</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+        <!-- Showcase Card 1 -->
+        <div>
+          <div class="preview">
+            <div>
+              <div class="font-semibold">Student Management System</div>
+              <div class="small mt-1">Console CRUD, file or JDBC backend</div>
+            </div>
+          </div>
+          <div class="mt-3 small">
+            <p><strong>Tech:</strong> Java Collections, File I/O / JDBC (optional), Exceptions</p>
+            <p><strong>Difficulty:</strong> <span class="badge badge-green">Beginner → Intermediate</span></p>
+            <p class="mt-2"><strong>Use-case:</strong> Practice CRUD patterns, serialization, unit tests, CLI UX.</p>
+          </div>
+        </div>
+
+        <!-- Interactive demo card -->
+        <div>
+          <div class="code-card">
+<pre id="console-student"><code>import java.util.*;
+import java.io.*;
+
+public class StudentConsole {
+  static List<Student> list = new ArrayList<>();
+  public static void main(String[] args) throws Exception {
+    list.add(new Student("Naveen",21));
+    Scanner sc = new Scanner(System.in);
+    while(true){
+      System.out.println("1:Add 2:List 3:Exit");
+      int c = sc.nextInt(); sc.nextLine();
+      if(c==1){ System.out.print("Name: "); String n=sc.nextLine(); System.out.print("Age: "); int a=sc.nextInt(); sc.nextLine(); list.add(new Student(n,a)); }
+      else if(c==2){ list.forEach(System.out::println); }
+      else break;
+    }
+  }
+}
+class Student { String name; int age; Student(String n,int a){name=n;age=a;} public String toString(){return name+" ("+age+")"; } }</code></pre>
+
+            <div class="mt-3 flex items-center">
+              <button class="btn btn-copy" data-codeid="console-student">📋 Copy</button>
+              <button class="btn btn-run" data-codeid="console-student">▶ Run</button>
+              <button class="btn btn-down" data-codeid="console-student" data-filename="StudentConsole.java">⬇ Download</button>
+              <span class="meta ml-3">Lightweight console CRUD demo</span>
+            </div>
+          </div>
+
+          <details class="details mt-3"><summary>📘 Beginner → Pro Explanation</summary>
+            <div class="small mt-2">
+              <p><b>Beginner:</b> Understand Lists and basic user I/O with Scanner.</p>
+              <p><b>Intermediate:</b> Replace in-memory list with file serialization (ObjectOutputStream) or JDBC for persistence.</p>
+              <p><b>Pro:</b> Add validation, command parsing, logging, unit tests, and a CLI menu framework (picocli).</p>
+            </div>
+          </details>
+
+          <details class="details mt-2"><summary>💡 Pro Tips & Interview Notes</summary>
+            <div class="small mt-2">
+              <ul class="list-disc ml-6">
+                <li>Cover edge cases: invalid input, empty lists, concurrency when using shared resources.</li>
+                <li>Interview talk: explain separation of concerns (CLI vs service vs DAO), and how you'd add tests.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category: GUI Projects -->
+    <section class="card">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🪟 GUI Projects (Swing / JavaFX)</h2>
+          <p class="small mt-1">Build desktop applications to practice event handling, layout managers, threads (SwingWorker), and UI/UX.</p>
+        </div>
+        <div class="text-right">
+          <span class="badge badge-yellow">Category: GUI</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+        <!-- Showcase Card -->
+        <div>
+          <div class="preview">
+            <div>
+              <div class="font-semibold">Calculator App (Swing)</div>
+              <div class="small mt-1">Buttons, layout, event handling</div>
+            </div>
+          </div>
+          <div class="mt-3 small">
+            <p><strong>Tech:</strong> Swing / JavaFX, AWT events</p>
+            <p><strong>Difficulty:</strong> <span class="badge badge-yellow">Intermediate</span></p>
+            <p class="mt-2"><strong>Use-case:</strong> Learn threading (for long tasks), responsive UI, and input validation.</p>
+          </div>
+        </div>
+
+        <!-- Interactive demo: minimal Swing frame -->
+        <div>
+          <div class="code-card">
+<pre id="swing-calc"><code>import javax.swing.*;
+import java.awt.*;
+public class CalcDemo {
+  public static void main(String[] args){
+    SwingUtilities.invokeLater(()->{
+      JFrame f = new JFrame("Calc");
+      JTextField tf = new JTextField();
+      JPanel p = new JPanel(new GridLayout(4,3,5,5));
+      for(String b: new String[]{"7","8","9","4","5","6","1","2","3","0","+","="}) p.add(new JButton(b));
+      f.setLayout(new BorderLayout()); f.add(tf, BorderLayout.NORTH); f.add(p, BorderLayout.CENTER);
+      f.setSize(260,320); f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); f.setVisible(true);
+    });
+  }
+}</code></pre>
+
+            <div class="mt-3 flex items-center">
+              <button class="btn btn-copy" data-codeid="swing-calc">📋 Copy</button>
+              <button class="btn btn-run" data-codeid="swing-calc">▶ Run</button>
+              <button class="btn btn-down" data-codeid="swing-calc" data-filename="CalcDemo.java">⬇ Download</button>
+              <span class="meta ml-3">Minimal Swing window example</span>
+            </div>
+          </div>
+
+          <details class="details mt-3"><summary>📘 Beginner → Pro Explanation</summary>
+            <div class="small mt-2">
+              <p><b>Beginner:</b> Understand the event-dispatch thread and basic components (JFrame, JButton).</p>
+              <p><b>Intermediate:</b> Add ActionListeners, implement expression parsing, keyboard shortcuts.</p>
+              <p><b>Pro:</b> Use JavaFX for rich UIs, decouple logic (MVC/MVVM), use FXML, and write UI tests with TestFX.</p>
+            </div>
+          </details>
+
+          <details class="details mt-2"><summary>💡 Pro Tips & Interview Notes</summary>
+            <div class="small mt-2">
+              <ul class="list-disc ml-6">
+                <li>Never do long computation on the EDT — use SwingWorker/Task in JavaFX.</li>
+                <li>Interview note: explain thread safety for UI components and separation of UI vs business logic.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category: JDBC Projects -->
+    <section class="card">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🗄️ JDBC Projects</h2>
+          <p class="small mt-1">Build database-backed applications: learn connections, prepared statements, transactions, and connection pooling.</p>
+        </div>
+        <div class="text-right">
+          <span class="badge badge-red">Category: JDBC</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+        <!-- Showcase Card -->
+        <div>
+          <div class="preview">
+            <div>
+              <div class="font-semibold">Employee Database (JDBC)</div>
+              <div class="small mt-1">CRUD, PreparedStatement, ResultSet</div>
+            </div>
+          </div>
+          <div class="mt-3 small">
+            <p><strong>Tech:</strong> JDBC, MySQL/Postgres, Connection Pool (HikariCP)</p>
+            <p><strong>Difficulty:</strong> <span class="badge badge-red">Intermediate → Advanced</span></p>
+            <p class="mt-2"><strong>Use-case:</strong> Practice SQL, transactions, batch processing, and error handling.</p>
+          </div>
+        </div>
+
+        <!-- Interactive demo: generic JDBC skeleton (no DB required) -->
+        <div>
+          <div class="code-card">
+<pre id="jdbc-skel"><code>import java.sql.*;
+public class JdbcSkeleton {
+  public static void main(String[] args){
+    try {
+      // Class.forName("com.mysql.cj.jdbc.Driver"); // load driver when needed
+      String url = "jdbc:db://host:port/dbname";
+      System.out.println("This is a JDBC skeleton. Replace URL, user, pass and run against a DB.");
+    } catch(Exception e){ e.printStackTrace(); }
+  }
+}</code></pre>
+
+            <div class="mt-3 flex items-center">
+              <button class="btn btn-copy" data-codeid="jdbc-skel">📋 Copy</button>
+              <button class="btn btn-run" data-codeid="jdbc-skel">▶ Run</button>
+              <button class="btn btn-down" data-codeid="jdbc-skel" data-filename="JdbcSkeleton.java">⬇ Download</button>
+              <span class="meta ml-3">Generic JDBC skeleton (replace values)</span>
+            </div>
+          </div>
+
+          <details class="details mt-3"><summary>📘 Beginner → Pro Explanation</summary>
+            <div class="small mt-2">
+              <p><b>Beginner:</b> Learn DriverManager.getConnection, PreparedStatement, and ResultSet iteration.</p>
+              <p><b>Intermediate:</b> Use connection pools (HikariCP), transactions, and PreparedStatement to prevent SQL injection.</p>
+              <p><b>Pro:</b> Use ORM (JPA/Hibernate) for complex mappings, but keep DAO layers for testability; handle large result sets with streaming.</p>
+            </div>
+          </details>
+
+          <details class="details mt-2"><summary>💡 Pro Tips & Interview Notes</summary>
+            <div class="small mt-2">
+              <ul class="list-disc ml-6">
+                <li>Describe the difference between Statement and PreparedStatement and why batching improves throughput.</li>
+                <li>Explain transaction isolation levels and when to use optimistic vs pessimistic locking.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category: File-based Applications -->
+    <section class="card">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">💾 File-based Applications</h2>
+          <p class="small mt-1">Projects that use java.io/java.nio for persistence: text processing, logs, CSV, and local databases.</p>
+        </div>
+        <div class="text-right">
+          <span class="badge badge-green">Category: File I/O</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+        <!-- Showcase Card -->
+        <div>
+          <div class="preview">
+            <div>
+              <div class="font-semibold">Library Manager (File)</div>
+              <div class="small mt-1">Store book records in CSV / JSON</div>
+            </div>
+          </div>
+          <div class="mt-3 small">
+            <p><strong>Tech:</strong> java.nio.file, BufferedReader/Writer, Gson/Jackson for JSON</p>
+            <p><strong>Difficulty:</strong> <span class="badge badge-yellow">Beginner → Intermediate</span></p>
+            <p class="mt-2"><strong>Use-case:</strong> Learn parsing, streaming I/O, and file locking concerns.</p>
+          </div>
+        </div>
+
+        <!-- Interactive demo: simple file copy -->
+        <div>
+          <div class="code-card">
+<pre id="file-copy"><code>import java.nio.file.*;
+public class FileCopyDemo {
+  public static void main(String[] args) throws Exception {
+    Path src = Paths.get("source.txt"); Path dst = Paths.get("dest.txt");
+    Files.writeString(src, "Hello KnowledgeStream\\n"); // create sample
+    Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
+    System.out.println("Copied source.txt → dest.txt");
+  }
+}</code></pre>
+
+            <div class="mt-3 flex items-center">
+              <button class="btn btn-copy" data-codeid="file-copy">📋 Copy</button>
+              <button class="btn btn-run" data-codeid="file-copy">▶ Run</button>
+              <button class="btn btn-down" data-codeid="file-copy" data-filename="FileCopyDemo.java">⬇ Download</button>
+              <span class="meta ml-3">Simple Files API example</span>
+            </div>
+          </div>
+
+          <details class="details mt-3"><summary>📘 Beginner → Pro Explanation</summary>
+            <div class="small mt-2">
+              <p><b>Beginner:</b> Learn Files.readString / writeString and path resolution.</p>
+              <p><b>Intermediate:</b> Parse CSV/JSON with third-party libs and design robust readers for large files (streaming).</p>
+              <p><b>Pro:</b> Handle file locks, concurrent file access, incremental processing, and integrate with messaging or databases.</p>
+            </div>
+          </details>
+
+          <details class="details mt-2"><summary>💡 Pro Tips & Interview Notes</summary>
+            <div class="small mt-2">
+              <ul class="list-disc ml-6">
+                <li>Prefer java.nio for performance; use Buffered streams for large binary/text processing.</li>
+                <li>Explain trade-offs: in-memory vs streaming parsing for big files.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category: Problem-solving mini apps -->
+    <section class="card">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">🧩 Problem-solving Mini Apps</h2>
+          <p class="small mt-1">Short apps to sharpen algorithms & data structures: number theory, string processing, graph basics, and puzzles.</p>
+        </div>
+        <div class="text-right">
+          <span class="badge badge-green">Category: Algorithms</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+        <!-- Showcase -->
+        <div>
+          <div class="preview">
+            <div>
+              <div class="font-semibold">Word Frequency Analyzer</div>
+              <div class="small mt-1">File + Map + Streams</div>
+            </div>
+          </div>
+          <div class="mt-3 small">
+            <p><strong>Tech:</strong> Collections, Streams, Map-reduce</p>
+            <p><strong>Difficulty:</strong> <span class="badge badge-green">Beginner → Intermediate</span></p>
+            <p class="mt-2"><strong>Use-case:</strong> Text analytics, simple NLP preprocessing</p>
+          </div>
+        </div>
+
+        <!-- Interactive demo: word count -->
+        <div>
+          <div class="code-card">
+<pre id="word-count"><code>import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
+public class WordCount {
+  public static void main(String[] args) throws Exception {
+    String text = Files.readString(Paths.get("sample.txt"));
+    Map<String,Long> freq = Arrays.stream(text.split("\\W+"))
+      .filter(s->!s.isBlank())
+      .map(String::toLowerCase)
+      .collect(Collectors.groupingBy(w->w, Collectors.counting()));
+    freq.entrySet().stream().sorted(Map.Entry.<String,Long>comparingByValue().reversed()).limit(10)
+      .forEach(e->System.out.println(e.getKey()+": "+e.getValue()));
+  }
+}</code></pre>
+
+            <div class="mt-3 flex items-center">
+              <button class="btn btn-copy" data-codeid="word-count">📋 Copy</button>
+              <button class="btn btn-run" data-codeid="word-count">▶ Run</button>
+              <button class="btn btn-down" data-codeid="word-count" data-filename="WordCount.java">⬇ Download</button>
+              <span class="meta ml-3">Simple word frequency analyser</span>
+            </div>
+          </div>
+
+          <details class="details mt-3"><summary>📘 Beginner → Pro Explanation</summary>
+            <div class="small mt-2">
+              <p><b>Beginner:</b> Count words using Maps and loops.</p>
+              <p><b>Intermediate:</b> Use Streams and handle large files with Files.lines (streaming).</p>
+              <p><b>Pro:</b> Extend to Hadoop/Spark for big data, or use tries for prefix queries and memory optimizations.</p>
+            </div>
+          </details>
+
+          <details class="details mt-2"><summary>💡 Pro Tips & Interview Notes</summary>
+            <div class="small mt-2">
+              <ul class="list-disc ml-6">
+                <li>Discuss time and space complexity: O(n) time, O(v) space (v = unique words).</li>
+                <li>Show how to handle stopwords, normalization, and memory trade-offs for huge data.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation & summary -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">📚 Summary & Next Steps</h2>
+      <ul class="list-disc ml-6 small mt-2">
+        <li>Start with Console projects to master language basics and I/O.</li>
+        <li>Move to GUI to learn event-driven programming and threading for desktop apps.</li>
+        <li>Practice JDBC projects to understand persistence, SQL, and transactions.</li>
+        <li>File-based projects teach robust parsing and streaming; mini algorithm apps build problem-solving skills.</li>
+        <li>For each project: add tests, documentation, CI, and a README to make it portfolio-ready.</li>
+      </ul>
+    </section>
+
+    <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+    <footer class="footer">
+      © 2025 KnowledgeStream — Projects Section. Want ZIP of all example `.java` files or printable PDF? I can generate them next.
+    </footer>
+  </main>
+
+  <div id="toast">Copied to clipboard</div>
+
+<script>
+  // Toast
+  function showToast(msg){
+    const t = document.getElementById('toast'); t.textContent = msg; t.style.display='block';
+    setTimeout(()=> t.style.display='none', 2000);
+  }
+
+  // Copy / Run / Download handlers
+  const JDoodleURL = 'https://www.jdoodle.com/online-java-compiler/';
+
+  document.querySelectorAll('.btn-copy').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.getAttribute('data-codeid');
+      const pre = id ? document.getElementById(id) : btn.closest('.code-card')?.querySelector('pre');
+      const text = pre ? pre.innerText : '';
+      if(!text){ showToast('No code found'); return; }
+      try { await navigator.clipboard.writeText(text); showToast('Code copied to clipboard'); }
+      catch(e){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); showToast('Copied (fallback)'); }
+    });
+  });
+
+  document.querySelectorAll('.btn-run').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.getAttribute('data-codeid');
+      const pre = id ? document.getElementById(id) : btn.closest('.code-card')?.querySelector('pre');
+      const text = pre ? pre.innerText : '';
+      if(!text){ showToast('No code found'); return; }
+      try { await navigator.clipboard.writeText(text); window.open(JDoodleURL,'_blank'); showToast('Copied & opened JDoodle — paste & run'); }
+      catch(e){ window.open(JDoodleURL,'_blank'); alert('Opened JDoodle — paste & run'); }
+    });
+  });
+
+  // Download .java from code snippet
+  document.querySelectorAll('.btn-down').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.getAttribute('data-codeid');
+      const filename = btn.getAttribute('data-filename') || 'Example.java';
+      const pre = id ? document.getElementById(id) : btn.closest('.code-card')?.querySelector('pre');
+      const text = pre ? pre.innerText : '';
+      if(!text){ showToast('No code to download'); return; }
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+      a.remove(); URL.revokeObjectURL(url);
+      showToast('Download started');
+    });
+  });
+
+  // Small safety: prevent accidental navigation/closing while editing large demos?
+  // (Not necessary here, but reserved for future extension.)
+
+</script>
+</body>
+</html>

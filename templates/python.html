@@ -1,0 +1,335 @@
+<!DOCTYPE html>  
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Full Syllabus — Beginner to Advanced</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0d1117;
+      --card-bg: #161b22;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --border: #1e293b;
+      --glow: rgba(59, 130, 246, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 50px 20px;
+    }
+
+    .container {
+      max-width: 750px;
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 0 30px rgba(37, 99, 235, 0.25);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .header h1 {
+      font-size: 1.9em;
+      font-weight: 700;
+      color: var(--accent-hover);
+      letter-spacing: 0.5px;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 0.95em;
+      margin-top: 8px;
+    }
+
+    .intro {
+      background-color: #1e2633;
+      color: var(--text-secondary);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 25px 0 35px;
+      line-height: 1.5;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+    }
+
+    .topic-card {
+      background-color: #111827;
+      border-radius: 10px;
+      padding: 18px 22px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .topic-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 18px var(--glow);
+      transform: translateY(-3px);
+    }
+
+    .topic-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topic-title {
+      font-weight: 600;
+      font-size: 1em;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .topic-info {
+      font-size: 0.85em;
+      color: var(--text-secondary);
+    }
+
+    .topic-link {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.9em;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .topic-link:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.8em;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 600px) {
+      .topic-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🐍 Python Development Stream</h1>
+      <p>21 Core Modules orbiting in this Knowledge Stream</p>
+    </div>
+
+    <div class="intro">
+      Dive into complete Python programming — from beginner to advanced.  
+      Master everything from syntax and control flow to OOP, web development, data analysis, and automation.
+    </div>
+
+    <!-- TOPIC CARDS -->
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣ Introduction to Python</div>
+        <div class="topic-info">Category: Basics • Learn setup, syntax, and your first program</div>
+      </div>
+      <a href="python-topic1.html" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">2️⃣ Python Basics</div>
+        <div class="topic-info">Category: Core Syntax • Variables, Data Types, Operators</div>
+      </div>
+      <a href="python-topic2.html" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">3️⃣ Control Flow</div>
+        <div class="topic-info">Category: Logic • Conditions, Loops, and Flow Control</div>
+      </div>
+
+      <!-- ✅ FIXED LINK -->
+      <a href="python-topic3.html" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">4️⃣ Data Structures</div>
+        <div class="topic-info">Category: Collections • Strings, Lists, Sets, Tuples, Dicts</div>
+      </div>
+      <a href="python-topic4.html" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">5️⃣ Functions</div>
+        <div class="topic-info">Category: Reusability • Args, Lambda, Recursion</div>
+      </div>
+      <a href="python-topic5.html" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">6️⃣ Modules & Packages</div>
+        <div class="topic-info">Category: Libraries • import, pip, venv</div>
+      </div>
+      <a href="python-topic6.html" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">7️⃣ File Handling</div>
+        <div class="topic-info">Category: Files • Read, Write, CSV, JSON</div>
+      </div>
+      <a href="python-topic7.html" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">8️⃣ Exception Handling</div>
+        <div class="topic-info">Category: Safety • try, except, raise, finally</div>
+      </div>
+      <a href="python-topic8.html" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">9️⃣ Object-Oriented Programming (OOP)</div>
+        <div class="topic-info">Category: Classes • Inheritance, Polymorphism, Abstraction</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">🔟 Advanced Python</div>
+        <div class="topic-info">Category: Pro • Decorators, Generators, Comprehensions</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣1️⃣ Regular Expressions</div>
+        <div class="topic-info">Category: Patterns • Search, Match, Replace</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣2️⃣ Database Programming</div>
+        <div class="topic-info">Category: SQLite/MySQL • CRUD, Cursor, SQL Queries</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣3️⃣ Python Standard Libraries</div>
+        <div class="topic-info">Category: Essentials • math, os, datetime, itertools</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣4️⃣ Multithreading & Multiprocessing</div>
+        <div class="topic-info">Category: Performance • Threads, Processes, GIL</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣5️⃣ Python Networking</div>
+        <div class="topic-info">Category: Communication • Sockets, APIs</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣6️⃣ GUI Programming</div>
+        <div class="topic-info">Category: Tkinter • Windows, Buttons, Layouts</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣7️⃣ Data Handling & Analysis</div>
+        <div class="topic-info">Category: NumPy, Pandas, Matplotlib</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣8️⃣ Web Development (Intro)</div>
+        <div class="topic-info">Category: Flask • Routing, Templates</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">1️⃣9️⃣ Automation</div>
+        <div class="topic-info">Category: Scripts • Selenium, Web Scraping</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">2️⃣0️⃣ Testing & Debugging</div>
+        <div class="topic-info">Category: Quality • unittest, Debugging Tools</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →
+      </a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">2️⃣1️⃣ Deployment</div>
+        <div class="topic-info">Category: Build • PyInstaller, Git, Packaging</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-details">
+        <div class="topic-title">🎯 Bonus Topics</div>
+        <div class="topic-info">Category: Extras • PEP 8, Docstrings, Design Patterns</div>
+      </div>
+      <a href="#" class="topic-link">Go to Class →</a>
+    </div>
+
+    <footer>© 2025 All Round Education | Python Knowledge Stream</footer>
+  </div>
+</body>
+</html>

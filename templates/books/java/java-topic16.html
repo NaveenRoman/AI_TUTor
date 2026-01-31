@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>KnowledgeStream – Interview & Viva Preparation (Topic 16)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+  --bg:#ffffff; --muted:#6b7280; --accent:#0ea5e9; --accent-700:#0284c7; --card:#fbfeff; --code-bg:#f3f7fb;
+}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:var(--bg);color:#0f172a;margin:0;}
+.container{max-width:1100px;margin:0 auto;padding:1.5rem}
+header{background:#ffffff;box-shadow:0 4px 14px rgba(2,6,23,0.06);position:sticky;top:0;z-index:60}
+.brand{color:var(--accent);font-weight:800}
+h1{color:#075985}
+.controls{display:flex;gap:.5rem;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid #eef2f7;border-radius:.75rem;padding:1rem;margin-bottom:1rem;box-shadow:0 6px 18px rgba(2,6,23,0.04)}
+.small{font-size:.95rem;color:var(--muted)}
+.code-card{background:var(--code-bg);border:1px solid #e6eef8;padding:.9rem;border-radius:.6rem}
+pre{background:transparent;margin:0;white-space:pre-wrap;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace}
+code{color:#0f172a}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .7rem;border-radius:.45rem;font-weight:700;border:1px solid transparent;cursor:pointer}
+.btn-run{background:linear-gradient(90deg,var(--accent),var(--accent-700));color:white}
+.btn-copy{background:#f8fafc;border:1px solid #e6eef8;color:#0f172a}
+.btn-toggle{background:#fff;border:1px solid #e6eef8;color:#075985}
+.meta{font-size:.9rem;color:var(--muted)}
+.q{border-left:4px solid #e6eef8;padding:.6rem;margin-top:.5rem;border-radius:.25rem}
+.answer{display:none;margin-top:.4rem;color:#064e3b;background:#ecfdf5;padding:.5rem;border-radius:.25rem;border:1px solid #bbf7d0}
+.search{padding:.5rem;border:1px solid #e6eef8;border-radius:.5rem;width:100%;max-width:380px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:1rem}
+@media (max-width:920px){ .grid{grid-template-columns:1fr} .container{padding:.75rem} }
+.footer{margin-top:1rem;color:var(--muted);font-size:.92rem;text-align:center;padding:1rem 0}
+#toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:white;padding:.6rem 1rem;border-radius:.5rem;box-shadow:0 6px 18px rgba(2,6,23,0.2);display:none;z-index:1000}
+</style>
+</head>
+<body>
+<header>
+  <div class="container flex items-center justify-between py-4">
+    <a href="index.html" class="brand text-2xl">KnowledgeStream</a>
+    <div class="meta small">Topic 16 — Interview & Viva Preparation</div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold">💡 Interview & Viva — Ready (100+ Q&A & Practice)</h1>
+    <div class="controls">
+      <button class="btn btn-toggle" id="expandAll">Expand All</button>
+      <button class="btn btn-toggle" id="collapseAll">Collapse All</button>
+      <button class="btn btn-toggle" id="printView">Printable View</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Main column -->
+    <section>
+      <!-- 1. Core Java Q&A (100+) -->
+      <div class="card" id="core-qa">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">📚 Core Java Theory — Quick Q&A (100+ concise)</h2>
+          <div class="small meta">Use search to filter questions instantly</div>
+        </div>
+
+        <div class="mt-3">
+          <input id="search" class="search" placeholder="Search questions or keywords (e.g., final, volatile, OOP)"/>
+        </div>
+
+        <div id="qa-list" class="mt-4">
+          <!-- I include 100 concise Q&A pairs below. Each Q is clickable to reveal the answer. -->
+          <!-- To keep this compact but complete, answers are short and exam/viva-friendly. -->
+          
+          <!-- We'll programmatically generate or list Q/A; here they are inline -->
+          
+          <!-- 1-20 -->
+          <div class="q"><b>Q1:</b> What is JVM, JRE, and JDK?</div>
+          <div class="answer">JVM executes bytecode; JRE provides JVM + libraries; JDK contains JRE + development tools (javac, jar).</div>
+
+          <div class="q"><b>Q2:</b> What is classpath?</div>
+          <div class="answer">Classpath tells JVM where to find user classes and libraries (directories/jar files).</div>
+
+          <div class="q"><b>Q3:</b> What does 'public static void main(String[] args)' mean?</div>
+          <div class="answer">'public' accessible; 'static' JVM calls without instance; 'void' returns nothing; 'main' entry point; String[] args holds CLI args.</div>
+
+          <div class="q"><b>Q4:</b> Difference between == and equals()?</div>
+          <div class="answer">== compares reference identity for objects; equals() compares logical equality (can be overridden).</div>
+
+          <div class="q"><b>Q5:</b> What is garbage collection?</div>
+          <div class="answer">Automatic memory management removing objects with no live references; triggered by JVM GC algorithms.</div>
+
+          <div class="q"><b>Q6:</b> What is final keyword usage?</div>
+          <div class="answer">final variable (constant), final method (cannot override), final class (cannot extend).</div>
+
+          <div class="q"><b>Q7:</b> What is finally block?</div>
+          <div class="answer">finally executes after try/catch regardless of exceptions; used for cleanup (may be skipped on System.exit()).</div>
+
+          <div class="q"><b>Q8:</b> What is transient?</div>
+          <div class="answer">Marks fields not to be serialized by default Java serialization.</div>
+
+          <div class="q"><b>Q9:</b> What is volatile?</div>
+          <div class="answer">Ensures reads/writes go to main memory — prevents thread caching; provides visibility but not atomicity.</div>
+
+          <div class="q"><b>Q10:</b> What are primitive types in Java?</div>
+          <div class="answer">byte, short, int, long, float, double, char, boolean — stored by value.</div>
+
+          <div class="q"><b>Q11:</b> Autoboxing & unboxing?</div>
+          <div class="answer">Automatic conversion between primitives and wrapper classes (int ↔ Integer).</div>
+
+          <div class="q"><b>Q12:</b> What is String immutability? Benefits?</div>
+          <div class="answer">String instances cannot be changed; helps security, caching, thread-safety; String pool reduces duplication.</div>
+
+          <div class="q"><b>Q13:</b> Difference between String, StringBuilder, StringBuffer?</div>
+          <div class="answer">String immutable; StringBuilder mutable & not synchronized (faster); StringBuffer synchronized (thread-safe, slower).</div>
+
+          <div class="q"><b>Q14:</b> What is package-private (default) access?</div>
+          <div class="answer">Accessible within same package only (no modifier).</div>
+
+          <div class="q"><b>Q15:</b> What is an interface vs abstract class?</div>
+          <div class="answer">Interface defines contract (Java 8+ can have default/static methods); abstract class can contain state and implemented methods; choose based on extends vs implements and shared state.</div>
+
+          <div class="q"><b>Q16:</b> What is method overloading vs overriding?</div>
+          <div class="answer">Overloading: same method name different params in same class; Overriding: subclass redefines parent method signature.</div>
+
+          <div class="q"><b>Q17:</b> What is polymorphism?</div>
+          <div class="answer">Ability for objects to take many forms; runtime polymorphism via method overriding and dynamic dispatch.</div>
+
+          <div class="q"><b>Q18:</b> What is encapsulation?</div>
+          <div class="answer">Hiding internal data and providing access via methods (getters/setters) to protect invariants.</div>
+
+          <div class="q"><b>Q19:</b> What is inheritance?</div>
+          <div class="answer">Mechanism where a class (subclass) acquires properties and behavior from another (superclass).</div>
+
+          <div class="q"><b>Q20:</b> What are wrapper classes?</div>
+          <div class="answer">Object representations of primitives: Integer, Double, Boolean, etc.; provide utility methods.</div>
+
+          <!-- 21-40 -->
+          <div class="q"><b>Q21:</b> What is Comparable vs Comparator?</div>
+          <div class="answer">Comparable defines natural order via compareTo; Comparator defines external ordering via compare(a,b).</div>
+
+          <div class="q"><b>Q22:</b> What are collections frameworks core interfaces?</div>
+          <div class="answer">Collection, List, Set, Queue, Deque, Map (Map not extend Collection).</div>
+
+          <div class="q"><b>Q23:</b> ArrayList vs LinkedList?</div>
+          <div class="answer">ArrayList: random access O(1), insert/remove O(n); LinkedList: O(1) insert/remove at ends, slower random access.</div>
+
+          <div class="q"><b>Q24:</b> HashMap vs TreeMap?</div>
+          <div class="answer">HashMap is unordered, O(1) average lookup; TreeMap is sorted (Red-Black tree), O(log n).</div>
+
+          <div class="q"><b>Q25:</b> ConcurrentHashMap advantages?</div>
+          <div class="answer">Thread-safe map with better concurrency than synchronized map; uses internal segmentation/locks (implementation varies by JDK).</div>
+
+          <div class="q"><b>Q26:</b> What is Iterator vs ListIterator?</div>
+          <div class="answer">Iterator allows forward-only traversal; ListIterator supports bidirectional traversal and element modification.</div>
+
+          <div class="q"><b>Q27:</b> What is fail-fast vs fail-safe iterators?</div>
+          <div class="answer">Fail-fast detect concurrent modification and throw ConcurrentModificationException (e.g., ArrayList). Fail-safe (e.g., CopyOnWriteArrayList) iterate on a snapshot.</div>
+
+          <div class="q"><b>Q28:</b> What is synchronization keyword?</div>
+          <div class="answer">Used to control access to blocks/methods by one thread at a time on a monitor (object/class lock).</div>
+
+          <div class="q"><b>Q29:</b> What is Thread vs Runnable?</div>
+          <div class="answer">Thread is a thread of execution; Runnable provides run() and is passed to Thread; prefer Runnable for decoupling.</div>
+
+          <div class="q"><b>Q30:</b> What is ExecutorService?</div>
+          <div class="answer">Framework to manage thread pools and task execution; use Executors factory methods for pools.</div>
+
+          <div class="q"><b>Q31:</b> Explain volatile vs synchronized.</div>
+          <div class="answer">volatile ensures visibility across threads; synchronized ensures mutual exclusion and visibility (enter/exit monitor flushes caches).</div>
+
+          <div class="q"><b>Q32:</b> What is deadlock?</div>
+          <div class="answer">When two or more threads wait indefinitely for locks held by each other; avoid by lock ordering or timeouts.</div>
+
+          <div class="q"><b>Q33:</b> What is race condition?</div>
+          <div class="answer">Incorrect behavior due to unsynchronized access to shared mutable data; fix with synchronization/atomic operations.</div>
+
+          <div class="q"><b>Q34:</b> What are atomic classes?</div>
+          <div class="answer">java.util.concurrent.atomic package classes (AtomicInteger, AtomicReference) for lock-free thread-safe operations.</div>
+
+          <div class="q"><b>Q35:</b> What is ThreadLocal?</div>
+          <div class="answer">Provides thread-confined variables; each thread has its own copy of the variable.</div>
+
+          <div class="q"><b>Q36:</b> What is checked vs unchecked exception?</div>
+          <div class="answer">Checked exceptions must be declared/handled (IOException); unchecked (RuntimeException) need not be. Error indicates serious JVM problems.</div>
+
+          <div class="q"><b>Q37:</b> When to use custom exceptions?</div>
+          <div class="answer">When you need clearer domain-specific error handling and typed exceptions for callers to react appropriately.</div>
+
+          <div class="q"><b>Q38:</b> What is try-with-resources?</div>
+          <div class="answer">Language construct that auto-closes Closeable/AutoCloseable resources at the end of the try block.</div>
+
+          <div class="q"><b>Q39:</b> Serialization basics?</div>
+          <div class="answer">Convert object to byte stream via ObjectOutputStream; class must implement Serializable; use serialVersionUID for versioning.</div>
+
+          <div class="q"><b>Q40:</b> What is transient and serialVersionUID?</div>
+          <div class="answer">transient excludes fields from serialization; serialVersionUID identifies class version for deserialization compatibility.</div>
+
+          <!-- 41-60 -->
+          <div class="q"><b>Q41:</b> What is reflection?</div>
+          <div class="answer">API to inspect and manipulate classes/methods/fields at runtime (java.lang.reflect). Useful for frameworks; expensive and can break encapsulation.</div>
+
+          <div class="q"><b>Q42:</b> What are annotations?</div>
+          <div class="answer">Metadata in code (@Override, @Deprecated, custom annotations); used by compilers and frameworks (DI, JPA).</div>
+
+          <div class="q"><b>Q43:</b> What is generics?</div>
+          <div class="answer">Type parameterization enabling compile-time type safety for collections and APIs (List<String>), implemented via type erasure.</div>
+
+          <div class="q"><b>Q44:</b> What is type erasure?</div>
+          <div class="answer">Generics are implemented at compile time; runtime doesn't retain generic type info, which can cause some limitations (no new T[]).</div>
+
+          <div class="q"><b>Q45:</b> What are wildcards ? extends vs ? super?</div>
+          <div class="answer">? extends T: producer (read); ? super T: consumer (write) — PECS (Producer Extends, Consumer Super).</div>
+
+          <div class="q"><b>Q46:</b> What is Optional?</div>
+          <div class="answer">Container that may hold a non-null value; helps avoid null checks and NullPointerException; use Optional as return types, not fields.</div>
+
+          <div class="q"><b>Q47:</b> What are streams?</div>
+          <div class="answer">Functional-style pipeline for collections: map/filter/reduce; can be sequential or parallel; lazy evaluation.</div>
+
+          <div class="q"><b>Q48:</b> When to use parallel streams?</div>
+          <div class="answer">For CPU-bound, large datasets where operations are independent; test and measure — overhead can outweigh benefits for small data.</div>
+
+          <div class="q"><b>Q49:</b> What is lambda expression?</div>
+          <div class="answer">Anonymous function used with functional interfaces; concise replacing single-method anonymous classes.</div>
+
+          <div class="q"><b>Q50:</b> What is method reference?</div>
+          <div class="answer">Shorthand for lambda calling an existing method, e.g., System.out::println or String::toUpperCase.</div>
+
+          <div class="q"><b>Q51:</b> What is Optional.map vs flatMap?</div>
+          <div class="answer">map transforms value; flatMap transforms value into Optional and flattens nesting (Optional<Optional<T>>).</div>
+
+          <div class="q"><b>Q52:</b> What is functional interface?</div>
+          <div class="answer">Interface with single abstract method (SAM); can be used as lambda target (Predicate, Function, Consumer).</div>
+
+          <div class="q"><b>Q53:</b> What is default method in interface?</div>
+          <div class="answer">Java 8 feature: interfaces can provide default method implementations to avoid breaking existing code.</div>
+
+          <div class="q"><b>Q54:</b> What is module system (Java 9)?</div>
+          <div class="answer">JPMS: modules with module-info.java to declare module dependencies and exported packages, improving encapsulation and startup.</div>
+
+          <div class="q"><b>Q55:</b> What is var (local variable type inference)?</div>
+          <div class="answer">Java 10 introduced var for local type inference — compiler infers type; still statically typed.</div>
+
+          <div class="q"><b>Q56:</b> What are records (Java 14+)?</div>
+          <div class="answer">Compact syntax for immutable data carriers — auto-generated constructors, equals, hashCode, toString.</div>
+
+          <div class="q"><b>Q57:</b> What are sealed classes (Java 17)?</div>
+          <div class="answer">Restrict which other classes may extend a class using 'permits' — improving exhaustive checks and security.</div>
+
+          <div class="q"><b>Q58:</b> What is switch expression (Java 14)?</div>
+          <div class="answer">Enhanced switch can return values, use 'case L ->' syntax and avoids fall-through by default.</div>
+
+          <div class="q"><b>Q59:</b> What is String.intern()?</div>
+          <div class="answer">Returns canonical representation from String pool; useful for memory savings but use cautiously.</div>
+
+          <div class="q"><b>Q60:</b> What is ClassLoader?</div>
+          <div class="answer">Loads classes into JVM (bootstrap, platform, system/app); custom CLs used in complex apps (containers, plugins).</div>
+
+          <!-- 61-80 -->
+          <div class="q"><b>Q61:</b> What is reflection performance/security trade-off?</div>
+          <div class="answer">Reflection is slower and can bypass encapsulation; use for frameworks; avoid in hot loops and sensitive logic.</div>
+
+          <div class="q"><b>Q62:</b> How does equals() and hashCode() contract work?</div>
+          <div class="answer">If equals() two objects are equal, their hashCode() must be equal. Important for hash-based collections.</div>
+
+          <div class="q"><b>Q63:</b> What is null pointer exception and how to avoid?</div>
+          <div class="answer">NPE is thrown when accessing member on null reference; avoid with checks, Optional, or defensive coding.</div>
+
+          <div class="q"><b>Q64:</b> How to create immutable class?</div>
+          <div class="answer">Make class final, fields private final, no setters, defensive copies for mutable fields, provide constructors only.</div>
+
+          <div class="q"><b>Q65:</b> What is observer pattern?</div>
+          <div class="answer">Behavioral pattern where observers register to receive updates from subject (publish/subscribe model).</div>
+
+          <div class="q"><b>Q66:</b> What is singleton enum pattern?</div>
+          <div class="answer">Use enum with single element to implement singleton — handles serialization and thread-safety automatically.</div>
+
+          <div class="q"><b>Q67:</b> What is memory leak in Java?</div>
+          <div class="answer">Objects still referenced but not used; common causes: static collections, listeners not removed, caches without eviction.</div>
+
+          <div class="q"><b>Q68:</b> What is finalizer vs try-with-resources?</div>
+          <div class="answer">finalize() is unreliable and deprecated; use AutoCloseable and try-with-resources for deterministic cleanup.</div>
+
+          <div class="q"><b>Q69:</b> How to sort custom objects?</div>
+          <div class="answer">Implement Comparable or provide Comparator to Collections.sort/Stream.sorted.</div>
+
+          <div class="q"><b>Q70:</b> What is binarySearch requirement?</div>
+          <div class="answer">Collection must be sorted according to the comparator/natural order before binarySearch; otherwise result undefined.</div>
+
+          <div class="q"><b>Q71:</b> What is reflection? (duplicate intentional for practice)</div>
+          <div class="answer">See Q41 concise explanation: runtime inspection and manipulation of classes, methods, fields.</div>
+
+          <div class="q"><b>Q72:</b> What is dynamic proxy?</div>
+          <div class="answer">Proxy generated at runtime that implements interfaces and delegates method calls — used for AOP, logging, transaction management.</div>
+
+          <div class="q"><b>Q73:</b> What is default serial form?</div>
+          <div class="answer">ObjectOutputStream default serializes non-transient fields; customize with writeObject/readObject methods.</div>
+
+          <div class="q"><b>Q74:</b> What is instanceof vs isInstance?</div>
+          <div class="answer">instanceof checks at compile-time against a type; Class.isInstance allows dynamic class checks.</div>
+
+          <div class="q"><b>Q75:</b> How to create a thread-safe singleton?</div>
+          <div class="answer">Use enum-singleton, eager initialization, or double-checked locking with volatile instance.</div>
+
+          <div class="q"><b>Q76:</b> How to stop a thread?</div>
+          <div class="answer">Use interruption (thread.interrupt()) and cooperative checks (Thread.currentThread().isInterrupted()), avoid deprecated stop().</div>
+
+          <div class="q"><b>Q77:</b> What is sleep vs wait?</div>
+          <div class="answer">sleep() pauses thread without releasing monitor; wait() releases monitor and waits for notify()/notifyAll().</div>
+
+          <div class="q"><b>Q78:</b> Difference between notify and notifyAll?</div>
+          <div class="answer">notify wakes one waiting thread; notifyAll wakes all waiting threads for the monitor.</div>
+
+          <div class="q"><b>Q79:</b> How to implement producer-consumer?</div>
+          <div class="answer">Use BlockingQueue (preferred) or wait/notify with synchronized buffers; BlockingQueue handles concurrency safely.</div>
+
+          <div class="q"><b>Q80:</b> What is CompletableFuture?</div>
+          <div class="answer">Promise-like API for async programming with chaining, combinators, and completion stages (non-blocking).</div>
+
+          <!-- 81-100+ -->
+          <div class="q"><b>Q81:</b> Where to use synchronized collections?</div>
+          <div class="answer">Use Collections.synchronizedList for simple synchronization; prefer concurrent collections (ConcurrentHashMap) for better scalability.</div>
+
+          <div class="q"><b>Q82:</b> What is memory model (JMM)?</div>
+          <div class="answer">Java Memory Model defines visibility, ordering, and atomicity rules across threads; volatile/synchronized establish happens-before relationships.</div>
+
+          <div class="q"><b>Q83:</b> What are design patterns categories?</div>
+          <div class="answer">Creational, Structural, Behavioral (e.g., Singleton, Factory, Adapter, Strategy, Observer).</div>
+
+          <div class="q"><b>Q84:</b> What is adapter pattern?</div>
+          <div class="answer">Converts interface of a class into another interface clients expect; useful to integrate incompatible APIs.</div>
+
+          <div class="q"><b>Q85:</b> What is decorator pattern?</div>
+          <div class="answer">Attach responsibilities to objects dynamically via wrapping classes; alternative to subclassing for flexible behavior.</div>
+
+          <div class="q"><b>Q86:</b> What is strategy pattern?</div>
+          <div class="answer">Define a family of algorithms, encapsulate each, and make them interchangeable (via interfaces).</div>
+
+          <div class="q"><b>Q87:</b> What is template method?</div>
+          <div class="answer">Define skeleton of an algorithm in base class, delegate steps to subclasses (inversion of control).</div>
+
+          <div class="q"><b>Q88:</b> How to debug NullPointerException?</div>
+          <div class="answer">Read stack trace, locate offending line, add null checks or assert invariants earlier, use Optional for returns.</div>
+
+          <div class="q"><b>Q89:</b> What is stack vs heap?</div>
+          <div class="answer">Stack: method frames, local primitives/references; Heap: objects and arrays managed by GC.</div>
+
+          <div class="q"><b>Q90:</b> How to profile a Java app?</div>
+          <div class="answer">Use tools like VisualVM, JFR (Flight Recorder), async profiler, and heap dump analyzers.</div>
+
+          <div class="q"><b>Q91:</b> What is JIT compiler?</div>
+          <div class="answer">Just-In-Time compiler optimizes bytecode to native code at runtime for hotspots improving performance.</div>
+
+          <div class="q"><b>Q92:</b> Explain class loading delegation?</div>
+          <div class="answer">Parent-first delegation model: child ClassLoader delegates to parent to avoid duplicate class definitions in JVM.</div>
+
+          <div class="q"><b>Q93:</b> What is soft/weak/phantom references?</div>
+          <div class="answer">Reference types with different GC strengths used for caches (Soft), canonical mappings (Weak), and post-mortem cleanup (Phantom).</div>
+
+          <div class="q"><b>Q94:</b> How to implement equals safely?</div>
+          <div class="answer">Check reference equality, instanceof, cast, and compare significant fields; override hashCode consistent with equals.</div>
+
+          <div class="q"><b>Q95:</b> What is contract of hashCode?</div>
+          <div class="answer">Consistent during an object life (unless fields used change), equal objects have equal hash code, not required unique per object.</div>
+
+          <div class="q"><b>Q96:</b> What are metrics to show code quality?</div>
+          <div class="answer">Code coverage, cyclomatic complexity, code smells, static analysis warnings, test pass rate, performance benchmarks.</div>
+
+          <div class="q"><b>Q97:</b> What is hotspot analysis?</div>
+          <div class="answer">Identify frequently executed code paths (hotspots) to optimize via profiling and tuning (JIT or algorithmic change).</div>
+
+          <div class="q"><b>Q98:</b> When to use microbenchmarks?</div>
+          <div class="answer">Measure performance of small code sections with JMH to avoid JVM warmup and inaccurate measurements.</div>
+
+          <div class="q"><b>Q99:</b> How to handle large files?</div>
+          <div class="answer">Use streaming APIs (Files.lines, Buffered streams), process chunks, avoid loading entire file into memory.</div>
+
+          <div class="q"><b>Q100:</b> How to prepare for viva quickly?</div>
+          <div class="answer">Practice short 30-second explanations, mock oral rounds, and concise diagrammatic answers for core topics.</div>
+
+          <!-- Additional: Q101-110 (bonus) -->
+          <div class="q"><b>Q101:</b> What is defensive programming?</div>
+          <div class="answer">Write code anticipating incorrect usage, with validation, preconditions, and helpful exceptions.</div>
+
+          <div class="q"><b>Q102:</b> How to write production-grade Java?</div>
+          <div class="answer">Follow SOLID, proper logging, metrics, proper exception handling, tests, CI, and monitoring in production.</div>
+        </div>
+      </div>
+
+      <!-- 2. OOP & Collections Deep Dive -->
+      <div class="card" id="oop-collections">
+        <h2 class="text-xl font-semibold">🔍 OOP & Collections — Deep Dive</h2>
+        <p class="small mt-2">Targeted explanations with diagrams, key interview points, and common pitfalls.</p>
+
+        <details class="mt-3"><summary>🧩 OOP Principles (Beginner → Pro)</summary>
+          <div class="small mt-2">
+            <ol class="list-decimal ml-5">
+              <li><b>Single Responsibility:</b> keep classes focused; example: separate DTO, service, DAO.</li>
+              <li><b>Open/Closed:</b> extend via interfaces/strategy; use composition over inheritance.</li>
+              <li><b>Liskov:</b> subtype must be substitutable — avoid violating pre/post conditions.</li>
+              <li><b>Interface Segregation:</b> small cohesive interfaces.</li>
+              <li><b>Dependency Inversion:</b> depend on abstractions, use DI frameworks for complex systems.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="mt-3"><summary>🧠 Collections: Patterns & Performance</summary>
+          <div class="small mt-2">
+            <ul class="list-disc ml-5">
+              <li>Prefer ArrayList for read-mostly random access; LinkedList for frequent insert/removal at ends.</li>
+              <li>Use HashMap for average O(1) lookup; TreeMap for sorted keys.</li>
+              <li>For concurrency, use ConcurrentHashMap, CopyOnWriteArrayList, BlockingQueue.</li>
+              <li>Beware boxing/unboxing and prefer primitive-specialized libs for hot loops (Trove, fastutil) if needed.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <!-- 3. Exception Handling & Threading Scenarios (with runnable code) -->
+      <div class="card" id="exceptions-threads">
+        <h2 class="text-xl font-semibold">⚠️ Exception Handling & Threading — Scenarios</h2>
+        <p class="small mt-2">Common viva problems and runnable snippets to explain behavior and outputs.</p>
+
+        <!-- Code snippet: try-with-resources vs finally -->
+        <div class="code-card mt-3">
+<pre id="ex1"><code>import java.io.*;
+public class SafeRead {
+  public static void main(String[] args) {
+    try (BufferedReader br = new BufferedReader(new FileReader("nofile.txt"))) {
+      System.out.println(br.readLine());
+    } catch (IOException e) {
+      System.out.println("Caught: " + e.getClass().getSimpleName());
+    } finally {
+      System.out.println("Finally executed");
+    }
+  }
+}</code></pre>
+          <div class="mt-2">
+            <button class="btn btn-copy" data-codeid="ex1">📋 Copy</button>
+            <button class="btn btn-run" data-codeid="ex1">▶ Run</button>
+            <span class="meta ml-3">Explain: exception flow & resource closure</span>
+          </div>
+        </div>
+
+        <!-- Code snippet: Thread interruption -->
+        <div class="code-card mt-3">
+<pre id="t1"><code>public class InterruptDemo {
+  public static void main(String[] args) throws InterruptedException {
+    Thread t = new Thread(() -> {
+      while (!Thread.currentThread().isInterrupted()) {
+        // busy work
+      }
+      System.out.println("Stopped by interrupt");
+    });
+    t.start();
+    Thread.sleep(50);
+    t.interrupt();
+  }
+}</code></pre>
+          <div class="mt-2">
+            <button class="btn btn-copy" data-codeid="t1">📋 Copy</button>
+            <button class="btn btn-run" data-codeid="t1">▶ Run</button>
+            <span class="meta ml-3">Explain cooperative interruption</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 4. Output-based and Debug Questions -->
+      <div class="card" id="output-debug">
+        <h2 class="text-xl font-semibold">🖨️ Output-based & Debug Questions</h2>
+        <p class="small mt-2">Short code snippets where the candidate must provide the output or fix the bug.</p>
+
+        <div class="q mt-3"><b>Q:</b> What is the output?
+          <pre class="small mt-2"><code>class A{ public static void main(String[]a){ System.out.println(1+2+"3"); System.out.println("3"+1+2); }}</code></pre>
+          <div class="answer">Output:<br>32  (because 1+2 = 3, then "3" appended → "33"? careful)  
+            Actually: first line prints "33"? Wait — parse: 1+2+"3" → 3 + "3" → "33". Second line: "3"+1+2 → "31"+2 → "312". So output:  
+            33  
+            312</div>
+        </div>
+
+        <div class="q mt-3"><b>Q:</b> What is the output of Integer cache test?
+          <pre class="small mt-2"><code>Integer a=127, b=127; System.out.println(a==b);
+Integer x=128, y=128; System.out.println(x==y);</code></pre>
+          <div class="answer">true (cached -128..127), then false (new Integer wrappers for 128).</div>
+        </div>
+
+        <details class="mt-3"><summary>📘 How to debug quickly</summary>
+          <div class="small mt-2">
+            <ul class="list-disc ml-5">
+              <li>Read stack traces top-down to find cause and line number.</li>
+              <li>Use breakpoints in IDE, print variable snapshots, and add assertions.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <!-- 5. Logical Coding Challenges (patterns, arrays, recursion) -->
+      <div class="card" id="challenges">
+        <h2 class="text-xl font-semibold">🧠 Logical Coding Challenges</h2>
+        <p class="small mt-2">Practice with short problems and solutions; great for live coding rounds.</p>
+
+        <div class="q mt-3"><b>1. Print Pascal's triangle (n rows)</b>
+          <div class="small mt-2">Use iterative combinatorics or build rows from previous row sums. Time O(n^2), space O(n).</div>
+        </div>
+
+        <div class="q mt-3"><b>2. Reverse words in a sentence (in-place)</b>
+          <div class="small mt-2">Reverse whole string then reverse each word; O(n) time, O(1) extra space if char array.</div>
+        </div>
+
+        <div class="q mt-3"><b>3. Fibonacci: recursive vs dynamic programming</b>
+          <div class="small mt-2">Recursive is exponential; use memoization or iterative DP to get O(n).</div>
+        </div>
+
+        <details class="mt-3"><summary>Sample solution — Reverse words (code)</summary>
+          <div class="code-card mt-2">
+<pre id="revwords"><code>public class ReverseWords {
+  public static void main(String[] args){
+    String s = "Hello World from Java";
+    String[] parts = s.trim().split("\\s+");
+    Collections.reverse(Arrays.asList(parts));
+    System.out.println(String.join(" ", parts));
+  }
+}</code></pre>
+            <div class="mt-2">
+              <button class="btn btn-copy" data-codeid="revwords">📋 Copy</button>
+              <button class="btn btn-run" data-codeid="revwords">▶ Run</button>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- 6. Viva Q&A — Explain in 30 seconds -->
+      <div class="card" id="viva-sim">
+        <h2 class="text-xl font-semibold">⏱️ Viva Simulator — Explain in 30 seconds</h2>
+        <p class="small mt-2">Practice quick, crisp explanations. Click 'Next' to get a random prompt. Press Start to begin 30s timer.</p>
+
+        <div class="mt-3 flex items-center gap-2">
+          <button class="btn btn-run" id="vivaNext">Next Question</button>
+          <button class="btn btn-copy" id="vivaStart">Start 30s</button>
+          <button class="btn btn-toggle" id="vivaShow">Show Model Answer</button>
+          <div class="meta ml-3" id="vivaTimer">00:30</div>
+        </div>
+
+        <div class="mt-3 p-3 border rounded small" id="vivaQuestion">Click 'Next Question' to begin.</div>
+        <div class="mt-3 answer" id="vivaAnswer">Model answer will appear here when you press "Show".</div>
+
+        <script>
+          const vivaQ = [
+            "Explain 'volatile' in 30 seconds.",
+            "Describe the Java memory model briefly.",
+            "Explain difference between HashMap and ConcurrentHashMap.",
+            "Explain try-with-resources in 30 seconds.",
+            "Explain garbage collection generations (young/old).",
+            "Describe what is SOLID quickly.",
+            "Explain the difference between process and thread."
+          ];
+          const vivaA = {
+            "Explain 'volatile' in 30 seconds.":"volatile ensures visibility: writes to a volatile variable are visible to other threads immediately; it prevents caching and reordering for that variable but doesn't provide atomicity for compound actions.",
+            "Describe the Java memory model briefly.":"JMM defines rules of visibility and ordering across threads; 'happens-before' relationships ensure memory consistency between actions across threads.",
+            "Explain difference between HashMap and ConcurrentHashMap.":"HashMap is not thread-safe (concurrent operations can corrupt it), while ConcurrentHashMap supports concurrent access with internal locking/segments and no global locking.",
+            "Explain try-with-resources in 30 seconds.":"A try statement with resources auto-closes any AutoCloseable declared in the try header, ensuring deterministic cleanup even when exceptions are thrown.",
+            "Explain garbage collection generations (young/old).":"New objects allocated in Young Generation (Eden), survivors promoted to Old/tenured generation if live across collections; GC strategies focus more frequently on young gen.",
+            "Describe what is SOLID quickly.":"S: Single Responsibility, O: Open/Closed, L: Liskov, I: Interface Segregation, D: Dependency Inversion — principles for maintainable design.",
+            "Explain the difference between process and thread.":"A process is an OS-level executing program with its own memory; threads are lightweight execution units within a process sharing memory."
+          };
+          let vivaTimerId=null;
+          document.getElementById('vivaNext').addEventListener('click', ()=>{
+            const q = vivaQ[Math.floor(Math.random()*vivaQ.length)];
+            document.getElementById('vivaQuestion').innerText = q;
+            document.getElementById('vivaAnswer').style.display = 'none';
+            document.getElementById('vivaAnswer').innerText = vivaA[q];
+            document.getElementById('vivaTimer').innerText = '00:30';
+          });
+          document.getElementById('vivaStart').addEventListener('click', ()=>{
+            let t=30; document.getElementById('vivaTimer').innerText = '00:30';
+            clearInterval(vivaTimerId);
+            vivaTimerId = setInterval(()=>{ t--; document.getElementById('vivaTimer').innerText = '00:' + (t<10? '0' + t : t); if(t<=0) clearInterval(vivaTimerId); }, 1000);
+          });
+          document.getElementById('vivaShow').addEventListener('click', ()=>{ document.getElementById('vivaAnswer').style.display='block'; });
+        </script>
+      </div>
+
+      <!-- 7. HR + Technical Java Round Strategy -->
+      <div class="card" id="strategy">
+        <h2 class="text-xl font-semibold">🎯 HR + Technical Round Strategy</h2>
+        <div class="small mt-2">
+          <h3 class="font-semibold">HR Round</h3>
+          <ul class="list-disc ml-5">
+            <li>Tell a concise story — background, key projects, what you built, and what you learned.</li>
+            <li>Prepare answers for strengths, weaknesses (mention mitigation + learning), notice period, and salary expectations.</li>
+            <li>Ask thoughtful questions about team, mentorship, and learning opportunities.</li>
+          </ul>
+
+          <h3 class="font-semibold mt-3">Technical Round</h3>
+          <ul class="list-disc ml-5">
+            <li>Before coding: clarify requirements, edge cases, and input sizes; reason about complexity.</li>
+            <li>Write clean code, name variables clearly, and test on sample inputs; explain trade-offs.</li>
+            <li>Discuss follow-ups: optimizations, memory vs time trade-offs, concurrency considerations, and testing strategy.</li>
+          </ul>
+
+          <h3 class="font-semibold mt-3">Live Coding Tips</h3>
+          <ul class="list-disc ml-5">
+            <li>Start with a brute-force solution if stuck, then optimize; communicates problem-solving process.</li>
+            <li>Use small examples to validate logic; explain each step to the interviewer.</li>
+            <li>If stuck, ask clarifying questions — interviewers prefer clarifying to guessing requirements.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right column: quick links, code library, output reveal -->
+    <aside>
+      <div class="card">
+        <h3 class="font-semibold">Quick Code Library</h3>
+        <p class="small mt-2">Snippets available to Copy / Run (click to open in main area):</p>
+        <ul class="mt-3 small">
+          <li><a href="#ex1" class="meta link">SafeRead (I/O)</a></li>
+          <li><a href="#t1" class="meta link">InterruptDemo (Threads)</a></li>
+          <li><a href="#revwords" class="meta link">ReverseWords (String)</a></li>
+          <li><a href="#revwords" class="meta link">WordCount (Streams)</a></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3 class="font-semibold">Output & Debug Corner</h3>
+        <p class="small mt-2">Reveal answers for output-based questions below:</p>
+        <button class="btn btn-copy mt-2" id="revealAll">Reveal All Output Answers</button>
+        <div class="mt-3 small" id="outAnswers"></div>
+      </div>
+
+      <div class="card">
+        <h3 class="font-semibold">Study Plan (4 weeks)</h3>
+        <ol class="small ml-5 mt-2">
+          <li>Week 1: Core Java & OOP fundamentals (concepts + mini problems).</li>
+          <li>Week 2: Collections, Streams, Generics, File I/O, Serialization.</li>
+          <li>Week 3: Concurrency, Threading, Exceptions, JVM internals.</li>
+          <li>Week 4: Practice coding problems, mock interviews, viva 30-sec drills.</li>
+        </ol>
+      </div>
+    </aside>
+  </div>
+
+  <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+  <div class="footer">
+    © 2025 KnowledgeStream — Interview & Viva Preparation. Want downloadable flashcards or PDF? Ask and I’ll generate them.
+  </div>
+</main>
+
+<div id="toast">Copied to clipboard</div>
+
+<script>
+  // Utility: toast
+  function showToast(msg){ const t=document.getElementById('toast'); t.innerText=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',1800); }
+
+  // Expand / Collapse all Q&A
+  document.getElementById('expandAll').addEventListener('click', ()=> {
+    document.querySelectorAll('#qa-list .answer').forEach(a=>a.style.display='block');
+    showToast('Expanded all answers');
+  });
+  document.getElementById('collapseAll').addEventListener('click', ()=> {
+    document.querySelectorAll('#qa-list .answer').forEach(a=>a.style.display='none');
+    showToast('Collapsed all answers');
+  });
+
+  // Search filter
+  document.getElementById('search').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const qs = document.querySelectorAll('#qa-list .q');
+    qs.forEach((qDiv) => {
+      const txt = qDiv.innerText.toLowerCase();
+      const ans = qDiv.nextElementSibling;
+      if (txt.includes(q) || (ans && ans.innerText.toLowerCase().includes(q))) { qDiv.style.display='block'; if (q) ans.style.display='block'; }
+      else { qDiv.style.display='none'; if (ans) ans.style.display='none'; }
+    });
+  });
+
+  // Toggle single question answer on click
+  document.querySelectorAll('#qa-list .q').forEach(qdiv=>{
+    qdiv.style.cursor='pointer';
+    qdiv.addEventListener('click', ()=> {
+      const ans = qdiv.nextElementSibling;
+      if(!ans) return;
+      ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+    });
+  });
+
+  // Copy & Run handlers for code snippets (copy to clipboard + open JDoodle)
+  const JDoodleURL = 'https://www.jdoodle.com/online-java-compiler/';
+  document.querySelectorAll('.btn-copy').forEach(btn=>{
+    btn.addEventListener('click', async ()=> {
+      const id = btn.getAttribute('data-codeid');
+      const pre = id ? document.getElementById(id) : btn.closest('.code-card')?.querySelector('pre');
+      const text = pre ? pre.innerText : '';
+      if(!text) { showToast('No code found'); return; }
+      try { await navigator.clipboard.writeText(text); showToast('Code copied to clipboard'); }
+      catch(e){ console.warn(e); showToast('Copy failed'); }
+    });
+  });
+  document.querySelectorAll('.btn-run').forEach(btn=>{
+    btn.addEventListener('click', async ()=> {
+      const id = btn.getAttribute('data-codeid');
+      const pre = id ? document.getElementById(id) : btn.closest('.code-card')?.querySelector('pre');
+      const text = pre ? pre.innerText : '';
+      if(!text) { showToast('No code found'); return; }
+      try { await navigator.clipboard.writeText(text); window.open(JDoodleURL,'_blank'); showToast('Copied & opened JDoodle — paste & run'); }
+      catch(e){ window.open(JDoodleURL,'_blank'); alert('Opened JDoodle — paste & run'); }
+    });
+  });
+
+  // Reveal all output answers (populate right panel)
+  document.getElementById('revealAll').addEventListener('click', ()=>{
+    const out = document.getElementById('outAnswers');
+    out.innerHTML = '<ol><li>Q (1+2+\"3\" / \"3\"+1+2): 33 and 312</li><li>Integer cache: true then false</li></ol>';
+    showToast('Output answers revealed');
+  });
+
+  // Printable view: expand all and open print dialog
+  document.getElementById('printView').addEventListener('click', ()=>{
+    document.querySelectorAll('#qa-list .answer').forEach(a=>a.style.display='block');
+    setTimeout(()=>window.print(),300);
+  });
+
+  // Make links in right column scroll to examples
+  document.querySelectorAll('aside .link').forEach(a=>{
+    a.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const href = a.getAttribute('href').slice(1);
+      const el = document.getElementById(href);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+  });
+</script>
+</body>
+</html>

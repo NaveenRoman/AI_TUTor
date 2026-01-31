@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KnowledgeStream – Advanced Java APIs (NIO.2, Reflection, Annotations)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background:#f9fafb; color:#1e293b; font-family:'Inter',sans-serif; }
+  pre { background:#0f172a; color:#e2e8f0; padding:1rem; border-radius:.5rem; overflow-x:auto; }
+  code { color:#7dd3fc; }
+  .card { background:white; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.08); padding:1.5rem; margin-bottom:2rem; }
+  .copy-btn, .run-btn { border-radius:.4rem; padding:.3rem .6rem; font-size:.9rem; margin-right:.3rem; cursor:pointer; }
+  .copy-btn{ background:#e2e8f0; } .run-btn{ background:#0ea5e9; color:white; }
+  .diagram { background:#f1f5f9; border:1px solid #e5e7eb; padding:1rem; border-radius:.6rem; margin-top:.8rem; }
+  details summary { cursor:pointer; font-weight:600; color:#0369a1; margin-top:.5rem; }
+  table { width:100%; border-collapse:collapse; margin-top:1rem; }
+  th,td{ border:1px solid #e5e7eb; padding:.8rem; text-align:left; }
+  th{ background:#e0f2fe; color:#075985; }
+  .callout{ background:#fffbeb; border-left:4px solid #facc15; padding:.75rem; border-radius:.5rem; color:#854d0e; margin-top:.8rem; }
+</style>
+<script>
+function copyCode(id){ navigator.clipboard.writeText(document.getElementById(id).innerText); alert("✅ Code copied!"); }
+function runCode(){ window.open("https://www.jdoodle.com/online-java-compiler/","_blank"); }
+</script>
+</head>
+<body>
+
+<header class="bg-sky-600 text-white sticky top-0 z-50 shadow-md">
+  <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <a href="index.html" class="text-3xl font-extrabold">KnowledgeStream</a>
+  </div>
+</header>
+
+<section class="container mx-auto px-6 py-10">
+  <h1 class="text-4xl font-bold text-sky-700 mb-6">☁️ Advanced Java APIs (NIO.2, Reflection, Annotations)</h1>
+  <p class="text-gray-700 mb-8 leading-relaxed">
+    These APIs power the backbone of enterprise Java. Frameworks like Spring, Hibernate, and Jakarta EE use them for file handling, dynamic configuration, dependency injection, and metadata-driven behavior.
+  </p>
+
+  <!-- NIO.2 -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">📁 1. NIO.2 (New I/O – java.nio.file)</h2>
+    <p>Introduced in Java 7, NIO.2 provides powerful file and directory handling features beyond traditional <code>java.io</code>.</p>
+
+    <div class="diagram">
+      <b>Core Classes:</b>
+      <ul class="list-disc ml-6 mt-2">
+        <li><code>Path</code> – represents file/directory paths.</li>
+        <li><code>Files</code> – static utility methods for file operations.</li>
+        <li><code>FileVisitor</code> & <code>SimpleFileVisitor</code> – walk through directory trees.</li>
+        <li><code>WatchService</code> – monitors file system changes in real-time.</li>
+      </ul>
+    </div>
+
+    <div class="flex justify-end mb-2 mt-4">
+      <button class="copy-btn" onclick="copyCode('nio1')">📋 Copy</button>
+      <button class="run-btn" onclick="runCode()">▶ Run</button>
+    </div>
+<pre id="nio1"><code>import java.nio.file.*;
+import java.io.IOException;
+
+public class NioWalkDemo {
+  public static void main(String[] args) throws IOException {
+    Path root = Paths.get("C:/Users/Naveen");
+    Files.walk(root, 1)
+         .filter(Files::isRegularFile)
+         .forEach(System.out::println);
+  }
+}</code></pre>
+
+    <details><summary>🧠 Explanation</summary>
+      <ul class="list-disc ml-6 mt-2">
+        <li><code>Files.walk()</code> traverses directories recursively.</li>
+        <li>Use <code>Files.copy()</code>, <code>Files.move()</code>, <code>Files.delete()</code> for file operations.</li>
+        <li>NIO handles large files efficiently with buffers and channels.</li>
+      </ul>
+    </details>
+
+    <h3 class="text-lg text-sky-600 mt-6 mb-2">👁️ Real-time File Monitoring (WatchService)</h3>
+    <pre><code>WatchService watch = FileSystems.getDefault().newWatchService();
+Path dir = Paths.get("C:/temp");
+dir.register(watch, StandardWatchEventKinds.ENTRY_CREATE);
+System.out.println("Watching directory...");
+
+while(true){
+  WatchKey key = watch.take();
+  for(WatchEvent&lt;?&gt; e : key.pollEvents()){
+    System.out.println("File created: "+ e.context());
+  }
+  key.reset();
+}</code></pre>
+  </div>
+
+  <!-- Reflection API -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🪞 2. Reflection API</h2>
+    <p>Reflection allows Java code to inspect and modify classes, methods, and fields at runtime — the foundation of frameworks, dependency injection, and testing libraries.</p>
+
+    <div class="diagram">
+      <b>Common Use Cases:</b>
+      <ul class="list-disc ml-6 mt-2">
+        <li>Inspecting class structure (methods, fields, constructors).</li>
+        <li>Invoking private methods dynamically.</li>
+        <li>Building frameworks that adapt to unknown classes at runtime.</li>
+      </ul>
+    </div>
+
+    <div class="flex justify-end mb-2 mt-4">
+      <button class="copy-btn" onclick="copyCode('reflect1')">📋 Copy</button>
+      <button class="run-btn" onclick="runCode()">▶ Run</button>
+    </div>
+<pre id="reflect1"><code>import java.lang.reflect.*;
+
+class Student {
+  private String name = "Naveen";
+  public void greet() { System.out.println("Hello, " + name); }
+}
+
+public class ReflectionDemo {
+  public static void main(String[] args) throws Exception {
+    Class&lt;?&gt; c = Class.forName("Student");
+    Object obj = c.getDeclaredConstructor().newInstance();
+    
+    Field f = c.getDeclaredField("name");
+    f.setAccessible(true);
+    f.set(obj, "Roman");
+    
+    Method m = c.getMethod("greet");
+    m.invoke(obj);
+  }
+}</code></pre>
+
+    <details><summary>🧠 Step-by-Step Explanation</summary>
+      <ul class="list-disc ml-6 mt-2">
+        <li><code>Class.forName()</code> loads the class dynamically.</li>
+        <li><code>getDeclaredField()</code> fetches private field info.</li>
+        <li><code>setAccessible(true)</code> overrides access modifiers.</li>
+        <li><code>invoke()</code> calls method on the object.</li>
+      </ul>
+    </details>
+
+    <div class="callout">
+      ⚠️ Reflection is powerful but expensive. Use it carefully — it bypasses compile-time checks and can hurt performance if overused.
+    </div>
+  </div>
+
+  <!-- Annotations -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🏷️ 3. Custom Annotations & Metadata</h2>
+    <p>Annotations are metadata that instruct compilers, frameworks, or tools. You can create your own to mark or configure behavior.</p>
+
+    <div class="flex justify-end mb-2">
+      <button class="copy-btn" onclick="copyCode('anno1')">📋 Copy</button>
+      <button class="run-btn" onclick="runCode()">▶ Run</button>
+    </div>
+<pre id="anno1"><code>import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@interface Info {
+  String author() default "Unknown";
+}
+
+class Demo {
+  @Info(author="Naveen")
+  public void display() { System.out.println("Annotation Example"); }
+}
+
+public class AnnotationRead {
+  public static void main(String[] args) throws Exception {
+    Method m = Demo.class.getMethod("display");
+    Info a = m.getAnnotation(Info.class);
+    System.out.println("Author: " + a.author());
+  }
+}</code></pre>
+
+    <details><summary>🧠 Explanation</summary>
+      <ul class="list-disc ml-6 mt-2">
+        <li><code>@Retention</code> defines how long annotation info is kept (SOURCE, CLASS, RUNTIME).</li>
+        <li><code>@Target</code> defines what it applies to (METHOD, FIELD, TYPE, etc.).</li>
+        <li><code>getAnnotation()</code> reads metadata during runtime (used by frameworks like Spring).</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- Annotation Processing -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🧩 4. Annotation Processing</h2>
+    <p>Annotation processors run at compile-time to generate extra code automatically (e.g., Lombok, Dagger, MapStruct).</p>
+    <pre><code>// Example of compile-time annotation processor
+@SupportedAnnotationTypes("example.MyAnnotation")
+@SupportedSourceVersion(SourceVersion.RELEASE_11)
+public class MyProcessor extends AbstractProcessor {
+  public boolean process(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment env) {
+    // generate code dynamically here
+    return true;
+  }
+}</code></pre>
+
+    <div class="callout">💡 Used to auto-generate boilerplate (e.g., getters/setters, builders, factories).</div>
+  </div>
+
+  <!-- Dynamic Class Loading -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">⚙️ 5. Dynamic Class Loading</h2>
+    <p>Classes can be loaded at runtime — enabling plugin systems, script engines, and modular applications.</p>
+
+    <div class="flex justify-end mb-2">
+      <button class="copy-btn" onclick="copyCode('dyn1')">📋 Copy</button>
+    </div>
+<pre id="dyn1"><code>URL[] urls = { new File("plugins/").toURI().toURL() };
+URLClassLoader loader = new URLClassLoader(urls);
+Class&lt;?&gt; plugin = loader.loadClass("MyPlugin");
+Object obj = plugin.getDeclaredConstructor().newInstance();
+plugin.getMethod("start").invoke(obj);</code></pre>
+
+    <details><summary>🧠 Explanation</summary>
+      <ul class="list-disc ml-6 mt-2">
+        <li>Used for **hot-deploying modules** (e.g., loading JARs dynamically).</li>
+        <li>Popular in IDEs, game engines, and enterprise containers.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">⚖️ Concept Comparison</h2>
+    <table>
+      <tr><th>Feature</th><th>Purpose</th><th>Used In</th></tr>
+      <tr><td>NIO.2</td><td>Efficient file and directory operations</td><td>File systems, servers</td></tr>
+      <tr><td>Reflection</td><td>Inspect/modify objects at runtime</td><td>Spring, JUnit, Hibernate</td></tr>
+      <tr><td>Annotations</td><td>Attach metadata to code elements</td><td>Dependency injection, ORM mapping</td></tr>
+      <tr><td>Annotation Processing</td><td>Compile-time code generation</td><td>Lombok, Dagger, MapStruct</td></tr>
+      <tr><td>Dynamic Class Loading</td><td>Load plugins/modules dynamically</td><td>Java EE, OSGi, IDEs</td></tr>
+    </table>
+  </div>
+
+  <!-- Mini Project -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🚀 Mini Project – Annotation-based Config Loader</h2>
+    <p>Simulates how Spring or Hibernate reads metadata to initialize objects dynamically.</p>
+<pre><code>import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@interface Config {
+  String path();
+}
+
+@Config(path="app.properties")
+class App {}
+
+public class ConfigReader {
+  public static void main(String[] args) throws Exception {
+    Class&lt;?&gt; c = App.class;
+    Config conf = c.getAnnotation(Config.class);
+    System.out.println("Loading from: " + conf.path());
+  }
+}</code></pre>
+  </div>
+
+  <!-- Quick Quiz -->
+  <div class="card">
+    <h2 class="text-2xl text-sky-700 mb-3">🧠 Quick Quiz</h2>
+    <form id="quiz">
+      <p>1️⃣ What does Reflection allow?<br>
+      <input type="radio" name="q1" value="A"> A. Compile-time checks<br>
+      <input type="radio" name="q1" value="B"> B. Runtime inspection<br></p>
+
+      <p>2️⃣ Which API monitors file system changes?<br>
+      <input type="radio" name="q2" value="A"> A. WatchService<br>
+      <input type="radio" name="q2" value="B"> B. FileReader<br></p>
+
+      <button type="button" onclick="checkQuiz()" class="bg-sky-600 text-white px-4 py-1 rounded mt-2">Check Answers</button>
+    </form>
+    <p id="result" class="mt-3 font-semibold text-sky-700"></p>
+  </div>
+
+  <script>
+    function checkQuiz(){
+      let score=0;
+      if(document.querySelector('input[name="q1"]:checked')?.value==="B")score++;
+      if(document.querySelector('input[name="q2"]:checked')?.value==="A")score++;
+      document.getElementById('result').innerText=`Your Score: ${score}/2`;
+    }
+  </script>
+
+  <div class="flex justify-between mt-10">
+    <a href="java-topic18.html" class="text-sky-600 font-semibold">← Previous</a>
+    <a href="java-topic20.html" class="text-sky-600 font-semibold">Next →</a>
+  </div>
+</section>
+
+<div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+<footer class="bg-sky-100 text-gray-600 text-center py-8 mt-10 border-t border-sky-200">
+  <p>&copy; 2025 KnowledgeStream. Illuminating the Universe of Knowledge 🌠</p>
+</footer>
+</body>
+</html>

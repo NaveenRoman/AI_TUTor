@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KnowledgeStream — JDBC & Database Connectivity (Enhanced)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg:#ffffff; --muted:#6b7280; --accent:#0ea5e9; --accent-700:#0284c7; --code-bg:#f3f7fb;
+    }
+    body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#0f172a;line-height:1.6}
+    .container{max-width:980px;margin:0 auto;padding:2rem}
+    header{background:#ffffff;box-shadow:0 4px 14px rgba(2,6,23,0.06);position:sticky;top:0;z-index:50}
+    .brand{color:var(--accent);font-weight:800}
+    h1{color:#075985}
+    h2{color:#0369a1}
+    .card{background:#ffffff;border:1px solid #eef2f7;border-radius:.7rem;padding:1.25rem;box-shadow:0 6px 18px rgba(2,6,23,0.04);margin-bottom:1rem}
+    .code-card{background:var(--code-bg);border:1px solid #e6eef8;padding:1rem;border-radius:.6rem;position:relative}
+    pre{background:transparent;margin:0;white-space:pre-wrap;overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;color:#0f172a}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .7rem;border-radius:.45rem;font-weight:700;border:1px solid transparent;cursor:pointer}
+    .btn-run{background:linear-gradient(90deg,var(--accent),var(--accent-700));color:white}
+    .btn-copy{background:#f8fafc;border:1px solid #e6eef8;color:#0f172a}
+    .meta{font-size:.92rem;color:var(--muted)}
+    details summary{cursor:pointer;font-weight:700;color:#075985}
+    .diagram{background:#f8fafc;border:1px solid #e6eef8;padding:.9rem;border-radius:.5rem}
+    table{width:100%;border-collapse:collapse;margin-top:.75rem}
+    th,td{padding:.6rem;border:1px solid #eef2f7;text-align:left}
+    th{background:#eef9ff;color:#0369a1;font-weight:700}
+    .explain{background:#f1f5f9;border-left:4px solid #60a5fa;padding:.8rem;border-radius:.4rem;color:#0f172a}
+    .small{font-size:.95rem;color:var(--muted)}
+    footer{margin-top:2rem;color:var(--muted);font-size:.92rem;text-align:center;padding:1.5rem 0}
+    #toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:white;padding:.6rem 1rem;border-radius:.5rem;box-shadow:0 6px 18px rgba(2,6,23,0.2);display:none;z-index:1000}
+    .code-meta { display:flex; gap:.5rem; align-items:center; margin-top:.75rem; }
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media (max-width:800px){ .grid-2{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container flex items-center justify-between py-4">
+      <a href="index.html" class="brand text-2xl">KnowledgeStream</a>
+      <nav class="meta">
+        <a href="java-topic11.html" class="hover:underline">← Previous</a>
+        <span class="mx-2">|</span>
+        <a href="java-topic13.html" class="hover:underline">Next →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="text-3xl font-bold mb-2">🧮 JDBC & Database Connectivity — Enhanced</h1>
+    <p class="small mb-4">Complete learning module with diagrams, collapsible line-by-line explanations, examples (MySQL + generic), a Student Management mini-project, comparison table (JDBC vs Hibernate vs Spring Data), and interactive quiz.</p>
+
+    <!-- JDBC Architecture -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">JDBC Architecture (diagram + short explanation)</h2>
+      <p class="small mt-2">Architecture layers: Java App → JDBC API (DriverManager...) → DB Driver → Database.</p>
+      <div class="mt-3">
+        <button class="btn btn-copy" onclick="toggle('arch')">🖼 Toggle Diagram</button>
+      </div>
+      <div id="arch" class="diagram mt-3 hidden">
+        <svg viewBox="0 0 900 160" width="100%" height="160" xmlns="http://www.w3.org/2000/svg" role="img">
+          <rect x="20" y="20" width="240" height="100" rx="8" fill="#fff" stroke="#e6eef8"/>
+          <text x="140" y="58" fill="#0369a1" font-weight="700" text-anchor="middle">Java Application</text>
+          <rect x="340" y="10" width="220" height="130" rx="8" fill="#fff" stroke="#e6eef8"/>
+          <text x="450" y="60" fill="#0369a1" font-weight="700" text-anchor="middle">JDBC API / DriverManager</text>
+          <rect x="680" y="20" width="200" height="100" rx="8" fill="#fff" stroke="#e6eef8"/>
+          <text x="780" y="60" fill="#0369a1" font-weight="700" text-anchor="middle">DB Driver → Database</text>
+          <path d="M260 70 H340" stroke="#0ea5e9" stroke-width="3" marker-end="url(#m)"/>
+          <path d="M560 70 H680" stroke="#0ea5e9" stroke-width="3" marker-end="url(#m)"/>
+          <defs><marker id="m" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#0ea5e9"/></marker></defs>
+        </svg>
+      </div>
+      <details class="mt-4">
+        <summary>Show Explanation</summary>
+        <div class="explain mt-2 small">
+          JDBC standardizes DB access. Driver vendors (MySQL, PostgreSQL, Oracle) provide driver JARs that plug into DriverManager to handle vendor-specific protocols.
+        </div>
+      </details>
+    </section>
+
+    <!-- DriverManager & Connection Setup -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">DriverManager & Connection Setup</h2>
+      <p class="small mt-2">Load driver (modern drivers auto-register) and get a Connection using a JDBC URL.</p>
+
+      <div class="code-card" id="card-conn">
+<pre id="code-conn"><code>// MySQL connection example
+import java.sql.*;
+
+public class DBConnectMySQL {
+  public static void main(String[] args) {
+    String url = "jdbc:mysql://localhost:3306/college?useSSL=false&serverTimezone=UTC";
+    String user = "root";
+    String pass = "password";
+    try (Connection con = DriverManager.getConnection(url, user, pass)) {
+      System.out.println("Connected: " + con.getMetaData().getDatabaseProductName());
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-run" data-codeid="code-conn">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-conn">📋 Copy</button>
+          <div class="meta ml-auto small">MySQL • real connection</div>
+        </div>
+
+        <details class="mt-3"><summary>Show Explanation (line-by-line)</summary>
+          <ol class="mt-2 small">
+            <li><code>String url = "jdbc:mysql://...";</code> — JDBC URL includes protocol, host, port, database, and params.</li>
+            <li><code>DriverManager.getConnection(url, user, pass)</code> — Establishes the DB session and returns a <code>Connection</code>.</li>
+            <li>Use try-with-resources so <code>Connection</code> is closed automatically even on exceptions.</li>
+            <li><code>con.getMetaData().getDatabaseProductName()</code> — Example of fetching DB metadata to confirm connection.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- Statement vs PreparedStatement -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">Statement vs PreparedStatement</h2>
+      <p class="small">PreparedStatement is preferred for parameterized, repeated SQL — safer and often faster.</p>
+
+      <div class="grid-2 mt-3">
+        <div class="code-card">
+<pre id="code-stmt"><code>// Statement (vulnerable)
+Statement st = con.createStatement();
+String name = "Naveen";
+int age = 21;
+st.executeUpdate("INSERT INTO students(name, age) VALUES ('" + name + "', " + age + ")");</code></pre>
+          <div class="code-meta mt-2">
+            <button class="btn btn-copy" data-codeid="code-stmt">📋 Copy</button>
+            <div class="meta ml-auto small">Statement</div>
+          </div>
+          <details class="mt-3"><summary>Show Explanation</summary>
+            <div class="explain mt-2 small">Concatenating user input into SQL can allow SQL injection. Avoid when input is untrusted.</div>
+          </details>
+        </div>
+
+        <div class="code-card">
+<pre id="code-pstmt"><code>// PreparedStatement (safe)
+PreparedStatement pst = con.prepareStatement("INSERT INTO students(name, age) VALUES(?, ?)");
+pst.setString(1, "Naveen");
+pst.setInt(2, 21);
+pst.executeUpdate();</code></pre>
+          <div class="code-meta mt-2">
+            <button class="btn btn-copy" data-codeid="code-pstmt">📋 Copy</button>
+            <div class="meta ml-auto small">PreparedStatement</div>
+          </div>
+          <details class="mt-3"><summary>Show Explanation</summary>
+            <div class="explain mt-2 small">Placeholders (?) decouple SQL from data; the driver handles proper escaping and types, preventing injection.</div>
+          </details>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <table>
+          <tr><th>Aspect</th><th>Statement</th><th>PreparedStatement</th></tr>
+          <tr><td>SQL</td><td>Concatenate strings</td><td>Parameterized (placeholders)</td></tr>
+          <tr><td>Security</td><td>Vulnerable</td><td>Safe</td></tr>
+          <tr><td>Performance</td><td>Slower for repeats</td><td>Faster (precompiled)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- CRUD Operations -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">CRUD Operations (Create / Read / Update / Delete)</h2>
+      <p class="small mt-2">Example showing full CRUD flow using PreparedStatement and try-with-resources.</p>
+
+      <div class="code-card mt-3">
+<pre id="code-crud"><code>import java.sql.*;
+
+public class CRUDExample {
+  public static void main(String[] args) {
+    String url = "jdbc:mysql://localhost:3306/college?useSSL=false&serverTimezone=UTC";
+    try (Connection con = DriverManager.getConnection(url, "root", "password")) {
+
+      // CREATE
+      try (PreparedStatement ins = con.prepareStatement(
+              "INSERT INTO students(name, age) VALUES(?, ?)")) {
+        ins.setString(1, "Aisha");
+        ins.setInt(2, 20);
+        ins.executeUpdate();
+      }
+
+      // READ
+      try (PreparedStatement sel = con.prepareStatement("SELECT id, name, age FROM students")) {
+        try (ResultSet rs = sel.executeQuery()) {
+          while (rs.next()) {
+            System.out.println(rs.getInt("id") + " " + rs.getString("name") + " " + rs.getInt("age"));
+          }
+        }
+      }
+
+      // UPDATE
+      try (PreparedStatement upd = con.prepareStatement("UPDATE students SET age=? WHERE id=?")) {
+        upd.setInt(1, 22);
+        upd.setInt(2, 1);
+        upd.executeUpdate();
+      }
+
+      // DELETE
+      try (PreparedStatement del = con.prepareStatement("DELETE FROM students WHERE id=?")) {
+        del.setInt(1, 2);
+        del.executeUpdate();
+      }
+
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-run" data-codeid="code-crud">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-crud">📋 Copy</button>
+          <div class="meta ml-auto small">Full CRUD • MySQL</div>
+        </div>
+
+        <details class="mt-3"><summary>Show Explanation (key steps)</summary>
+          <ol class="mt-2 small">
+            <li>Use separate <code>PreparedStatement</code> objects for each statement and scope them with try-with-resources.</li>
+            <li>Read with <code>ResultSet</code> and iterate using <code>rs.next()</code>.</li>
+            <li>Always catch <code>SQLException</code> and inspect stacktrace or SQL error codes when debugging.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- Batch Processing -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">Batch Processing & Transactions</h2>
+      <p class="small mt-2">Use batching and transactions for performance and atomicity.</p>
+
+      <div class="code-card mt-3">
+<pre id="code-batch"><code>try (PreparedStatement pst = con.prepareStatement("INSERT INTO students(name, age) VALUES(?, ?)")) {
+  con.setAutoCommit(false);
+  for (int i=1;i<=100;i++) {
+    pst.setString(1, "S"+i);
+    pst.setInt(2, 18 + (i%5));
+    pst.addBatch();
+  }
+  pst.executeBatch();
+  con.commit();
+} catch (SQLException e) {
+  con.rollback();
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-copy" data-codeid="code-batch">📋 Copy</button>
+          <div class="meta ml-auto small">Batch & Transactions</div>
+        </div>
+
+        <details class="mt-3"><summary>Show Explanation</summary>
+          <div class="explain mt-2 small">Turning off auto-commit groups statements; <code>executeBatch()</code> sends them together, reducing network roundtrips. Always rollback on exceptions.</div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ResultSet & Meta -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">ResultSet & ResultSetMetaData (dynamic readers)</h2>
+
+      <div class="code-card mt-3">
+<pre id="code-meta"><code>try (Statement st = con.createStatement();
+     ResultSet rs = st.executeQuery("SELECT * FROM students")) {
+  ResultSetMetaData meta = rs.getMetaData();
+  int cols = meta.getColumnCount();
+  for (int i=1;i<=cols;i++) {
+    System.out.print(meta.getColumnName(i) + "\t");
+  }
+  System.out.println();
+  while (rs.next()) {
+    for (int i=1;i<=cols;i++) System.out.print(rs.getString(i) + "\t");
+    System.out.println();
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-copy" data-codeid="code-meta">📋 Copy</button>
+          <div class="meta ml-auto small">Dynamic result printer</div>
+        </div>
+
+        <details class="mt-3"><summary>Show Explanation</summary>
+          <div class="explain mt-2 small">Meta lets you build generic viewers that print columns regardless of schema. Note: column indices start at 1.</div>
+        </details>
+      </div>
+    </section>
+
+    <!-- SQLException Handling -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">Handling SQL Exceptions</h2>
+      <div class="code-card mt-3">
+<pre id="code-sqlerr"><code>catch (SQLException e) {
+  System.err.println("SQLState: " + e.getSQLState());
+  System.err.println("Error Code: " + e.getErrorCode());
+  System.err.println("Message: " + e.getMessage());
+  Throwable t = e.getCause();
+  while (t != null) { System.err.println("Cause: " + t); t = t.getCause(); }
+}</code></pre>
+
+          <div class="code-meta">
+            <button class="btn btn-copy" data-codeid="code-sqlerr">📋 Copy</button>
+            <div class="meta ml-auto small">Detailed SQLException diagnostics</div>
+          </div>
+
+        <details class="mt-3"><summary>Show Explanation</summary>
+          <div class="explain mt-2 small">Use SQLState and vendor error codes to map error conditions. For production, log errors and show user-friendly messages instead of raw traces.</div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Mini Project: MySQL + Generic -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">Mini Project — Student Management System (MySQL + Generic)</h2>
+      <p class="small mt-2">Two variants: real MySQL CLI app and generic mock version that runs without a DB (great for demos or offline learners).</p>
+
+      <div class="mt-4">
+        <h3 class="font-semibold">A. MySQL CLI Version (simplified)</h3>
+        <div class="code-card mt-2">
+<pre id="code-project-mysql"><code>import java.sql.*;
+import java.util.Scanner;
+
+public class StudentAppCLI {
+  private static final String URL = "jdbc:mysql://localhost:3306/college?useSSL=false&serverTimezone=UTC";
+  private static final String USER = "root";
+  private static final String PASS = "password";
+
+  public static void main(String[] args) throws Exception {
+    try (Connection con = DriverManager.getConnection(URL,USER,PASS);
+         Scanner sc = new Scanner(System.in)) {
+      System.out.println("1) Add 2) List 3) Delete 4) Exit");
+      while (true) {
+        System.out.print("Choice: ");
+        int c = Integer.parseInt(sc.nextLine());
+        if (c==1) {
+          System.out.print("Name: "); String name = sc.nextLine();
+          System.out.print("Age: "); int age = Integer.parseInt(sc.nextLine());
+          try (PreparedStatement pst = con.prepareStatement("INSERT INTO students(name,age) VALUES(?,?)")) {
+            pst.setString(1,name); pst.setInt(2,age); pst.executeUpdate();
+            System.out.println("Added");
+          }
+        } else if (c==2) {
+          try (PreparedStatement pst = con.prepareStatement("SELECT id,name,age FROM students");
+               ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getInt(3));
+          }
+        } else if (c==3) {
+          System.out.print("ID to delete: "); int id = Integer.parseInt(sc.nextLine());
+          try (PreparedStatement pst = con.prepareStatement("DELETE FROM students WHERE id=?")) {
+            pst.setInt(1,id); int r = pst.executeUpdate();
+            System.out.println(r>0?"Deleted":"Not found");
+          }
+        } else break;
+      }
+    }
+  }
+}</code></pre>
+
+          <div class="code-meta">
+            <button class="btn btn-copy" data-codeid="code-project-mysql">📋 Copy</button>
+            <div class="meta ml-auto small">Project • MySQL CLI</div>
+          </div>
+
+          <details class="mt-3"><summary>Show Explanation</summary>
+            <ol class="mt-2 small">
+              <li>Create table first: <code>CREATE TABLE students (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), age INT);</code></li>
+              <li>Prepared statements are used for insert/select/delete for safety.</li>
+              <li>Good next steps: add update, search by name, or a GUI front-end.</li>
+            </ol>
+          </details>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <h3 class="font-semibold">B. Generic (No-DB) Version — MockDB</h3>
+        <div class="code-card mt-2">
+<pre id="code-project-generic"><code>// MockDB + CLI app — no DB required
+import java.util.*;
+
+class MockDB {
+  static class Student { int id; String name; int age; Student(int i,String n,int a){id=i;name=n;age=a;} }
+  static List<Student> table = new ArrayList<>();
+  static int nextId = 1;
+
+  public static int insert(String name,int age) {
+    Student s = new Student(nextId++, name, age);
+    table.add(s);
+    return s.id;
+  }
+  public static List<Student> selectAll() { return new ArrayList<>(table); }
+  public static boolean delete(int id) { return table.removeIf(s->s.id==id); }
+}
+
+public class StudentAppMock {
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    System.out.println("1) Add 2) List 3) Delete 4) Exit");
+    while(true) {
+      System.out.print("Choice: ");
+      int c = Integer.parseInt(sc.nextLine());
+      if (c==1) {
+        System.out.print("Name: "); String name = sc.nextLine();
+        System.out.print("Age: "); int age = Integer.parseInt(sc.nextLine());
+        int id = MockDB.insert(name, age);
+        System.out.println("Added id=" + id);
+      } else if (c==2) {
+        MockDB.selectAll().forEach(s -> System.out.println(s.id + " " + s.name + " " + s.age));
+      } else if (c==3) {
+        System.out.print("ID to delete: "); int id = Integer.parseInt(sc.nextLine());
+        boolean ok = MockDB.delete(id);
+        System.out.println(ok ? "Deleted":"Not found");
+      } else break;
+    }
+  }
+}</code></pre>
+
+          <div class="code-meta">
+            <button class="btn btn-copy" data-codeid="code-project-generic">📋 Copy</button>
+            <div class="meta ml-auto small">Project • Generic (No DB)</div>
+          </div>
+
+          <details class="mt-3"><summary>Show Explanation</summary>
+            <div class="explain mt-2 small">This mock version mirrors JDBC operations: insert returns a generated id, select returns rows, delete removes by id — great for offline teaching or testing logic before adding a DB.</div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Concept Comparison Table -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">Concept Comparison: JDBC vs Hibernate vs Spring Data</h2>
+      <table class="mt-3">
+        <tr><th>Aspect</th><th>JDBC</th><th>Hibernate (ORM)</th><th>Spring Data</th></tr>
+        <tr><td>Level</td><td>Low-level SQL</td><td>High-level OOP mapping</td><td>Repository abstraction over ORM/NoSQL</td></tr>
+        <tr><td>SQL Control</td><td>Full control</td><td>Abstracted (HQL/native if needed)</td><td>Less SQL — method names or @Query</td></tr>
+        <tr><td>Boilerplate</td><td>High (manual mapping)</td><td>Low (automated mapping)</td><td>Very low (repositories)</td></tr>
+        <tr><td>Use-case</td><td>Performance-critical, custom SQL</td><td>Complex domains, caching</td><td>Rapid development, CRUD apps</td></tr>
+      </table>
+      <details class="mt-3"><summary>Show Recommendation</summary>
+        <div class="explain mt-2 small">Use JDBC for direct control and performance-sensitive queries. Use Hibernate when you want an object-centric model. Use Spring Data for quick CRUD and repository patterns with minimal boilerplate.</div>
+      </details>
+    </section>
+
+    <!-- Practice & Quiz -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">Practice Tasks & Quick Quiz</h2>
+      <ol class="ml-6 mt-2 small">
+        <li>Create <code>students</code> table and insert 10 records; print students older than 20.</li>
+        <li>Enhance the mock app to update student names by id.</li>
+        <li>Implement transaction around multiple inserts and rollback on error.</li>
+      </ol>
+
+      <div class="mt-4 small">
+        <p class="font-semibold">Q1. Which method returns number of rows affected by INSERT/UPDATE/DELETE?</p>
+        <label><input type="radio" name="jq1" value="A"> A. executeQuery()</label><br>
+        <label><input type="radio" name="jq1" value="B"> B. executeUpdate()</label><br>
+
+        <p class="font-semibold mt-3">Q2. Which class represents a DB connection?</p>
+        <label><input type="radio" name="jq2" value="A"> A. DriverManager</label><br>
+        <label><input type="radio" name="jq2" value="B"> B. Connection</label><br>
+
+        <div class="mt-3">
+          <button id="check-quiz" class="btn btn-run">Check</button>
+          <button id="reset-quiz" class="btn btn-copy">Reset</button>
+          <div id="quiz-result" class="mt-3 font-semibold"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+    <!-- Footer -->
+    <footer>
+      <p class="small">© 2025 KnowledgeStream — JDBC & Database Connectivity. Want a ZIP of .java files, a printable PDF, or a MySQL setup guide? Ask and I’ll generate them.</p>
+    </footer>
+  </main>
+
+  <div id="toast">Copied & opened JDoodle — paste (Ctrl+V) and run</div>
+
+  <script>
+    // helpers
+    function toggle(id){ const el=document.getElementById(id); if(!el) return; el.classList.toggle('hidden'); }
+    function showToast(msg){
+      const t = document.getElementById('toast'); t.textContent = msg; t.style.display='block';
+      setTimeout(()=> t.style.display='none', 3000);
+    }
+
+    // Copy & Run behavior
+    const JDoodleURL = 'https://www.jdoodle.com/online-java-compiler/';
+
+    document.querySelectorAll('.btn-copy').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const id = btn.getAttribute('data-codeid');
+        let codeEl = id ? document.getElementById(id) : btn.closest('.code-card')?.querySelector('pre');
+        if(!codeEl) codeEl = btn.closest('.card')?.querySelector('pre');
+        const text = codeEl ? codeEl.innerText : '';
+        if(!text){ showToast('No code found'); return; }
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast('Code copied to clipboard');
+        } catch(e){
+          const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); ta.remove();
+          showToast('Code copied (fallback)');
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-run').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const id = btn.getAttribute('data-codeid');
+        const pre = id ? document.getElementById(id) : btn.closest('.card')?.querySelector('pre');
+        const text = pre ? pre.innerText : '';
+        if(!text){ showToast('No code found'); return; }
+        try {
+          await navigator.clipboard.writeText(text);
+          window.open(JDoodleURL, '_blank');
+          showToast('Copied & opened JDoodle — paste (Ctrl+V) and run');
+        } catch(e){
+          window.open(JDoodleURL, '_blank');
+          alert('Copied (fallback). Paste into JDoodle and run.');
+        }
+      });
+    });
+
+    // Quiz
+    (function(){
+      const answers = { jq1: 'B', jq2: 'B' };
+      document.getElementById('check-quiz').addEventListener('click', ()=>{
+        let total=0, score=0;
+        for(const k in answers){
+          total++;
+          const sel = document.querySelector('input[name="'+k+'"]:checked');
+          if(sel && sel.value === answers[k]) score++;
+        }
+        const res = document.getElementById('quiz-result');
+        res.textContent = 'Score: ' + score + ' / ' + total;
+        const expl = document.createElement('div'); expl.className='small mt-2';
+        expl.innerHTML = '<ul><li>Q1: B — <code>executeUpdate()</code> returns affected rows.</li><li>Q2: B — <code>Connection</code> represents the DB connection.</li></ul>';
+        const old = document.getElementById('quiz-expl'); if(old) old.remove();
+        expl.id='quiz-expl'; res.appendChild(expl);
+      });
+      document.getElementById('reset-quiz').addEventListener('click', ()=>{
+        ['jq1','jq2'].forEach(n => { document.querySelectorAll('input[name="'+n+'"]').forEach(i=>i.checked=false); });
+        document.getElementById('quiz-result').textContent=''; const old=document.getElementById('quiz-expl'); if(old) old.remove();
+      });
+    })();
+  </script>
+</body>
+</html>

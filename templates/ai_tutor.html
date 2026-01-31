@@ -1,0 +1,1177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Navindhu AI — Hybrid Premium (Optimized)</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Minimal CSS (no heavy Tailwind runtime) -->
+  <style>
+    :root{
+      --bg:#f6f8fb; --panel:#ffffff; --muted:#6b7280; --accent:#0f172a; --accent-2:#6366f1;
+      --glass: rgba(255,255,255,0.6);
+      --card-shadow: 0 8px 30px rgba(16,24,40,0.06);
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Roboto,'Segoe UI';background:var(--bg);color:var(--accent);-webkit-font-smoothing:antialiased;}
+    .app{height:100vh;display:flex;gap:18px;padding:18px;box-sizing:border-box;align-items:stretch;min-width:320px;overflow:hidden}
+    /* Sidebar */
+    .sidebar{width:300px;background:linear-gradient(180deg,var(--panel),#fbfdff);border-radius:12px;padding:16px;border:1px solid rgba(15,23,42,0.04);box-shadow:var(--card-shadow);flex-shrink:0;display:flex;flex-direction:column;gap:14px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),#4f46e5);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px}
+    .muted{color:var(--muted)}
+    .seg{display:flex;gap:6px;border-radius:999px;padding:4px;background:transparent}
+    .seg button{border-radius:999px;padding:6px 10px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-weight:600}
+    .seg button.active{background:linear-gradient(90deg,var(--accent-2),#4f46e5);color:#fff}
+    .panel{background:linear-gradient(180deg,var(--panel),#fff);border-radius:10px;padding:12px;border:1px solid rgba(15,23,42,0.04);box-shadow:var(--card-shadow)}
+    .history{display:flex;flex-direction:column;gap:8px;overflow:auto}
+    .history-item{padding:10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
+    .history-item:hover{background:#f1f5ff}
+    .small{font-size:.84rem;color:var(--muted)}
+    /* Main */
+    .main{flex:1;display:flex;flex-direction:column;gap:12px;min-width:0;overflow:hidden}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn-ghost{background:transparent;border:1px solid rgba(15,23,42,0.04);color:var(--muted)}
+    .btn-primary{background:linear-gradient(90deg,var(--accent-2),#4f46e5);color:#fff}
+    .content{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:stretch;min-height:0;overflow:hidden}
+    .left-col{display:flex;flex-direction:column;gap:12px;overflow:hidden}
+    .preview{height:200px;border-radius:10px;border:1px dashed rgba(15,23,42,0.06);display:flex;align-items:center;justify-content:center;background:#fff;overflow:hidden}
+    /* Chat column */
+    .chat-col{display:flex;flex-direction:column;gap:12px;height:100%;min-height:0}
+    .chat-window{flex:1;overflow:auto;border-radius:12px;padding:16px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(15,23,42,0.03);min-height:0;display:flex;flex-direction:column;gap:8px}
+    /* Virtualized message list container */
+    .msg-list{display:flex;flex-direction:column;gap:12px;min-height:0}
+    .msg{max-width:75%;padding:12px 14px;border-radius:14px;word-wrap:break-word;white-space:pre-wrap;line-height:1.45;box-shadow:0 6px 18px rgba(16,24,40,0.04)}
+    .msg.bot{background:#f3f6fb;color:var(--accent)}
+    .msg.user{margin-left:auto;background:linear-gradient(90deg,#10b981,#059669);color:#03291d}
+    .meta{font-size:.78rem;color:var(--muted);margin-bottom:6px}
+    /* Composer */
+    .composer{display:flex;gap:8px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg,var(--panel),#fff);border:1px solid rgba(15,23,42,0.04);flex-shrink:0}
+    .input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);min-width:0}
+    .icon-btn{width:44px;height:44px;border-radius:10px;border:0;background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+    .small-muted{font-size:0.82rem;color:var(--muted)}
+    .kbd{background:#f3f4f6;padding:2px 6px;border-radius:6px;font-weight:600;font-size:.82rem}
+    /* Responsive */
+    @media (max-width:1024px){ .app{padding:10px} .sidebar{display:none} .content{grid-template-columns:1fr} .left-col{order:2} .chat-col{order:1} }
+    /* subtle animations */
+    .fade-in{animation:fadeIn .28s ease both}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    /* compact controls row */
+    .controls-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .pill{padding:6px 10px;border-radius:999px;border:1px solid rgba(15,23,42,0.04);background:transparent;font-weight:600;color:var(--muted);cursor:pointer}
+    /* upload progress */
+    .progress-wrap{width:220px;height:12px;border-radius:999px;overflow:hidden;background:#eef2ff;border:1px solid rgba(15,23,42,0.03)}
+    .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent-2),#4f46e5)}
+    /* compact summary cards */
+    .summary-card{padding:10px;border-radius:10px;border:1px solid rgba(15,23,42,0.03);background:linear-gradient(180deg,#fff,#fbfdff)}
+    /* small helpers */
+    .muted-sm{font-size:.8rem;color:var(--muted)}
+    .toggle{display:inline-flex;align-items:center;gap:8px}
+  </style>
+</head>
+
+
+<header class="bg-black/80 backdrop-blur-lg text-white sticky top-0 z-50 shadow-xl border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-8 py-6 flex items-center justify-between">
+
+        <!-- LOGO -->
+        <a href="{% url 'index' %}"
+           class="text-4xl font-extrabold tracking-tight text-sky-400 hover:text-sky-300 transition">
+            KnowledgeStream
+        </a>
+
+        <!-- NAVIGATION -->
+        <nav class="hidden md:flex items-center gap-10 text-lg font-medium">
+
+            <a href="{% url 'index' %}" class="hover:text-sky-400 transition">
+                Home
+            </a>
+
+            <a href="{% url 'categories' %}" class="hover:text-sky-400 transition">
+                Categories
+            </a>
+
+            <a href="{% url 'ai_tutor' %}" class="hover:text-sky-400 transition">
+                AI Chat
+            </a>
+
+            <!-- 🎤 AI INTERVIEW CTA -->
+            <a href="{% url 'interview' %}">
+                <button
+                    class="bg-gradient-to-r from-indigo-500 to-indigo-600
+                           hover:from-indigo-600 hover:to-indigo-700
+                           text-white font-extrabold
+                           px-6 py-3 rounded-2xl
+                           shadow-lg hover:shadow-indigo-500/40
+                           transition transform hover:scale-105">
+                    🎤 Start AI Interview
+                </button>
+            </a>
+
+            <a href="{% url 'dashboard' %}" class="hover:text-sky-400 transition">
+                Dashboard
+            </a>
+
+            <a href="{% url 'my_profile' %}" class="hover:text-sky-400 transition">
+                Profile
+            </a>
+
+            <a href="{% url 'contact' %}" class="hover:text-sky-400 transition">
+                Contact
+            </a>
+
+        </nav>
+    </div>
+</header>
+<style>
+
+/* ===============================
+   PROFESSIONAL HEADER STYLING
+   =============================== */
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* Container */
+header .header-container {
+    max-width: 1280px;
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 22px 32px;
+}
+
+/* Logo */
+header .logo {
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: #38bdf8;
+    letter-spacing: -0.5px;
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+header .logo:hover {
+    color: #7dd3fc;
+}
+
+/* Navigation */
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 38px;
+}
+
+/* Nav links */
+header nav a {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #e5e7eb;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.25s ease;
+}
+
+/* Underline animation */
+header nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0%;
+    height: 2px;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    transition: width 0.3s ease;
+}
+
+header nav a:hover {
+    color: #38bdf8;
+}
+
+header nav a:hover::after {
+    width: 100%;
+}
+
+/* CTA Button (AI Interview) */
+header .cta-btn {
+    padding: 12px 26px;
+    border-radius: 18px;
+
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border: none;
+
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(99,102,241,0.35);
+    transition: all 0.3s ease;
+}
+
+header .cta-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 18px 45px rgba(99,102,241,0.55);
+}
+
+/* Responsive (mobile) */
+@media (max-width: 768px) {
+    header nav {
+        display: none;
+    }
+
+    header .logo {
+        font-size: 2rem;
+    }
+}
+</style>
+<body>
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" aria-label="Navindhu AI sidebar">
+    <div class="brand">
+      <div class="logo">NA</div>
+      <div>
+        <div style="font-weight:800;">Navindhu AI</div>
+        <div class="small muted">Tutor • File Reader • Voice</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="small muted">Model</div>
+      <div style="margin-top:8px" class="seg" id="modelSeg">
+        <button data-model="gpt-4" class="active">GPT-4</button>
+        <button data-model="gpt-3.5">GPT-3.5</button>
+        <button data-model="local">Local</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="small muted">Controls</div>
+      <div style="margin-top:8px" class="controls-row">
+        <button id="themeBtn" class="pill">Theme</button>
+        <button id="voiceToggle" class="pill">Voice: On</button>
+        <button id="newChatBtn" class="pill">New Chat</button>
+      </div>
+
+      <div style="margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="small muted">Wake Assistant</div>
+          <button id="wakeBtn" class="btn btn-primary">Enable</button>
+        </div>
+        <div id="wakeStatus" class="small-muted" style="margin-top:8px">Wake assistant: Off</div>
+        <div class="muted-sm" style="margin-top:6px">Wake phrase: <strong>"Hey Naveen"</strong></div>
+      </div>
+    </div>
+
+    <div class="panel" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div class="small muted">History</div>
+      <div id="history" class="history" style="margin-top:10px;overflow:auto"></div>
+      <div class="muted-sm" style="margin-top:10px">Stored in IndexedDB (fast & safe)</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" role="main">
+    <div class="topbar">
+      <div style="display:flex;gap:10px;align-items:center">
+        <label class="btn btn-ghost" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+          <input id="fileInput" type="file" accept=".pdf,.txt,.html,.png,.jpg,.jpeg" style="display:none">
+          <span id="fileLabel">Upload</span>
+        </label>
+        <button id="uploadBtn" class="btn btn-primary">Upload & Analyze</button>
+        <button id="previewBtn" class="btn btn-ghost">Preview</button>
+        <button id="debugBtn" class="btn btn-ghost">Debug Preview</button>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center">
+        <div id="uploadStatus" class="small-muted">No file processed</div>
+        <div style="display:flex;align-items:center">
+          <div class="progress-wrap" id="progressWrap" style="display:none"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- LEFT: Summary & Preview -->
+      <div class="left-col">
+        <div class="panel" style="overflow:hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong>Section-wise Summary</strong>
+            <div class="small muted">Auto</div>
+          </div>
+          <div id="summaryArea" style="margin-top:8px;overflow:auto;max-height:36vh;padding-right:6px">
+            <div class="summary-card small-muted">No summary yet.</div>
+          </div>
+        </div>
+
+        <div class="panel" style="overflow:hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong>Preview / PDF</strong>
+            <div class="small muted">Preview</div>
+          </div>
+          <div id="previewArea" class="preview" style="margin-top:8px">
+            <div class="small-muted">No preview selected</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong>Books</strong>
+            <div class="small muted">Local KB</div>
+          </div>
+          <select id="bookSelect" style="margin-top:8px;padding:8px;border-radius:8px;border:1px solid rgba(15,23,42,0.04);width:100%;background:transparent">
+            <option value="none">— Ask from file / choose book —</option>
+          </select>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <button id="fullAnswerBtn" class="pill">Full Answer</button>
+            <div class="muted-sm">Use to request textbook-style answer</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Chat -->
+      <div class="chat-col">
+        <div class="chat-window" id="chatWindow" aria-live="polite">
+          <div id="msgList" class="msg-list"></div>
+          <div id="olderLoader" style="text-align:center;padding:8px"><button id="loadOlderBtn" class="pill">Load older messages</button></div>
+        </div>
+
+        <div class="composer">
+          <button id="micBtn" class="icon-btn" title="Record">🎤</button>
+          <input id="question" class="input" placeholder="Ask something (file, book or general). Press Enter to send" aria-label="Question input">
+          <button id="askBtn" class="btn btn-primary">Ask</button>
+          <button id="readBtn" class="btn btn-ghost">🔊</button>
+          <button id="stopBtn" class="btn btn-ghost">🛑</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- SCRIPT: Optimized client logic --><script>
+/* ==============
+   CONFIG
+   ============== */
+/* NOTE: important — endpoints MUST include trailing slash to match Django urls.py */
+const API_BASE = "http://127.0.0.1:8000/api";
+const API = {
+  upload: API_BASE + "/upload/",
+  chat: API_BASE + "/chat/",
+  ask: API_BASE + "/ask/",
+  askBook: API_BASE + "/ask-book/",
+  askBookTopic: API_BASE + "/ask-book-topic/",
+  books: API_BASE + "/books/",
+  profile: API_BASE + "/profile/",
+  markChapter: API_BASE + "/mark-chapter-complete/"
+};
+
+const DB_NAME = "navindhu_db_v1";
+const DB_STORE = "chats";
+const VISIBLE_MSG_LIMIT = 30;
+const CHUNK_LOAD = 20;
+
+/* ==============
+   STATE
+   ============== */
+let selectedModel = 'gpt-4';
+let voiceEnabled = true;
+let wakeEnabled = false;
+let currentFile = null;
+let lastProcessedFileId = null;
+let fullAnswerRequested = false;
+let currentChatId = null;
+let db = null;
+let chatCache = {};
+let recognition = null;
+let supportsSpeech = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+
+/* ==============
+   DOM refs
+   ============== */
+const fileInput = document.getElementById('fileInput');
+const fileLabel = document.getElementById('fileLabel');
+const uploadBtn = document.getElementById('uploadBtn');
+const previewBtn = document.getElementById('previewBtn');
+const debugBtn = document.getElementById('debugBtn');
+const uploadStatus = document.getElementById('uploadStatus');
+const progressWrap = document.getElementById('progressWrap');
+const progressFill = document.getElementById('progressFill');
+const summaryArea = document.getElementById('summaryArea');
+const previewArea = document.getElementById('previewArea');
+const bookSelect = document.getElementById('bookSelect');
+const fullAnswerBtn = document.getElementById('fullAnswerBtn');
+const modelSeg = document.getElementById('modelSeg');
+const wakeBtn = document.getElementById('wakeBtn');
+const wakeStatus = document.getElementById('wakeStatus');
+const historyDom = document.getElementById('history');
+const msgList = document.getElementById('msgList');
+const questionInput = document.getElementById('question');
+const askBtn = document.getElementById('askBtn');
+const micBtn = document.getElementById('micBtn');
+const readBtn = document.getElementById('readBtn');
+const stopBtn = document.getElementById('stopBtn');
+const loadOlderBtn = document.getElementById('loadOlderBtn');
+
+/* ==============
+   IndexedDB
+   ============== */
+function idbOpen(){
+  return new Promise((resolve, reject) => {
+    const r = indexedDB.open(DB_NAME, 1);
+    r.onupgradeneeded = e => {
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(DB_STORE)){
+        db.createObjectStore(DB_STORE, { keyPath: 'id' });
+      }
+    };
+    r.onsuccess = () => { db = r.result; resolve(db); };
+    r.onerror = () => reject(r.error);
+  });
+}
+
+function idbPut(obj){
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(DB_STORE,'readwrite');
+    const st = tx.objectStore(DB_STORE);
+    const req = st.put(obj);
+    req.onsuccess = ()=> resolve(req.result);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+function idbGetAll(){
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(DB_STORE,'readonly');
+    const st = tx.objectStore(DB_STORE);
+    const req = st.getAll();
+    req.onsuccess = ()=> resolve(req.result);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+function idbGet(id){
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(DB_STORE,'readonly');
+    const st = tx.objectStore(DB_STORE);
+    const req = st.get(id);
+    req.onsuccess = ()=> resolve(req.result);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+/* ==============
+   Sanitizer
+   ============== */
+function sanitizeHtml(raw){
+  if(!raw) return '';
+  raw = raw.replace(/\b(read above|see above|refer above|mentioned above|as above)\b/ig, '');
+  raw = raw.replace(/\n{2,}/g, '\n\n');
+  return raw;
+}
+
+/* ==============
+   Virtualized Chat Renderer
+   ============== */
+function renderVisibleMessages(chatId){
+  const cache = chatCache[chatId];
+  if(!cache) return;
+  const msgs = cache.messages || [];
+
+  const start = Math.max(0, msgs.length - VISIBLE_MSG_LIMIT);
+  const slice = msgs.slice(start);
+
+  msgList.innerHTML = '';
+
+  slice.forEach(m => {
+    const node = document.createElement('div');
+    node.className = 'msg fade-in ' + (m.role === 'user' ? 'user' : 'bot');
+
+    if(m.role !== 'user' && m.meta?.section){
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.textContent = `From: ${m.meta.section}`;
+      node.appendChild(meta);
+    }
+
+    const body = document.createElement('div');
+    body.innerHTML = m.role === 'assistant' ? m.text : sanitizeHtml(m.text);
+
+    node.appendChild(body);
+    msgList.appendChild(node);
+  });
+
+  setTimeout(()=> {
+    const cw = document.querySelector('.chat-window');
+    if(cw) cw.scrollTop = cw.scrollHeight;
+  }, 50);
+}
+
+/* ==============
+   Append message (with typing animation)
+   ============== */
+async function appendMessage(chatId, role, text, meta){
+  if(!db) await idbOpen();
+  let entry = await idbGet(chatId);
+  if(!entry) entry = { id: chatId, messages: [] };
+
+  const msg = {
+    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36),
+    role,
+    text,
+    meta: meta || {},
+    time: Date.now()
+  };
+
+  entry.messages.push(msg);
+  if(entry.messages.length > 500) entry.messages = entry.messages.slice(-500);
+
+  await idbPut(entry);
+  chatCache[chatId] = { messages: entry.messages };
+
+  if(role === 'user'){
+    renderVisibleMessages(chatId);
+    return;
+  }
+
+  // Assistant: animate
+  const bubble = createTypingMessageBubble();
+  typeWriterEffect(bubble, text, 12, () => {
+    renderVisibleMessages(chatId);
+  });
+}
+
+/* ==============
+   Typing Bubble + Animation
+   ============== */
+function createTypingMessageBubble() {
+    const node = document.createElement('div');
+    node.className = 'msg fade-in bot';
+
+    const body = document.createElement('div');
+    body.className = 'typing-output';
+    body.style.whiteSpace = "pre-wrap";
+    node.appendChild(body);
+
+    msgList.appendChild(node);
+    const cw = document.querySelector('.chat-window');
+    if (cw) cw.scrollTop = cw.scrollHeight;
+
+    return body;
+}
+
+function typeWriterEffect(element, fullText, speed = 12, callback = null) {
+    let i = 0;
+
+    function type() {
+        if (i < fullText.length) {
+            element.innerHTML += fullText[i];
+            i++;
+            element.scrollTop = element.scrollHeight;
+            setTimeout(type, speed);
+        } else {
+            callback && callback();
+        }
+    }
+
+    type();
+}
+
+/* ==============
+   Load or Start Chat
+   ============== */
+async function ensureChat(){
+  if(!db) await idbOpen();
+  if(currentChatId) return currentChatId;
+
+  currentChatId = 'chat-'+Date.now().toString(36);
+  await idbPut({ id: currentChatId, title: 'New chat', messages: [] });
+
+  chatCache[currentChatId] = { messages: [] };
+  renderHistoryList();
+  return currentChatId;
+}
+
+/* ==============
+   History Sidebar
+   ============== */
+async function renderHistoryList(){
+  if(!db) await idbOpen();
+  const all = await idbGetAll();
+
+  all.sort((a,b)=>{
+    const ta = a.messages?.length ? a.messages[a.messages.length-1].time : 0;
+    const tb = b.messages?.length ? b.messages[b.messages.length-1].time : 0;
+    return tb - ta;
+  });
+
+  historyDom.innerHTML = '';
+
+  all.slice(0,40).forEach(item=>{
+    const el = document.createElement('div');
+    el.className = 'history-item';
+    el.onclick = () => {
+      currentChatId = item.id;
+      chatCache[item.id] = { messages: item.messages || [] };
+      renderVisibleMessages(item.id);
+    };
+
+    const left = document.createElement('div');
+    left.style.flex='1';
+    const title = item.title || ('Chat • ' + new Date(item.messages?.at(-1)?.time || Date.now()).toLocaleString());
+    const snippet = item.messages?.length ? item.messages.at(-1).text.slice(0,80) : 'No messages';
+
+    left.innerHTML = `<div style="font-weight:700">${title}</div><div class="small muted">${snippet}</div>`;
+
+    const right = document.createElement('div');
+
+    const openBtn = document.createElement('button');
+    openBtn.className='pill';
+    openBtn.textContent='Open';
+    openBtn.onclick = e => {
+      e.stopPropagation();
+      currentChatId = item.id;
+      chatCache[item.id] = { messages: item.messages || [] };
+      renderVisibleMessages(item.id);
+    };
+
+    const delBtn = document.createElement('button');
+    delBtn.className='pill';
+    delBtn.textContent='Delete';
+    delBtn.onclick = async e => {
+      e.stopPropagation();
+      if(!confirm('Delete this chat?')) return;
+      const tx = db.transaction(DB_STORE,'readwrite');
+      tx.objectStore(DB_STORE).delete(item.id);
+      tx.oncomplete = renderHistoryList;
+    };
+
+    right.appendChild(openBtn);
+    right.appendChild(delBtn);
+
+    el.appendChild(left);
+    el.appendChild(right);
+
+    historyDom.appendChild(el);
+  });
+}
+
+/* ==============
+   Load Older Messages
+   ============== */
+function loadOlder(){
+  if(!currentChatId) return;
+
+  const cache = chatCache[currentChatId];
+  if(!cache) return;
+
+  const msgs = cache.messages;
+  if(msgs.length <= VISIBLE_MSG_LIMIT){
+    alert("No older messages available.");
+    return;
+  }
+
+  const start = Math.max(0, msgs.length - VISIBLE_MSG_LIMIT - CHUNK_LOAD);
+  const slice = msgs.slice(start, msgs.length - VISIBLE_MSG_LIMIT);
+
+  slice.reverse().forEach(m=>{
+    const node = document.createElement('div');
+    node.className = 'msg fade-in ' + (m.role==='user'?'user':'bot');
+
+    if(m.role!=='user' && m.meta?.section){
+      const meta = document.createElement('div');
+      meta.className='meta';
+      meta.textContent = `From: ${m.meta.section}`;
+      node.appendChild(meta);
+    }
+
+    const body = document.createElement('div');
+    body.innerHTML = m.role==='assistant'?m.text:sanitizeHtml(m.text);
+
+    node.appendChild(body);
+    msgList.insertBefore(node, msgList.firstChild);
+  });
+}
+
+/* ==============
+   Ask Server
+   ============== */
+async function askServer(question){
+  if(!question) return;
+
+  await ensureChat();
+  appendMessage(currentChatId, 'user', question);
+
+  showTyping();
+
+  try{
+    const book = bookSelect.value;
+
+    /* Book ask */
+    if(book && book !== 'none'){
+      const body = { subject: book, question, full: fullAnswerRequested };
+      const r = await fetch(API.askBook, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(body)
+      });
+      const j = await r.json();
+      hideTyping();
+      appendMessage(currentChatId,'assistant', j.answer || 'No answer.', {section:j.section || book});
+      if(voiceEnabled) speak(stripTags(j.answer));
+      return;
+    }
+
+    /* File ask */
+    if(lastProcessedFileId){
+      const body = { fileId:lastProcessedFileId, question, model:selectedModel, full:fullAnswerRequested };
+      const r = await fetch(API.ask, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(body)
+      });
+      const j = await r.json();
+      hideTyping();
+      appendMessage(currentChatId,'assistant', j.answer || 'No answer.', {section:j.section || 'file'});
+      if(voiceEnabled) speak(stripTags(j.answer));
+      return;
+    }
+
+    /* Friendly chat */
+    const r = await fetch(API.chat, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ question, refreshNews:false })
+    });
+    const j = await r.json();
+
+    if(j.answer?.trim()){
+      hideTyping();
+      appendMessage(currentChatId,'assistant', j.answer, {section:j.source || 'assistant'});
+      if(voiceEnabled) speak(stripTags(j.answer));
+      return;
+    }
+
+    /* Fallback */
+    const r2 = await fetch(API.ask, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ question, model:selectedModel, full:fullAnswerRequested })
+    });
+    const j2 = await r2.json();
+    hideTyping();
+    appendMessage(currentChatId,'assistant', j2.answer || 'No answer.', {section:j2.section || j2.source || 'fallback'});
+    if(voiceEnabled) speak(stripTags(j2.answer));
+
+  } catch(e){
+    hideTyping();
+    appendMessage(currentChatId,'assistant','❌ Error answering. Check server.');
+  }
+}
+
+/* ==============
+   Typing Indicator
+   ============== */
+let typingElem = null;
+function showTyping(){
+  if(typingElem) return;
+  typingElem = document.createElement('div');
+  typingElem.className = 'msg bot';
+  typingElem.innerHTML = '<div class="small-muted">Navindhu is thinking…</div>';
+  msgList.appendChild(typingElem);
+}
+function hideTyping(){
+  typingElem?.remove();
+  typingElem = null;
+}
+
+/* ==============
+   TTS
+   ============== */
+let utter = null;
+
+function speak(text){
+  if(!text || !('speechSynthesis' in window)) return;
+  stopSpeak();
+
+  try{
+    const u = new SpeechSynthesisUtterance(stripTags(text));
+    u.lang = 'en-IN';
+    utter = u;
+    speechSynthesis.speak(u);
+    u.onend = ()=> utter=null;
+  }catch{}
+}
+
+function stopSpeak(){
+  try{
+    speechSynthesis.cancel();
+    utter = null;
+  }catch{}
+}
+
+function stripTags(s){
+  return (s||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+}
+
+/* ==============
+   File Upload & Preview
+   ============== */
+fileInput.addEventListener('change', e=>{
+  currentFile = e.target.files[0];
+  fileLabel.textContent = currentFile ? currentFile.name : 'Upload';
+  if(currentFile) showClientPreview(currentFile);
+});
+
+function showClientPreview(file){
+  previewArea.innerHTML = '';
+  const ext = file.name.split('.').pop().toLowerCase();
+
+  if(ext === 'pdf'){
+    previewArea.textContent = 'PDF ready. Click Preview.';
+    return;
+  }
+
+  if(['png','jpg','jpeg','gif'].includes(ext)){
+    const img = document.createElement('img');
+    img.style.maxWidth='100%';
+    img.style.maxHeight='100%';
+    img.src = URL.createObjectURL(file);
+    previewArea.appendChild(img);
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const pre = document.createElement('div');
+    pre.style.whiteSpace='pre-wrap';
+    pre.textContent = ev.target.result.slice(0,5000);
+    previewArea.appendChild(pre);
+  };
+  reader.readAsText(file);
+}
+
+previewBtn.addEventListener('click', ()=>{
+  if(!currentFile) return alert("Choose a file.");
+  const ext = currentFile.name.split('.').pop().toLowerCase();
+
+  if(ext === 'pdf'){
+    previewArea.innerHTML = `<iframe src="${URL.createObjectURL(currentFile)}"
+                             style="width:100%;height:100%;border:0;"></iframe>`;
+    return;
+  }
+
+  showClientPreview(currentFile);
+});
+
+uploadBtn.addEventListener('click', ()=>{
+  if(!currentFile) return alert("No file selected.");
+
+  uploadStatus.textContent='Uploading…';
+  progressWrap.style.display='inline-block';
+  progressFill.style.width='0%';
+
+  const form = new FormData();
+  form.append('file', currentFile);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', API.upload);
+
+  xhr.upload.onprogress = e=>{
+    if(e.lengthComputable){
+      progressFill.style.width = (e.loaded/e.total*100)+'%';
+    }
+  };
+
+  xhr.onload = async ()=>{
+    progressWrap.style.display='none';
+
+    if(xhr.status !== 200){
+      uploadStatus.textContent='Upload failed';
+      return;
+    }
+
+    const j = JSON.parse(xhr.responseText);
+
+    lastProcessedFileId = j.fileId;
+    uploadStatus.textContent='File processed';
+
+    renderSummaryHtml(j.keyPointsHtml || j.summary || '');
+
+    await ensureChat();
+    appendMessage(currentChatId,'assistant','📘 File processed. Ask now.', {section:'file'});
+  };
+
+  xhr.onerror = ()=>{
+    progressWrap.style.display='none';
+    uploadStatus.textContent='Upload error';
+  };
+
+  xhr.send(form);
+});
+
+function renderSummaryHtml(html){
+  if(!html){
+    summaryArea.innerHTML='<div class="summary-card small-muted">No summary.</div>';
+    return;
+  }
+
+  try{
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    const ul = tmp.querySelector('ul');
+
+    if(!ul){
+      summaryArea.innerHTML = sanitizeHtml(html);
+      return;
+    }
+
+    summaryArea.innerHTML='';
+    Array.from(ul.querySelectorAll('li')).slice(0,10).forEach(li=>{
+      const c = document.createElement('div');
+      c.className='summary-card';
+      c.textContent = li.textContent.trim();
+      summaryArea.appendChild(c);
+    });
+
+  }catch{
+    summaryArea.innerHTML = sanitizeHtml(html);
+  }
+}
+
+/* ==============
+   Books
+   ============== */
+async function loadBooks(){
+  try{
+    const r = await fetch(API.books);
+    const j = await r.json();
+    bookSelect.innerHTML = '<option value="none">— Ask from file / choose book —</option>';
+    Object.keys(j.books || {}).forEach(s=>{
+      const o = document.createElement('option');
+      o.value=s;
+      o.textContent=s.charAt(0).toUpperCase()+s.slice(1);
+      bookSelect.appendChild(o);
+    });
+  }catch{
+    bookSelect.innerHTML='<option value="none">— Ask from file / choose book —</option>';
+  }
+}
+
+/* ==============
+   UI Actions
+   ============== */
+modelSeg.addEventListener('click', e=>{
+  const b = e.target.closest('button[data-model]');
+  if(!b) return;
+  modelSeg.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  selectedModel = b.dataset.model;
+});
+
+fullAnswerBtn.addEventListener('click', ()=>{
+  fullAnswerRequested = !fullAnswerRequested;
+  fullAnswerBtn.textContent = fullAnswerRequested ? 'Full: ON' : 'Full Answer';
+  fullAnswerBtn.style.background = fullAnswerRequested
+      ? 'linear-gradient(90deg,var(--accent-2),#4f46e5)'
+      : 'transparent';
+});
+
+/* Wake assistant */
+wakeBtn.addEventListener('click', ()=>{
+  if(!wakeEnabled){
+    if(!supportsSpeech) return alert('Speech recognition not supported.');
+    startWakeAssistant();
+  } else {
+    stopWakeAssistant();
+  }
+});
+
+function startWakeAssistant(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return;
+
+  wakeEnabled=true;
+  wakeStatus.textContent='Wake assistant: On — listening';
+  wakeBtn.textContent='Disable';
+
+  const wakeRec = new SR();
+  wakeRec.lang='en-IN';
+
+  wakeRec.onresult = e=>{
+    const t = e.results[0][0].transcript.toLowerCase();
+    if(t.includes('hey naveen') || t.includes('hey navindhu')){
+      startCommandListener();
+    }
+    if(t.includes('stop naveen')){
+      stopWakeAssistant();
+    }
+  };
+
+  wakeRec.onend=()=>{ if(wakeEnabled) wakeRec.start(); };
+  wakeRec.start();
+
+  window._nav_wake_rec = wakeRec;
+}
+
+function stopWakeAssistant(){
+  wakeEnabled=false;
+  wakeStatus.textContent='Wake assistant: Off';
+  wakeBtn.textContent='Enable';
+  try{ window._nav_wake_rec?.stop(); }catch{}
+}
+
+function startCommandListener(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const cmd = new SR();
+  cmd.lang='en-IN';
+
+  cmd.onstart = ()=>{
+    const old = questionInput.placeholder;
+    questionInput.placeholder='Listening…';
+    setTimeout(()=> questionInput.placeholder=old, 8000);
+  };
+
+  cmd.onresult = e=>{
+    const txt = e.results[0][0].transcript.trim();
+    questionInput.value = txt;
+    askBtn.click();
+  };
+
+  cmd.start();
+}
+
+/* Voice input button */
+if(supportsSpeech){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang='en-IN';
+
+  recognition.onresult = e=>{
+    questionInput.value = e.results[0][0].transcript.trim();
+    askBtn.click();
+  };
+
+  micBtn.addEventListener('click', ()=>{
+    try{ recognition.start(); }catch{ alert('Mic permission required.'); }
+  });
+
+}else{
+  micBtn.disabled=true;
+}
+
+/* Ask */
+askBtn.addEventListener('click', ()=>{
+  const q = questionInput.value.trim();
+  if(q) askServer(q);
+  questionInput.value='';
+});
+
+/* Enter = send */
+questionInput.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){
+    e.preventDefault();
+    askBtn.click();
+  }
+});
+
+/* Read last message */
+readBtn.addEventListener('click', ()=>{
+  if(!currentChatId) return;
+  const msgs = chatCache[currentChatId]?.messages || [];
+  for(let i=msgs.length-1;i>=0;i--){
+    if(msgs[i].role==='assistant'){
+      speak(msgs[i].text);
+      return;
+    }
+  }
+  alert("No assistant answer.");
+});
+
+stopBtn.addEventListener('click', stopSpeak);
+
+/* Load older */
+loadOlderBtn.addEventListener('click', loadOlder);
+
+/* Debug preview */
+debugBtn.addEventListener('click', ()=>{
+  previewArea.innerHTML='<img src="/mnt/data/Screenshot 2025-11-17 214532.png" style="max-width:100%;max-height:100%">';
+});
+
+/* ==============
+   INIT
+   ============== */
+(async function init(){
+  try{
+    await idbOpen();
+    await loadBooks();
+    await renderHistoryList();
+
+    const all = await idbGetAll();
+
+    if(all.length === 0){
+      currentChatId='chat-welcome';
+      await idbPut({ id:'chat-welcome', title:'Welcome', messages:[] });
+      chatCache['chat-welcome']={ messages:[] };
+
+      appendMessage('chat-welcome','assistant',
+        `<h2>Welcome to Navindhu AI</h2>
+         <div class="small-muted">
+           Upload a file or choose a book and start asking.  
+           Tap <strong>Full Answer</strong> for detailed answers.  
+           Say "Hey Navindhu" to activate voice assistant.
+         </div>`
+      );
+
+    }else{
+      currentChatId = all[0].id;
+      chatCache[currentChatId]={ messages: all[0].messages };
+      renderVisibleMessages(currentChatId);
+    }
+
+  }catch(e){
+    console.error(e);
+  }
+})();
+
+/* open file dialog */
+document.querySelector('label.btn').addEventListener('click', ()=> fileInput.click());
+
+/* theme toggle */
+document.getElementById('themeBtn').addEventListener('click', ()=>{
+  document.body.classList.toggle('dark');
+});
+
+/* voice toggle */
+document.getElementById('voiceToggle').addEventListener('click', ()=>{
+  voiceEnabled = !voiceEnabled;
+  document.getElementById('voiceToggle').textContent = voiceEnabled ? 'Voice: On' : 'Voice: Off';
+});
+
+/* new chat */
+document.getElementById('newChatBtn').addEventListener('click', async ()=>{
+  currentChatId = 'chat-'+Date.now().toString(36);
+  await idbPut({ id:currentChatId, title:'New chat', messages:[] });
+  chatCache[currentChatId]={ messages:[] };
+  renderVisibleMessages(currentChatId);
+  renderHistoryList();
+});
+</script>
+
+</body>
+</html>

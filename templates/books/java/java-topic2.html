@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Java Topic 2 — Java Basics (Variables, Operators & Control) | KnowledgeStream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+   <style>
+/* --- Light Theme Styles --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap');
+body { font-family: 'Inter', system-ui; background: #f9fafb; color: #1f2937; margin: 0; line-height: 1.65; }
+.container { max-width: 980px; margin: 0 auto; padding: 28px; }
+header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(6px); border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 10;}
+.card { background: #ffffff; border-radius: 12px; padding: 32px; border: 1px solid #d1d5db; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+
+/* Typography & Color */
+h1 { color: #0f172a; font-weight: 800; font-size: 2.5rem; }
+h2 { color: #0284c7; font-size: 1.75rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-top: 32px; font-weight: 700; }
+h3 { color: #1d4ed8; font-size: 1.25rem; margin-top: 20px; font-weight: 600; }
+.muted { color: #6b7280; font-size: 0.95rem; }
+
+/* Code Styles */
+pre { background: #f3f4f6; padding: 18px; border-radius: 8px; overflow-x: auto; color: #1f2937; font-family: 'Roboto Mono', monospace; font-size: 0.9rem; border: 1px solid #d1d5db;}
+code { color: #ef4444; background: #e5e7eb; padding: 2px 4px; border-radius: 4px; font-weight: 500; font-family: 'Roboto Mono', monospace; }
+pre code { background: none; padding: 0; color: inherit; }
+
+/* Table Styles */
+.data-table th, .data-table td {
+  padding: 12px; border-bottom: 1px solid #e5e7eb; font-size: 0.875rem;
+}
+.data-table thead { background-color: #e0f2fe; }
+.data-table tbody tr:nth-child(even) { background-color: #f9fafb; }
+.data-table tbody tr:hover { background-color: #eff6ff; }
+
+/* Buttons */
+.btn { background: linear-gradient(90deg,#38bdf8,#0284c7); padding: 10px 18px; border-radius: 10px; font-weight: 700; color: #ffffff; text-decoration: none; transition: transform 0.2s; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(2, 132, 199, 0.3); }
+
+/* Utility */
+.section-separator { margin-top: 40px; padding-top: 10px; border-top: 1px solid #e5e7eb; }
+.output { color: #10b981; font-weight: 600; margin-top: 4px; display: block; }
+.code-explanation { background-color: #ecfeff; border-left: 5px solid #06b6d4; padding: 16px; border-radius: 8px; margin-top: 16px; font-size: 0.95rem; color: #164e63;}
+.code-explanation ul { list-style: none; padding-left: 0; }
+.code-explanation li { margin-bottom: 8px; }
+.code-explanation strong { color: #0c4a6e; display: inline-block; min-width: 150px; font-weight: 700; }
+</style>
+</head>
+
+<body>
+<header>
+  <div class="container flex justify-between items-center py-4">
+    <a href="#" style="font-weight:800;color:#0f172a;font-size:1.5rem;">KnowledgeStream: Java</a>
+    <nav class="flex gap-4">
+      <a href="#variables" class="muted hover:text-gray-800 transition-colors">Variables & Types</a>
+      <a href="#operators" class="text-blue-600 font-semibold transition-colors">Operators</a>
+      <a href="#control" class="muted hover:text-gray-800 transition-colors">Control Flow</a>
+    </nav>
+  </div>
+</header>
+
+<input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+
+    <main class="container">
+        <div class="card">
+            <h1 class="text-4xl sm:text-5xl mb-4">2. Java Basics: Logic & Data Flow</h1>
+            <p class="muted text-lg">Mastering data storage and the control mechanisms that dictate program execution.</p>
+
+            <!-- 1. Variables, Constants, Data Types, Literals, Casting -->
+            <section id="variables" class="section-separator">
+                <h2>Data Types, Constraints, and Casting</h2>
+                <p class="muted mt-3">Java is **statically-typed**, requiring type declaration. Variables can be constrained using the `final` keyword, which makes them **constants** (non-reassignable).</p>
+
+                <h3 class="mt-4">Primitive Data Types: Storage, Size, and Range</h3>
+                <p class="muted mb-4">The **range constraint** of a data type is critical. Exceeding the range (overflow) leads to unexpected behavior.</p>
+                
+               <!-- 📘 Java Primitive Data Types Table -->
+<table class="data-table w-full text-left border-collapse rounded-lg overflow-hidden text-gray-800">
+    <thead class="bg-blue-50 text-blue-900">
+        <tr>
+            <th class="p-3 font-semibold">Type</th>
+            <th class="p-3 font-semibold">Size</th>
+            <th class="p-3 font-semibold">Range / Constraint</th>
+            <th class="p-3 font-semibold">Purpose</th>
+        </tr>
+    </thead>
+    <tbody class="bg-white">
+        <!-- Integers -->
+        <tr class="hover:bg-blue-50 transition">
+            <td><code>byte</code></td>
+            <td>8 bits (1 byte)</td>
+            <td>-128 to 127</td>
+            <td>Smallest whole number type.</td>
+        </tr>
+        <tr class="hover:bg-blue-50 transition">
+            <td><code>short</code></td>
+            <td>16 bits (2 bytes)</td>
+            <td>-32,768 to 32,767</td>
+            <td>Used when memory is limited for small integers.</td>
+        </tr>
+        <tr class="hover:bg-blue-50 transition font-semibold text-blue-800">
+            <td><code>int</code></td>
+            <td>32 bits (4 bytes)</td>
+            <td>≈ ±2.14 Billion</td>
+            <td><strong>Default</strong> integer type for most whole numbers.</td>
+        </tr>
+        <tr class="hover:bg-blue-50 transition">
+            <td><code>long</code></td>
+            <td>64 bits (8 bytes)</td>
+            <td>≈ ±9 × 10¹⁸</td>
+            <td>For very large integers (use suffix <code>L</code>).</td>
+        </tr>
+
+        <!-- Floating Point -->
+        <tr class="hover:bg-blue-50 transition">
+            <td><code>float</code></td>
+            <td>32 bits (4 bytes)</td>
+            <td>≈ 6–7 decimal digits precision</td>
+            <td>For decimal values; less precise (use <code>F</code> suffix).</td>
+        </tr>
+        <tr class="hover:bg-blue-50 transition font-semibold text-blue-800">
+            <td><code>double</code></td>
+            <td>64 bits (8 bytes)</td>
+            <td>≈ 15 decimal digits precision</td>
+            <td><strong>Default</strong> floating-point type; high precision.</td>
+        </tr>
+
+        <!-- Others -->
+        <tr class="hover:bg-blue-50 transition">
+            <td><code>char</code></td>
+            <td>16 bits (2 bytes)</td>
+            <td>0 to 65,535 (Unicode)</td>
+            <td>Stores a single character (e.g., 'A', '9', '!').</td>
+        </tr>
+        <tr class="hover:bg-blue-50 transition">
+            <td><code>boolean</code></td>
+            <td>1 bit (logical unit)</td>
+            <td>true or false</td>
+            <td>Used for logical decisions and conditions.</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- 💡 Explanation Below Table -->
+<div class="code-explanation mt-6">
+    <h4 class="text-lg font-semibold text-blue-800 mb-2">💬 Explanation of Terms</h4>
+    <ul class="list-disc ml-6 text-gray-700">
+        <li><strong>Bit:</strong> The smallest unit of data in computing (0 or 1).</li>
+        <li><strong>Byte:</strong> 8 bits; enough to store a single character.</li>
+        <li><strong>Precision:</strong> Refers to how many decimal digits a floating-point type can represent accurately.</li>
+        <li><strong>Literal:</strong> A fixed value written directly in code, e.g. <code>10</code>, <code>3.14F</code>, <code>100L</code>.</li>
+        <li><strong>Unicode:</strong> A universal character encoding that represents letters, digits, and symbols globally.</li>
+        <li><strong>Default type:</strong> Java automatically assumes <code>int</code> for whole numbers and <code>double</code> for decimals.</li>
+        <li><strong>Suffixes:</strong> <code>L</code> for <code>long</code>, <code>F</code> for <code>float</code> (example: <code>3.14F</code>, <code>100L</code>).</li>
+    </ul>
+</div>
+
+                
+                <h3 class="mt-6">Literals and Type Casting: The Data Loss Risk</h3>
+
+<p class="muted">
+<strong>Type Casting</strong> means converting one data type to another.  
+There are two main types:  
+<ul>
+<li><strong>Widening (Implicit):</strong> Automatic conversion from smaller to larger type (no data loss).</li>
+<li><strong>Narrowing (Explicit):</strong> Manual conversion from larger to smaller type using a cast <code>(type)</code> — may cause <strong>data loss</strong> or <strong>overflow</strong>.</li>
+</ul>
+Always be careful when narrowing types — precision or entire values can be lost!
+</p>
+
+<pre><code>// Example: Type Casting and Data Loss
+int total = 95;
+int count = 10;
+byte smallByte = 120;
+
+// 1️⃣ Widening (Implicit) — Safe Conversion (int → double)
+double widened = total; // 95 becomes 95.0, automatic widening
+
+// 2️⃣ Narrowing (Explicit) — Risk of Data Loss
+double pi = 3.14159;
+int pi_int = (int) pi;  // decimal part is cut off → 3
+
+// 3️⃣ Overflow Example (Narrowing)
+short maxShort = (short) (32767 + 1); // exceeds short max → wraps to -32768
+
+// 4️⃣ Division Precision — Why Casting Matters
+double average = (double) total / count; // ensures 9.5 instead of 9
+</code></pre>
+
+<div class="code-explanation">
+  <h4>🧠 Code Breakdown: Understanding Each Line</h4>
+  <ul>
+    <li><strong><code>int total = 95;</code></strong> → Declares an integer (whole number).</li>
+
+    <li><strong><code>double widened = total;</code></strong> → 
+    <u>Widening Cast:</u> The int 95 is automatically converted to double 95.0.
+    ✅ Safe conversion (no data loss).</li>
+
+    <li><strong><code>int pi_int = (int) pi;</code></strong> → 
+    <u>Narrowing Cast:</u> The double 3.14159 is manually cast to int 3.
+    ⚠️ Decimal part (0.14159) is lost!</li>
+
+    <li><strong><code>short maxShort = (short)(32767 + 1);</code></strong> → 
+    <u>Overflow Example:</u> The result 32768 is beyond short’s range (-32768 to 32767).  
+    So it <em>wraps around</em> to -32768.  
+    ⚠️ Dangerous in real-world programs if unchecked.</li>
+
+    <li><strong><code>double average = (double) total / count;</code></strong> → 
+    <u>Forcing Floating-Point Division:</u>  
+    Casting <code>total</code> to double ensures correct precision — result is 9.5,  
+    not 9 (which would happen in integer division).</li>
+  </ul>
+</div>
+
+<div class="tips mt-4 p-3 border rounded bg-gray-50">
+  <strong>💡 Quick Tips:</strong>
+  <ul>
+    <li>✅ Prefer widening conversions whenever possible.</li>
+    <li>⚠️ Always double-check for overflow when narrowing.</li>
+    <li>🔍 When dividing integers but expecting decimals — cast one operand to <code>double</code>.</li>
+  </ul>
+</div>
+
+            </section>
+
+        <!-- 2. Operators -->
+<section id="operators" class="section-separator">
+  <h2>Operators: Definition, Precedence, and 6 Deep Dive Examples</h2>
+  <p class="muted mt-3">
+    Operators are <strong>symbols that perform operations on operands</strong>.  
+    Understanding <strong>operator precedence</strong> helps you know which operation runs first  
+    (for example, multiplication happens before addition).  
+    Use parentheses <code>()</code> to change or control execution order when needed.
+  </p>
+
+  <!-- 🧮 Arithmetic Operators -->
+  <h3 class="mt-4">1. Arithmetic Operators (Calculation) - 6 Examples</h3>
+  <p class="muted">
+    Arithmetic operators handle math operations like +, -, *, /, and %.  
+    Note: Integer division (<code>/</code>) **truncates** decimals (drops them, doesn’t round).
+  </p>
+
+  <pre><code>// --- Arithmetic Operator Examples ---
+int a = 15;
+int b = 4;
+int x = 2;
+double y = 3.5;
+
+// 1️⃣ Basic Addition & Subtraction
+int result1 = a + 5 - b; // (15 + 5 - 4) = 16
+
+// 2️⃣ Integer Division (decimal part is dropped)
+int result2 = a / b; // (15 / 4) = 3
+
+// 3️⃣ Modulus - gives remainder
+int result3 = a % b; // (15 % 4) = 3
+
+// 4️⃣ Compound Assignment
+int c = 10;
+c *= 2 + 1; // First 2+1=3, then c = 10*3 = 30
+
+// 5️⃣ Post-Increment Operator
+int d = 5;
+int result5 = d++; // result5 = 5, then d = 6
+
+// 6️⃣ Precedence and Type Promotion
+double result6 = a * x + y / b; // (15*2) + (3.5/4) = 30.875
+</code></pre>
+
+  <div class="code-explanation">
+    <h4>🧠 Code Breakdown: Arithmetic Operators</h4>
+    <ul>
+      <li><strong>result1 = a + 5 - b;</strong> → Normal left-to-right math. <strong>Output: 16</strong>.</li>
+      <li><strong>result2 = a / b;</strong> → Integer division drops decimal (<strong>3.75 → 3</strong>).</li>
+      <li><strong>result3 = a % b;</strong> → Remainder of 15 ÷ 4 is <strong>3</strong>.</li>
+      <li><strong>c *= 2 + 1;</strong> → Parentheses first (3), then <code>c = c * 3</code>. <strong>Output: 30</strong>.</li>
+      <li><strong>d++;</strong> → Post-increment: assigns first (5), then adds 1. <strong>d becomes 6</strong>.</li>
+      <li><strong>result6 = a * x + y / b;</strong> → Precedence: multiply before divide.  
+        Mixed-type (double + int) → final result is <strong>30.875</strong>.</li>
+    </ul>
+  </div>
+
+  <!-- ⚙️ Logical Operators -->
+  <h3 class="mt-6">2. Logical Operators (Boolean Checks) - 6 Examples</h3>
+  <p class="muted">
+    Logical operators work with <strong>true/false conditions</strong>.  
+    Short-circuit versions (<code>&&</code>, <code>||</code>) skip unnecessary checks, preventing errors.
+  </p>
+
+  <pre><code>// --- Logical Operator Examples ---
+int age = 20;
+boolean isStudent = true;
+
+// 1️⃣ AND (&&) — both sides must be true
+boolean check1 = (age > 18) && isStudent; // true && true → true
+
+// 2️⃣ OR (||) — any one true makes the result true
+boolean check2 = (age < 15) || isStudent; // false || true → true
+
+// 3️⃣ NOT (!) — reverses true/false
+boolean check3 = !isStudent; // !true → false
+
+// 4️⃣ Parentheses to control order
+int score = 85;
+boolean check4 = (score > 90 || age < 18) && isStudent; // false && true → false
+
+// 5️⃣ Short-Circuit prevents error
+String name = "Alex";
+boolean check5 = (name != null) && name.length() > 3; // true && true → true
+
+// 6️⃣ Single | (non-short-circuit)
+int value = 5;
+boolean check6 = (value < 10) | (value > 20); // true | false → true
+</code></pre>
+
+  <div class="code-explanation">
+    <h4>🧩 Code Breakdown: Logical Operators</h4>
+    <ul>
+      <li><strong>check1:</strong> both true → true ✅</li>
+      <li><strong>check2:</strong> one true → true ✅</li>
+      <li><strong>check3:</strong> negates true → false ❌</li>
+      <li><strong>check4:</strong> parentheses make OR run first; final result false.</li>
+      <li><strong>check5:</strong> short-circuit skips <code>name.length()</code> if null → avoids crash. ✅</li>
+      <li><strong>check6:</strong> single <code>|</code> checks both sides regardless → less efficient.</li>
+    </ul>
+  </div>
+
+  <!-- 🧱 Bitwise Operators -->
+  <h3 class="mt-6">3. Bitwise Operators (Binary Manipulation) - 6 Examples</h3>
+  <p class="muted">
+    Bitwise operators act directly on binary (bits).  
+    Useful in system programming, flags, and performance optimization.
+  </p>
+
+  <pre><code>// --- Bitwise Operator Examples ---
+int a = 5;  // Binary: 0101
+int b = 3;  // Binary: 0011
+
+// 1️⃣ AND (&)
+int result1 = a & b; // 0101 & 0011 → 0001 (1)
+
+// 2️⃣ OR (|)
+int result2 = a | b; // 0101 | 0011 → 0111 (7)
+
+// 3️⃣ XOR (^)
+int result3 = a ^ b; // 0101 ^ 0011 → 0110 (6)
+
+// 4️⃣ Left Shift (<<)
+int result4 = a << 2; // 0101 << 2 → 010100 (5*4=20)
+
+// 5️⃣ Signed Right Shift (>>)
+int negNum = -10;
+int result5 = negNum >> 1; // shifts right, keeps sign bit (−5)
+
+// 6️⃣ Unsigned Right Shift (>>>)
+int result6 = negNum >>> 1; // shifts right, fills 0s → huge positive value
+</code></pre>
+
+  <div class="code-explanation">
+    <h4>🧠 Code Breakdown: Bitwise Operators</h4>
+    <ul>
+      <li><strong>&:</strong> both bits must be 1 → <code>0001</code> → 1.</li>
+      <li><strong>|:</strong> either bit 1 → <code>0111</code> → 7.</li>
+      <li><strong>^:</strong> bits differ → <code>0110</code> → 6.</li>
+      <li><strong><<:</strong> left shift (multiply by 4) → 20.</li>
+      <li><strong>>>:</strong> signed shift divides by 2, keeps sign → -5.</li>
+      <li><strong>>>>:</strong> unsigned shift makes negative into huge positive (2147483643).</li>
+    </ul>
+  </div>
+
+  <!-- ❓ Ternary Operator -->
+  <h3 class="mt-6">4. Ternary Operator (Conditional Assignment) - 6 Examples</h3>
+  <p class="muted">
+    The ternary operator is a compact way to write <code>if-else</code> logic that returns a value.  
+    Syntax: <code>condition ? valueIfTrue : valueIfFalse;</code>
+  </p>
+
+  <pre><code>// --- Ternary Operator Examples ---
+int balance = 150;
+String status;
+
+// 1️⃣ Basic conditional assignment
+status = balance > 100 ? "Active Account" : "Low Balance";
+
+// 2️⃣ Conditional numeric value
+double interestRate = balance > 500 ? 0.05 : 0.02;
+
+// 3️⃣ Inline conditional inside a formula
+int fees = 50;
+int finalAmount = 200 - (balance < 100 ? fees : 0);
+
+// 4️⃣ Nested ternary (avoid for readability)
+int points = 95;
+char grade = points > 90 ? 'A' : (points > 80 ? 'B' : 'C');
+
+// 5️⃣ Type compatibility (same return type)
+String message = (points > 100) ? "Perfect" : "Good";
+
+// 6️⃣ Mixed numeric types
+double bonus = balance > 100 ? balance * 0.1 : balance * 0.05;
+</code></pre>
+
+  <div class="code-explanation">
+    <h4>🎯 Code Breakdown: Ternary Operator</h4>
+    <ul>
+      <li><strong>status:</strong> 150 > 100 → true → “Active Account”. ✅</li>
+      <li><strong>interestRate:</strong> 150 > 500 → false → 0.02. 💡</li>
+      <li><strong>finalAmount:</strong> false → uses second value (0), 200 − 0 = 200.</li>
+      <li><strong>grade:</strong> 95 > 90 → true → 'A'. Inner ternary skipped.</li>
+      <li><strong>message:</strong> both results are strings → "Good".</li>
+      <li><strong>bonus:</strong> 150 > 100 → true → 15.0 (auto double). 💰</li>
+    </ul>
+  </div>
+
+  <!-- 💡 Summary -->
+  <div class="tips mt-4 p-3 border rounded bg-gray-50">
+    <strong>💡 Quick Recap:</strong>
+    <ul>
+      <li>🧮 Arithmetic → Math operations (+, -, /, %).</li>
+      <li>⚙️ Logical → Combine or invert conditions (&&, ||, !).</li>
+      <li>🧱 Bitwise → Operate on binary bits (&, |, ^, <<, >>).</li>
+      <li>❓ Ternary → Short if-else that returns a value.</li>
+      <li>📊 Always remember precedence — use <code>()</code> to be safe!</li>
+    </ul>
+  </div>
+</section>
+
+
+           <!-- 3. Input from User -->
+<section id="input" class="section-separator">
+    <h2>Input from User: Interacting with the Console</h2>
+    <p class="muted mt-3">
+        In Java, to make your program interactive, you often need to accept input from the user.  
+        There are two main ways to do this:
+        <strong>Scanner</strong> (simple, automatic parsing) and <strong>BufferedReader</strong> (fast, manual parsing).
+    </p>
+
+    <h3 class="mt-4">Importing Input Classes</h3>
+    <p class="muted">These imports must be placed <strong>before the class declaration</strong> to make Java recognize them:</p>
+    <pre><code>import java.util.Scanner;            // For Scanner
+import java.io.BufferedReader;        // For BufferedReader
+import java.io.InputStreamReader;     // Connects BufferedReader to System.in
+import java.io.IOException;           // Required for handling checked I/O exceptions
+</code></pre>
+
+    <h3 class="mt-6">Scanner vs BufferedReader: Which One to Use?</h3>
+    <p class="muted">Here’s a side-by-side comparison for better clarity:</p>
+
+    <table class="data-table w-full text-left border-collapse rounded-lg overflow-hidden text-gray-800">
+        <thead class="text-blue-800 bg-blue-100">
+            <tr>
+                <th class="p-3 font-semibold">Feature</th>
+                <th class="p-3 font-semibold">Scanner (`java.util`)</th>
+                <th class="p-3 font-semibold">BufferedReader (`java.io`)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Purpose</strong></td>
+                <td>For <em>user-friendly</em> console input. Automatically splits text into tokens (numbers, words).</td>
+                <td>For <em>fast</em> reading of entire lines (text or files). Ideal in large data or online judges.</td>
+            </tr>
+            <tr>
+                <td><strong>Speed</strong></td>
+                <td>Slower (handles parsing internally).</td>
+                <td>Much faster (reads large buffered chunks at once).</td>
+            </tr>
+            <tr>
+                <td><strong>Common Methods</strong></td>
+                <td>`nextInt()`, `nextDouble()`, `nextLine()`</td>
+                <td>`readLine()` (always returns a String)</td>
+            </tr>
+            <tr>
+                <td><strong>Error Handling</strong></td>
+                <td>No checked exceptions; simpler syntax.</td>
+                <td>Requires try-catch for <code>IOException</code>.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="note-box mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded-lg">
+        💡 <strong>Think of it like this:</strong>  
+        <br>
+        <strong>Scanner</strong> is like a “smart assistant” that reads and understands numbers/words for you.  
+        <strong>BufferedReader</strong> is like a “fast typist” who only gives you raw text — you must interpret it yourself.
+    </div>
+
+    <!-- Example 1: Scanner -->
+    <h3 class="mt-6">1️⃣ Using the Scanner (Beginner Friendly)</h3>
+    <p class="muted">
+        The <code>Scanner</code> class is perfect for simple input — it can directly read integers, strings, and doubles.
+    </p>
+
+    <pre><code>import java.util.Scanner;
+
+public class ScannerExample {
+    public static void main(String[] args) {
+        // Step 1: Create a Scanner linked to standard input (keyboard)
+        Scanner scanner = new Scanner(System.in);
+
+        // Step 2: Ask for an integer
+        System.out.print("Enter your ID number: ");
+        int id = scanner.nextInt();
+
+        // Step 3: Consume leftover newline (important!)
+        scanner.nextLine(); // Fixes issue where nextLine() skips input
+
+        // Step 4: Ask for user's name
+        System.out.print("Enter your full name: ");
+        String name = scanner.nextLine();
+
+        // Step 5: Display results
+        System.out.println("\n--- Scanner Input Summary ---");
+        System.out.println("ID: " + id);
+        System.out.println("Name: " + name);
+
+        // Step 6: Always close scanner to prevent resource leaks
+        scanner.close();
+    }
+}
+</code></pre>
+
+    <div class="code-explanation">
+        <h4>🧩 Code Breakdown: Scanner Input</h4>
+        <ul>
+            <li><strong>Scanner scanner = new Scanner(System.in);</strong>  
+                → Connects the Scanner object to the keyboard input stream.</li>
+            <li><strong>nextInt()</strong> reads only the number, leaving the “Enter key” newline behind.</li>
+            <li><strong>scanner.nextLine()</strong> afterwards clears that leftover newline to avoid skipped input.</li>
+            <li><strong>System.out.println()</strong> simply prints the collected data.</li>
+            <li><strong>scanner.close()</strong> releases memory — always close input streams when done.</li>
+        </ul>
+    </div>
+
+    <div class="tip-box mt-4 bg-green-50 border-l-4 border-green-400 text-green-800 rounded-lg p-3">
+        ✅ <strong>Tip:</strong>  
+        If your program only takes text input, you don’t need <code>nextLine()</code> after <code>nextInt()</code>.  
+        But if you mix numbers and strings, always add it to prevent skipped lines.
+    </div>
+
+    <!-- Example 2: BufferedReader -->
+    <h3 class="mt-6">2️⃣ Using BufferedReader (Advanced but Faster)</h3>
+    <p class="muted">
+        The <code>BufferedReader</code> class reads input faster but always as text.  
+        You must manually convert text to numbers using parsing functions like <code>Integer.parseInt()</code> or <code>Double.parseDouble()</code>.
+    </p>
+
+    <pre><code>import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+public class BufferedReaderExample {
+    public static void main(String[] args) {
+        // Step 1: Create BufferedReader wrapped around InputStreamReader
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            // Step 2: Ask for a decimal number
+            System.out.print("Enter a decimal number (e.g., 12.5): ");
+            String input = reader.readLine(); // Reads the entire line as a String
+
+            // Step 3: Convert the String input into a double
+            double value = Double.parseDouble(input);
+
+            // Step 4: Perform some operation with the number
+            System.out.println("Double of the entered value is: " + (value * 2));
+
+        } catch (IOException e) {
+            // Handles low-level I/O issues
+            System.err.println("I/O Error: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            // Handles invalid input conversion errors
+            System.err.println("Invalid input! Please enter a valid number.");
+        } finally {
+            // Step 5: Always close the reader safely
+            try {
+                reader.close();
+            } catch (IOException e) {
+                // Silently ignore closing errors
+            }
+        }
+    }
+}
+</code></pre>
+
+    <div class="code-explanation">
+        <h4>🧩 Code Breakdown: BufferedReader</h4>
+        <ul>
+            <li><strong>BufferedReader</strong> reads input efficiently using a “buffer” (temporary memory block).</li>
+            <li><strong>readLine()</strong> → Always returns a String (even for numbers).</li>
+            <li><strong>Double.parseDouble()</strong> → Converts that String into a double for arithmetic use.</li>
+            <li><strong>try-catch-finally</strong> → Used to handle exceptions and ensure resource closure.</li>
+            <li><strong>IOException</strong> → Happens if system input/output fails.</li>
+            <li><strong>NumberFormatException</strong> → Happens if user enters letters instead of numbers.</li>
+        </ul>
+    </div>
+
+    <div class="note-box mt-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded-lg p-3">
+        💡 <strong>Real-life analogy:</strong>  
+        - <strong>Scanner</strong> is like an assistant who reads and understands words and numbers for you.  
+        - <strong>BufferedReader</strong> is like a courier — delivers the whole message fast, but you must decode it yourself!
+    </div>
+</section>
+
+
+          <!-- 4. CONTROL FLOW (CONDITIONALS & LOOPS) -->
+<section id="control" class="section-separator">
+    <h2>🧭 Control Flow: Conditionals & Loops — How Programs Make Decisions</h2>
+
+    <p class="muted">
+        Control flow structures help a program make decisions (<strong>Conditionals</strong>) and repeat actions (<strong>Loops</strong>).
+        These are the foundation of all logical programs — from simple calculators to complex AIs.
+    </p>
+
+    <!-- ========================== -->
+    <!-- CONDITIONAL STATEMENTS -->
+    <!-- ========================== -->
+    <h3 class="mt-6">Conditional Statements: <code>if</code>, <code>else if</code>, and <code>switch</code></h3>
+
+    <p class="muted">
+        Conditional statements allow different blocks of code to execute based on <strong>boolean conditions</strong> (true or false). 
+        You can also <strong>nest</strong> conditions for more complex decision making.
+    </p>
+
+    <pre><code>// 🌡️ Example 1: Nested if-else structure
+int temp = 25;
+boolean raining = true;
+
+/*
+Logic Diagram:
+if (temp > 20)
+    if (raining)
+        print "It's warm but wet."
+    else
+        print "Perfect day."
+else
+    print "It's cold."
+*/
+
+if (temp > 20) {
+    // Outer condition met
+    if (raining) {
+        System.out.println("It's warm but wet.");
+    } else {
+        System.out.println("Perfect day.");
+    }
+} else {
+    System.out.println("It's cold.");
+}
+
+// 🖥️ Output: It's warm but wet
+</code></pre>
+
+    <div class="code-explanation">
+        <h4>🔍 Step-by-Step Breakdown</h4>
+        <ul>
+            <li><strong>if (temp &gt; 20)</strong>: Checks the outer condition (25 > 20 → true).</li>
+            <li><strong>if (raining)</strong>: Inner condition also true, so prints <code>"It's warm but wet."</code>.</li>
+            <li><strong>else</strong> blocks: Skipped since both conditions above were true.</li>
+        </ul>
+        <p class="muted">💡 <strong>Tip:</strong> Nested <code>if</code> statements create hierarchical logic. The inner block only runs if the outer condition succeeds.</p>
+    </div>
+
+    <h4 class="mt-6">⚙️ Example 2: Cleaner Decision Logic using <code>switch</code></h4>
+    <pre><code>// 🧩 Switch Expression (Java 14+)
+char initial = 'G';
+
+String nameGroup = switch (initial) {
+    case 'A', 'B' -> "Early Name Group";
+    case 'C' -> "Middle Name Group";
+    default -> "Late Name Group"; // mandatory fallback
+};
+
+System.out.println(nameGroup);
+
+// 🖥️ Output: Late Name Group
+</code></pre>
+
+    <div class="code-explanation">
+        <ul>
+            <li><strong>switch (initial)</strong>: Compares a single variable against multiple constant values.</li>
+            <li><strong>case 'A', 'B'</strong>: Multiple labels for the same action (cleaner than multiple if-else).</li>
+            <li><strong>default</strong>: Always define this to handle unexpected values.</li>
+        </ul>
+        <p class="muted">💡 <strong>Modern switch</strong> expressions (Java 14+) can <em>return</em> values directly, removing the need for <code>break;</code> and reducing errors.</p>
+    </div>
+
+    <!-- ========================== -->
+    <!-- NESTED CONDITIONAL EXAMPLE -->
+    <!-- ========================== -->
+    <h3 class="mt-8">🛒 Nested Conditional Example: Discounts & Shipping Calculator</h3>
+    <p class="muted">This example demonstrates how inner <code>if</code> blocks can apply specific rules only when outer conditions are met.</p>
+
+    <pre><code>import java.util.Scanner;
+
+public class DiscountShipping {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter customer type (regular/premium): ");
+        String type = sc.nextLine().trim().toLowerCase();
+
+        System.out.print("Enter purchase amount (in ₹): ");
+        double amount = sc.nextDouble();
+
+        double discount = 0.0, shipping = 50.0;
+
+        if (type.equals("premium")) {
+            discount = 0.10; // 10% base discount
+
+            if (amount >= 5000) {
+                discount += 0.05; // +5% extra
+                shipping = 0.0;   // free shipping
+            }
+        } else {
+            if (amount >= 3000) {
+                discount = 0.05;
+                shipping = 25.0;
+            }
+        }
+
+        double total = (amount * (1 - discount)) + shipping;
+
+        System.out.println("\n--- Summary ---");
+        System.out.println("Type: " + type);
+        System.out.println("Original: ₹" + amount);
+        System.out.println("Discount: " + (discount * 100) + "%");
+        System.out.println("Shipping: ₹" + shipping);
+        System.out.println("Total: ₹" + total);
+    }
+}
+
+/* 🖥️ Example Output
+Enter customer type (regular/premium): premium
+Enter purchase amount (in ₹): 6000
+
+--- Summary ---
+Type: premium
+Original: ₹6000.0
+Discount: 15.0%
+Shipping: ₹0.0
+Total: ₹5100.0
+*/
+</code></pre>
+
+    <div class="code-explanation">
+        <h4>🧩 Understanding the Flow</h4>
+        <ul>
+            <li>Outer <code>if</code> checks if user is <strong>premium</strong>.</li>
+            <li>Nested <code>if</code> applies additional perks for purchases above ₹5000.</li>
+            <li><strong>else</strong> branch handles <em>regular</em> customers separately.</li>
+            <li>Final calculation applies both discount and shipping cost.</li>
+        </ul>
+        <p class="muted">💡 <strong>Key Insight:</strong> Each nested level refines logic for specific cases — think of it as adding more detail to a rulebook.</p>
+    </div>
+
+    <!-- ========================== -->
+    <!-- NESTED LOOPS EXAMPLE -->
+    <!-- ========================== -->
+    <h3 class="mt-8">🔁 Nested Loops: Pattern Generation & Early Exit</h3>
+    <p class="muted">Nested loops are loops inside loops — used to process 2D data or generate patterns.</p>
+
+    <pre><code>public class NestedLoopPattern {
+    public static void main(String[] args) {
+        int rows = 5;
+
+        for (int r = 1; r <= rows; r++) {
+            for (int c = 1; c <= r; c++) {
+                if (r == 4 && c == 3) break; // early exit
+                System.out.print("*");
+            }
+
+            if (r == 2) {
+                System.out.println();
+                continue; // skip the rest for row 2
+            }
+
+            System.out.println("  (row " + r + ")");
+        }
+    }
+}
+
+/* 🖥️ Output:
+*
+**  
+***  (row 3)
+**  (row 4)
+*****  (row 5)
+*/
+</code></pre>
+
+    <div class="code-explanation">
+        <h4>🧩 Step-by-Step Explanation</h4>
+        <ul>
+            <li>Outer loop <code>r</code> controls rows (1–5).</li>
+            <li>Inner loop <code>c</code> prints <code>*</code> up to <code>r</code> times per row.</li>
+            <li><code>break</code> exits only the <strong>inner loop</strong> when <code>r==4 &amp;&amp; c==3</code>.</li>
+            <li><code>continue</code> skips remainder of the <strong>outer loop</strong> when <code>r==2</code>.</li>
+        </ul>
+        <p class="muted">💡 <strong>Tip:</strong> Always track which loop <code>break</code> or <code>continue</code> affects — the one it’s directly inside.</p>
+    </div>
+
+    <!-- ========================== -->
+    <!-- FLOW MODIFIERS -->
+    <!-- ========================== -->
+    <h3 class="mt-8">⚡ Flow Modifiers: <code>break</code>, <code>continue</code>, and <code>return</code></h3>
+
+    <p class="muted">
+        These keywords immediately change the normal execution path — useful for controlled exits or skips.
+    </p>
+
+    <pre><code>for (int i = 1; i <= 5; i++) {
+    if (i == 3) continue; // skip 3
+    if (i == 5) break;    // stop loop entirely
+    System.out.println(i);
+}
+// 🖥️ Output: 1, 2, 4
+
+public int checkValue(int val) {
+    if (val < 0) return 0; // exit early
+    return val;            // normal flow
+}
+</code></pre>
+
+    <div class="code-explanation">
+        <ul>
+            <li><code>continue</code>: jumps to next iteration, skipping current one.</li>
+            <li><code>break</code>: exits the entire loop immediately.</li>
+            <li><code>return</code>: exits the entire method (used in functions).</li>
+        </ul>
+        <p class="muted">💡 <strong>Shortcut Logic:</strong> Use <code>return</code> for early exits in methods instead of nesting multiple <code>if</code> statements.</p>
+    </div>
+
+    <!-- ========================== -->
+    <!-- SCOPE -->
+    <!-- ========================== -->
+    <h3 class="mt-8">📦 Scope and Lifetime of Variables</h3>
+
+    <p class="muted">
+        Every variable exists only within the block <code>{}</code> where it’s defined. When the block ends, the variable is destroyed.
+    </p>
+
+    <pre><code>public static void main(String[] args) {
+    int outer = 1; // scope: main method
+
+    if (outer > 0) {
+        int inner = 2; // scope: only inside this 'if' block
+        System.out.println(outer); // ✅ accessible
+        System.out.println(inner); // ✅ accessible
+    }
+
+    // System.out.println(inner); ❌ ERROR: 'inner' not visible here
+}
+</code></pre>
+
+    <div class="code-explanation">
+        <ul>
+            <li><code>outer</code> lives for the duration of <code>main()</code>.</li>
+            <li><code>inner</code> lives only inside the <code>if</code> block.</li>
+            <li>Once you exit <code>}</code>, <code>inner</code> is removed from memory.</li>
+        </ul>
+        <p class="muted">💡 <strong>Always declare variables in the smallest scope possible</strong> to reduce confusion and prevent accidental reuse.</p>
+    </div>
+</section>
+<!-- ✅ QUIZ SECTION -->
+<section id="quiz" class="section-separator">
+  <h2>🎯 Topic 2 AI Quiz: Data Types, Operators & Control Flow</h2>
+  <p class="muted mb-4">Answer all 15 questions below. You need <strong>90 %</strong> to unlock the completion button.</p>
+
+  <div id="quiz-container" class="bg-white border rounded-lg shadow-md p-6"></div>
+
+  <div class="text-center mt-6">
+    <button id="submit-quiz"
+      class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-5 rounded-full transition">
+      🚀 Submit Quiz
+    </button>
+    <p id="quiz-result" class="mt-4 text-gray-600 font-semibold"></p>
+  </div>
+</section>
+
+
+
+<!-- ✅ COMPLETION BUTTON -->
+<div class="text-center mt-10">
+  <button
+  id="complete-btn"
+  onclick="markTopicComplete()"
+  disabled
+  class="bg-gray-400 cursor-not-allowed px-4 py-2 rounded"
+>
+  🔒 Complete Quiz First
+</button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<div class="section-separator flex justify-between mt-10 pt-4">
+ <a class="btn" href="/topic/java/java-topic1/">&larr; Previous: Getting Started</a>
+
+  <a href="/topic/java/java-topic3/">Next: Arrays & Strings →</a>
+
+</div>
+</div>
+</main>
+
+<footer class="py-8 mt-10 text-center text-sm text-gray-500 border-t border-gray-300">
+  © 2025 KnowledgeStream — Java Roadmap
+</footer>
+
+<script>
+/* ========== QUIZ LOGIC ========== */
+const questions = [
+  {q:"Which data type stores true/false values?",o:["int","boolean","char","float"],a:1},
+  {q:"Default floating-point type in Java?",o:["float","double","BigDecimal","Decimal"],a:1},
+  {q:"What happens when narrowing a larger type to smaller one?",o:["Data increases","Data loss may occur","Becomes boolean","Converts to String"],a:1},
+  {q:"What keyword makes a variable constant?",o:["const","final","static","constant"],a:1},
+  {q:"Range of byte?",o:["-128 to 127","0 to 255","-255 to 255","-127 to 128"],a:0},
+  {q:"Operator for remainder?",o:["/","+","%","*"],a:2},
+  {q:"Expression 5/2 in int division gives?",o:["2","2.5","3","2.0"],a:0},
+  {q:"Result of 15%4 ?",o:["3","2","1","4"],a:0},
+  {q:"Which converts text to number in BufferedReader?",o:["parseInt()","toInt()","nextInt()","readInt()"],a:0},
+  {q:"Scanner method for reading whole line?",o:["nextLine()","read()","getLine()","scanLine()"],a:0},
+  {q:"Logical AND operator?",o:["&","&&","and","||"],a:1},
+  {q:"Which loop is best for known iteration count?",o:["while","for","do-while","switch"],a:1},
+  {q:"Break keyword does what?",o:["skips iteration","exits loop","pauses loop","returns value"],a:1},
+  {q:"Ternary operator syntax?",o:["if-else","cond?true:false","(cond)then()else()","?:ifelse"],a:1},
+  {q:"Variable inside {} block exists until?",o:["Program ends","Method ends","Block ends","Forever"],a:2}
+];
+
+const container=document.getElementById('quiz-container');
+questions.forEach((q,i)=>{
+  const div=document.createElement('div');
+  div.className='mb-4';
+  div.innerHTML=`<p class="font-semibold">${i+1}. ${q.q}</p>`+
+    q.o.map((opt,j)=>`
+      <label class="block cursor-pointer">
+        <input type="radio" name="q${i}" value="${j}" class="mr-2"> ${opt}
+      </label>`).join('');
+  container.appendChild(div);
+});
+
+document.getElementById('submit-quiz').addEventListener('click',()=>{
+  enableWebcamMonitoring(); // camera alert
+  let correct=0;
+  questions.forEach((q,i)=>{
+    const chosen=document.querySelector(`input[name=q${i}]:checked`);
+    if(chosen && parseInt(chosen.value)===q.a) correct++;
+  });
+  const percent=Math.round((correct/questions.length)*100);
+  const result=document.getElementById('quiz-result');
+  result.textContent=`You scored ${percent}% (${correct}/${questions.length})`;
+  if(percent>=90){
+    result.classList.add('text-green-600');
+    unlockCompletion();
+  }else{
+    result.classList.add('text-red-600');
+    showSecurityAlert("You need at least 90 % to unlock completion.");
+  }
+});
+
+/* Unlock completion button */
+function unlockCompletion(){
+  const btn = document.getElementById('complete-btn');
+  btn.disabled = false;
+  btn.classList.remove('bg-gray-400','cursor-not-allowed');
+  btn.classList.add('bg-sky-500','hover:bg-sky-600');
+  btn.textContent = "✅ Mark as Completed";
+}
+
+
+/* Completion storage */
+
+
+/* ========== ANTI-CHEAT & CAMERA ALERT ========== */
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('selectstart',e=>e.preventDefault());
+document.addEventListener('copy',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey&&['c','u','s','a','p'].includes(e.key.toLowerCase()))||
+     e.key==='PrintScreen'||e.key==='F12'){
+    e.preventDefault();
+    showSecurityAlert('⚠️ Copy/inspect blocked.');
+  }
+});
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden) showSecurityAlert('🚨 Tab switched!');
+});
+function showSecurityAlert(msg){
+  const box=document.createElement('div');
+  box.textContent=msg;
+  Object.assign(box.style,{position:'fixed',bottom:'20px',right:'20px',background:'#f87171',color:'#fff',
+    padding:'10px 16px',borderRadius:'8px',fontSize:'0.9rem',fontWeight:'600',zIndex:'9999',
+    boxShadow:'0 4px 8px rgba(0,0,0,0.15)',opacity:'0',transition:'opacity 0.3s'});
+  document.body.appendChild(box);
+  requestAnimationFrame(()=>box.style.opacity='1');
+  setTimeout(()=>box.remove(),4000);
+}
+function showCameraAlert(){
+  const alertBox=document.createElement('div');
+  alertBox.textContent='🎥 AI Proctoring Active — Camera Monitoring Enabled';
+  Object.assign(alertBox.style,{position:'fixed',top:'20px',right:'20px',background:'#dc2626',color:'#fff',
+    padding:'10px 16px',borderRadius:'8px',fontSize:'0.95rem',fontWeight:'600',zIndex:'9999',
+    boxShadow:'0 4px 8px rgba(0,0,0,0.15)',animation:'fadeInOut 6s ease forwards'});
+  document.body.appendChild(alertBox);
+  setTimeout(()=>alertBox.remove(),6000);
+}
+async function enableWebcamMonitoring(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:true});
+    const video=document.createElement('video');
+    video.srcObject=stream; video.autoplay=true; video.muted=true;
+    Object.assign(video.style,{position:'fixed',bottom:'10px',left:'10px',width:'120px',
+      border:'2px solid #22c55e',borderRadius:'8px',boxShadow:'0 2px 8px rgba(0,0,0,0.25)',zIndex:'9999'});
+    document.body.appendChild(video);
+    showCameraAlert();
+  }catch(err){
+    showSecurityAlert('⚠️ Camera access denied.');
+  }
+}
+
+function getCSRFToken() {
+  return document.getElementById("csrf-token").value;
+}
+
+
+function markTopicComplete(){
+  fetch("/api/topic-complete/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
+    },
+    body: JSON.stringify({
+      subject: "java",
+      topic: "java-topic2"
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (!data.success) {
+      alert("Failed to save progress");
+      return;
+    }
+
+    const btn = document.getElementById("complete-btn");
+    btn.disabled = true;
+    btn.textContent = "✅ Completed";
+    btn.classList.add("bg-green-600");
+
+    setTimeout(() => {
+      window.location.href = "/books/?subject=java";
+    }, 800);
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Error saving progress");
+  });
+}
+
+
+</script>
+
+
+
+
+<style>
+@keyframes fadeInOut{
+ 0%{opacity:0;transform:translateY(-10px);}
+ 15%{opacity:1;transform:translateY(0);}
+ 85%{opacity:1;}
+ 100%{opacity:0;transform:translateY(-10px);}
+}
+</style>
+</body>
+</html>

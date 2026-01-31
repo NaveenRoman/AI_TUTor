@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KnowledgeStream — File Handling &amp; I/O (Complete)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* KnowledgeStream light theme tweaks */
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: #f9fafb; color: #0f172a; }
+    .container { max-width: 980px; margin: 0 auto; padding: 2rem; }
+    pre { background: #0b1220; color: #e6eef8; padding: 1rem; border-radius: .5rem; overflow:auto; font-size: .92rem; }
+    code { color: #7dd3fc; }
+    table { width:100%; border-collapse: collapse; margin-top:1rem; }
+    th, td { padding:.75rem; border:1px solid #e6eef8; text-align:left; }
+    th { background:#e6f6ff; color:#0369a1; font-weight:700; }
+    .badge { background:#e0f2fe; color:#0369a1; padding:.25rem .5rem; border-radius:.375rem; font-weight:700; font-size:.875rem;}
+    details summary { cursor:pointer; font-weight:700; color:#0369a1; }
+    .section-title { color:#075985; font-weight:800; }
+    .explain { background:#eef2ff; border-left:4px solid #4f46e5; padding:.75rem; border-radius:.375rem; margin-top:.5rem; }
+    .diagram { background:#fff; border:1px solid #e6eef8; padding:1rem; border-radius:.5rem; }
+    .small { font-size:.92rem; color:#475569; }
+    .check { color: #059669; font-weight:700; }
+    footer { margin-top:2rem; color:#64748b; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <header class="bg-sky-600 text-white sticky top-0 z-50 shadow">
+    <div class="container flex items-center justify-between py-4">
+      <a href="index.html" class="text-2xl font-extrabold">KnowledgeStream</a>
+      <nav class="space-x-4">
+        <a href="#" class="underline">File Handling &amp; I/O</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="text-4xl font-bold section-title mb-2">💾 File Handling &amp; I/O — Complete Guide</h1>
+    <p class="small mb-4">Full coverage for learners and exam/viva prep. This page includes definitions, key points, runnable examples, line-by-line explanations, diagrams, practice tasks, an interactive quiz, and a real-world LogManager mini-project.</p>
+
+    <div class="mb-4">
+      <span class="badge">Module 9 • File Handling &amp; I/O</span>
+      <div class="mt-2 small">
+        Topics covered:
+        <ul class="list-disc ml-6">
+          <li><span class="check">✅</span> File Class and Basic Operations</li>
+          <li><span class="check">✅</span> Byte vs Character Streams</li>
+          <li><span class="check">✅</span> InputStream, OutputStream</li>
+          <li><span class="check">✅</span> BufferedReader, BufferedWriter</li>
+          <li><span class="check">✅</span> FileReader, FileWriter</li>
+          <li><span class="check">✅</span> Object Serialization</li>
+          <li><span class="check">✅</span> java.nio.file API</li>
+          <li><span class="check">✅</span> Exception Handling in I/O</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 1. File Class -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">1️⃣ File Class and Basic Operations</h2>
+      <p class="small">Definition: <code>java.io.File</code> represents file and directory pathnames. It deals with metadata and filesystem operations (exists, create, delete, rename) but does not read/write file contents.</p>
+
+      <div class="mt-4">
+        <pre><code>import java.io.File;
+
+public class FileInfo {
+  public static void main(String[] args) {
+    File f = new File("example.txt");
+    System.out.println("Name: " + f.getName());
+    System.out.println("Path: " + f.getAbsolutePath());
+    System.out.println("Exists: " + f.exists());
+    System.out.println("Readable: " + f.canRead());
+    System.out.println("Writable: " + f.canWrite());
+  }
+}</code></pre>
+
+        <details class="mt-3">
+          <summary>Line-by-line explanation</summary>
+          <ol class="mt-2 small">
+            <li><code>import java.io.File;</code> — imports the File class for path and metadata operations.</li>
+            <li><code>File f = new File("example.txt");</code> — creates a File object referencing the pathname (does not create a file on disk).</li>
+            <li><code>getName()</code> returns only the last name in the path (e.g., example.txt).</li>
+            <li><code>getAbsolutePath()</code> resolves and returns the full absolute path; useful when working with relative paths.</li>
+            <li><code>exists(), canRead(), canWrite()</code> check for presence and permissions before performing I/O operations.</li>
+          </ol>
+        </details>
+
+        <div class="diagram mt-4">
+          <!-- Simple inline SVG demonstrating flow -->
+          <svg width="100%" height="120" viewBox="0 0 900 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="File class flow">
+            <rect x="20" y="20" width="220" height="80" rx="8" fill="#eef2ff" stroke="#bfdbfe" />
+            <text x="130" y="60" font-size="14" text-anchor="middle" fill="#0f172a" font-weight="600">Program</text>
+            <rect x="340" y="20" width="220" height="80" rx="8" fill="#fff7ed" stroke="#fed7aa" />
+            <text x="450" y="60" font-size="14" text-anchor="middle" fill="#0f172a" font-weight="600">java.io.File (metadata)</text>
+            <rect x="660" y="20" width="220" height="80" rx="8" fill="#ecfccb" stroke="#bbf7d0" />
+            <text x="770" y="60" font-size="14" text-anchor="middle" fill="#0f172a" font-weight="600">File System</text>
+            <path d="M240 60 H340" stroke="#60a5fa" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+            <path d="M560 60 H660" stroke="#60a5fa" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+            <defs>
+              <marker id="arr" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#60a5fa" />
+              </marker>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Byte vs Character Streams -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">2️⃣ Byte vs Character Streams</h2>
+      <p class="small">Definition & Key points: Byte streams (<code>InputStream</code>/<code>OutputStream</code>) handle raw bytes. Character streams (<code>Reader</code>/<code>Writer</code>) handle characters and encoding; they convert bytes ↔ characters.</p>
+
+      <table class="mt-3">
+        <tr><th>Aspect</th><th>Byte Stream</th><th>Character Stream</th></tr>
+        <tr><td>Base Classes</td><td>InputStream / OutputStream</td><td>Reader / Writer</td></tr>
+        <tr><td>Data Unit</td><td>8-bit bytes</td><td>16-bit Unicode chars</td></tr>
+        <tr><td>Use Cases</td><td>Images, audio, compressed files</td><td>Text files, logs, config</td></tr>
+        <tr><td>Encoding</td><td>No (raw bytes)</td><td>Yes (decoding/encoding)</td></tr>
+      </table>
+
+      <div class="mt-4 small">
+        <strong>Example (byte stream):</strong>
+        <pre><code>import java.io.FileOutputStream;
+import java.io.FileInputStream;
+
+public class ByteExample {
+  public static void main(String[] args) throws Exception {
+    try (FileOutputStream out = new FileOutputStream("byte.bin")) {
+      out.write(0x41); // writes 'A' as a byte
+    }
+    try (FileInputStream in = new FileInputStream("byte.bin")) {
+      int b = in.read();
+      System.out.println((char)b);
+    }
+  }
+}</code></pre>
+
+        <details><summary>Explanation</summary>
+          <ol class="mt-2 small">
+            <li>FileOutputStream writes raw bytes. No encoding applied.</li>
+            <li>FileInputStream reads raw bytes; return -1 at EOF.</li>
+            <li>Store read result in <code>int</code> to handle EOF correctly.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- 3. InputStream/OutputStream -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">3️⃣ InputStream &amp; OutputStream (Byte Streams)</h2>
+      <p class="small">Use when working with binary data. Wrap in buffered versions for performance.</p>
+
+      <pre><code>import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+public class CopyBinary {
+  public static void main(String[] args) throws Exception {
+    try (BufferedInputStream in =
+          new BufferedInputStream(new FileInputStream("src.png"));
+         BufferedOutputStream out =
+          new BufferedOutputStream(new FileOutputStream("dst.png"))) {
+
+      byte[] buf = new byte[8192];
+      int n;
+      while ((n = in.read(buf)) != -1) out.write(buf, 0, n);
+    }
+  }
+}</code></pre>
+
+      <div class="explain small mt-2">
+        • Use an 8KB buffer for good throughput. <br>
+        • Buffered streams coalesce many small OS calls into fewer larger transfers. <br>
+        • Always prefer try-with-resources to ensure closure.
+      </div>
+    </section>
+
+    <!-- 4. BufferedReader / BufferedWriter -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">4️⃣ BufferedReader &amp; BufferedWriter</h2>
+      <p class="small">Best for reading/writing text efficiently and using line-based API (<code>readLine()</code>).</p>
+
+      <pre><code>import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+
+public class BufferedText {
+  public static void main(String[] args) throws Exception {
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter("data.txt"))) {
+      bw.write("KnowledgeStream Rocks!\n");
+    }
+    try (BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+      System.out.println("First line: " + br.readLine());
+    }
+  }
+}</code></pre>
+
+      <details class="mt-2"><summary>Why buffering helps</summary>
+        <p class="small mt-2">Disk I/O is expensive. Buffering reduces the number of native I/O calls, improving throughput for loops and repeated reads/writes.</p>
+      </details>
+    </section>
+
+    <!-- 5. FileReader / FileWriter -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">5️⃣ FileReader &amp; FileWriter</h2>
+      <p class="small">Simpler char-based read/write classes — use them for smaller text tasks, but prefer Buffered wrappers in production.</p>
+
+      <pre><code>import java.io.FileReader;
+import java.io.FileWriter;
+
+public class CharExample {
+  public static void main(String[] args) throws Exception {
+    try (FileWriter fw = new FileWriter("hello.txt")) {
+      fw.write("Hello Java!\n");
+    }
+    try (FileReader fr = new FileReader("hello.txt")) {
+      int c;
+      while ((c = fr.read()) != -1) System.out.print((char)c);
+    }
+  }
+}</code></pre>
+
+      <div class="explain small mt-2">
+        • FileReader/FileWriter use platform default charset — for predictable encoding use <code>InputStreamReader/OutputStreamWriter</code> with a specific charset.
+      </div>
+    </section>
+
+    <!-- 6. Object Serialization -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">6️⃣ Object Serialization (ObjectOutputStream / ObjectInputStream)</h2>
+      <p class="small">Serialization converts Java objects into bytes for persistence or transfer. Classes must implement <code>Serializable</code>. Use <code>serialVersionUID</code> to manage compatibility.</p>
+
+      <pre><code>import java.io.*;
+
+class Student implements Serializable {
+  private static final long serialVersionUID = 1L;
+  String name; int id;
+  Student(String n,int i){name=n;id=i;}
+}
+
+public class SerializeDemo {
+  public static void main(String[] args) throws Exception {
+    try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("student.ser"))) {
+      out.writeObject(new Student("Naveen", 101));
+    }
+    try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("student.ser"))) {
+      Student s = (Student) in.readObject();
+      System.out.println(s.name + \" \" + s.id);
+    }
+  }
+}</code></pre>
+
+      <details class="mt-2"><summary>Notes &amp; best practices</summary>
+        <ol class="mt-2 small">
+          <li>Use <code>transient</code> for fields you don't want serialized (passwords, streams).</li>
+          <li>Serialized data can be incompatible across class changes unless <code>serialVersionUID</code> is managed.</li>
+          <li>Be careful when deserializing data from untrusted sources — risk of remote code execution in unsafe libraries/configs.</li>
+        </ol>
+      </details>
+    </section>
+
+    <!-- 7. java.nio.file API -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">7️⃣ java.nio.file API (Files &amp; Paths)</h2>
+      <p class="small">Introduced in Java 7 — a modern, concise API for file operations with improved exceptions and features like atomic moves, file attributes, walking directories.</p>
+
+      <pre><code>import java.nio.file.*;
+import java.nio.charset.StandardCharsets;
+
+public class NioExample {
+  public static void main(String[] args) throws Exception {
+    Path p = Paths.get(\"nio.txt\");
+    Files.writeString(p, \"Hello NIO\\n\", StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    String content = Files.readString(p);
+    System.out.println(content);
+  }
+}</code></pre>
+
+      <div class="diagram mt-2 small">
+        <strong>Common helper methods:</strong> <code>Files.readString</code>, <code>Files.write</code>, <code>Files.copy</code>, <code>Files.move</code>, <code>Files.walk</code>.
+      </div>
+    </section>
+
+    <!-- 8. Exception Handling -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">8️⃣ Exception Handling in I/O</h2>
+      <p class="small">I/O operations throw checked exceptions (IOException). Use <code>try-with-resources</code> for deterministic resource management and catch specific exceptions where appropriate.</p>
+
+      <pre><code>import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class SafeRead {
+  public static void main(String[] args) {
+    try (BufferedReader br = new BufferedReader(new FileReader(\"input.txt\"))) {
+      System.out.println(br.readLine());
+    } catch (IOException e) {
+      System.err.println(\"File not found or error reading: \" + e.getMessage());
+    }
+  }
+}</code></pre>
+
+      <div class="explain small mt-2">Use logging frameworks for production errors (Logback, java.util.logging). Prefer catching specific exceptions like <code>FileNotFoundException</code> before generic <code>IOException</code> when you need targeted handling.</div>
+    </section>
+
+    <!-- Practice Zone -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">Practice Zone — Short Challenges</h2>
+      <ol class="ml-6 small">
+        <li><strong>Count characters:</strong> Create a file and count total characters using <code>FileReader</code>. (Hint: read until -1)</li>
+        <li><strong>Copy text file:</strong> Use <code>BufferedReader</code> + <code>BufferedWriter</code> to copy contents line by line.</li>
+        <li><strong>List files:</strong> Use <code>File.listFiles()</code> or <code>Files.list(Path)</code> to show files in a directory.</li>
+        <li><strong>Serialize list:</strong> Serialize an <code>ArrayList&lt;Student&gt;</code> to disk and read back.</li>
+      </ol>
+    </section>
+
+    <!-- Interactive Quiz -->
+    <section class="mb-8" id="quiz">
+      <h2 class="text-2xl font-semibold section-title">Interactive Quiz — Auto-check &amp; Score</h2>
+      <p class="small">Select the answer for each question and click <strong>Check Answers</strong>. Results and explanations will appear immediately.</p>
+
+      <div class="mt-4 space-y-4">
+        <div class="p-4 bg-white rounded shadow">
+          <p class="font-semibold">Q1. Which class represents file metadata and paths (not used to read/write content)?</p>
+          <label class="block"><input type="radio" name="q1" value="A"> A. FileInputStream</label>
+          <label class="block"><input type="radio" name="q1" value="B"> B. FileWriter</label>
+          <label class="block"><input type="radio" name="q1" value="C"> C. java.io.File</label>
+          <label class="block"><input type="radio" name="q1" value="D"> D. BufferedReader</label>
+        </div>
+
+        <div class="p-4 bg-white rounded shadow">
+          <p class="font-semibold">Q2. Why wrap FileReader in BufferedReader?</p>
+          <label class="block"><input type="radio" name="q2" value="A"> A. Convert chars to bytes</label>
+          <label class="block"><input type="radio" name="q2" value="B"> B. Make class serializable</label>
+          <label class="block"><input type="radio" name="q2" value="C"> C. Reduce system calls and improve I/O performance</label>
+          <label class="block"><input type="radio" name="q2" value="D"> D. Provide encryption</label>
+        </div>
+
+        <div class="p-4 bg-white rounded shadow">
+          <p class="font-semibold">Q3. Which Java construct closes I/O resources automatically?</p>
+          <label class="block"><input type="radio" name="q3" value="A"> A. finally block</label>
+          <label class="block"><input type="radio" name="q3" value="B"> B. Garbage collector</label>
+          <label class="block"><input type="radio" name="q3" value="C"> C. try-with-resources</label>
+          <label class="block"><input type="radio" name="q3" value="D"> D. synchronized</label>
+        </div>
+
+        <div>
+          <button id="check" class="px-4 py-2 bg-sky-600 text-white rounded">Check Answers</button>
+          <button id="reset" class="px-4 py-2 bg-gray-200 text-gray-800 rounded ml-2">Reset</button>
+          <div id="result" class="mt-3 text-lg font-semibold"></div>
+        </div>
+      </div>
+
+      <script>
+        (function(){
+          const answers = { q1: 'C', q2: 'C', q3: 'C' };
+          const checkBtn = document.getElementById('check');
+          const resetBtn = document.getElementById('reset');
+          const resultDiv = document.getElementById('result');
+
+          function grade() {
+            let total = 0, score = 0;
+            for (const k in answers) {
+              total++;
+              const r = document.getElementsByName(k);
+              let chosen = null;
+              for (const n of r) if (n.checked) { chosen = n.value; break; }
+              if (chosen === answers[k]) score++;
+            }
+            resultDiv.textContent = 'Score: ' + score + ' / ' + total + ' (' + Math.round((score/total)*100) + '%)';
+            // show explanations
+            const expl = document.createElement('div');
+            expl.style.marginTop = '8px';
+            expl.innerHTML = '<p class="font-semibold">Answers & Explanations</p>' +
+              '<ol class="small">' +
+              '<li>Q1: C — <em>java.io.File is for path/metadata operations.</em></li>' +
+              '<li>Q2: C — <em>BufferedReader reduces system calls and improves performance.</em></li>' +
+              '<li>Q3: C — <em>try-with-resources automatically closes AutoCloseable resources.</em></li>' +
+              '</ol>';
+            const old = document.getElementById('quiz-expl');
+            if (old) old.remove();
+            expl.id = 'quiz-expl';
+            resultDiv.appendChild(expl);
+          }
+
+          checkBtn.addEventListener('click', grade);
+          resetBtn.addEventListener('click', function(){
+            ['q1','q2','q3'].forEach(n => {
+              const arr = document.getElementsByName(n);
+              for (const r of arr) r.checked = false;
+            });
+            resultDiv.textContent = '';
+            const old = document.getElementById('quiz-expl'); if (old) old.remove();
+          });
+        })();
+      </script>
+    </section>
+
+    <!-- LogManager Mini-project -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">LogManager Mini-project — Full Code &amp; Explanations</h2>
+      <p class="small">Goal: create a small logger that writes timestamped lines to a daily log file and can print the last N lines. Uses <code>java.nio.file</code>, <code>BufferedWriter</code>, and <code>LocalDate/LocalDateTime</code>.</p>
+
+      <pre><code>/* LogManager.java */
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
+
+public class LogManager {
+  private static final Path LOG_DIR = Paths.get("logs");
+  private static final DateTimeFormatter FILE_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private static final DateTimeFormatter TIME_STAMP = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+  public static void ensureLogDir() throws IOException {
+    if (!Files.exists(LOG_DIR)) {
+      Files.createDirectories(LOG_DIR);
+    }
+  }
+
+  public static void log(String message) throws IOException {
+    ensureLogDir();
+    String fileName = FILE_DATE.format(LocalDate.now()) + ".txt";
+    Path logFile = LOG_DIR.resolve(fileName);
+
+    String line = TIME_STAMP.format(LocalDateTime.now()) + " - " + message + System.lineSeparator();
+    try (BufferedWriter bw = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8,
+            StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+      bw.write(line);
+    }
+  }
+
+  public static List<String> tail(int lines) throws IOException {
+    ensureLogDir();
+    Path logFile = LOG_DIR.resolve(FILE_DATE.format(LocalDate.now()) + ".txt");
+    if (!Files.exists(logFile)) return Collections.emptyList();
+
+    List<String> all = Files.readAllLines(logFile, StandardCharsets.UTF_8);
+    int from = Math.max(0, all.size() - lines);
+    return all.subList(from, all.size());
+  }
+
+  public static void main(String[] args) throws IOException {
+    log("Application started");
+    log("Performed operation X");
+    log("Application stopped");
+
+    System.out.println("Last 10 lines of today's log:");
+    List<String> last = tail(10);
+    last.forEach(System.out::println);
+  }
+}</code></pre>
+
+      <details class="mt-3"><summary>Line-by-line explanation</summary>
+        <ol class="mt-2 small">
+          <li><code>LOG_DIR</code>: central logs folder path.</li>
+          <li><code>ensureLogDir()</code>: creates folder if not exists. Uses <code>Files.createDirectories</code> (safe for nested dirs).</li>
+          <li><code>log()</code>: builds file name using current date, formats timestamp line, and writes using <code>Files.newBufferedWriter</code> with <code>APPEND</code> and <code>CREATE</code> options.</li>
+          <li><code>tail()</code>: reads all lines (suitable for moderate log sizes) and returns the last N lines. For huge files, use a streaming reverse reader.</li>
+          <li><code>main()</code>: example usage — writes three log lines and prints last 10 lines.</li>
+        </ol>
+      </details>
+
+      <div class="explain small mt-3">
+        Production notes: For large log files prefer memory-efficient tail implementations (e.g., ReversedLinesFileReader from Apache Commons IO). Add log rotation, compression, and integrate a logging framework (Logback or java.util.logging) for advanced functionality.
+      </div>
+    </section>
+
+    <!-- Summary & Difference Tables -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold section-title">Summary &amp; Difference Tables</h2>
+
+      <table class="mt-3">
+        <tr><th>Concept</th><th>Description</th></tr>
+        <tr><td>File Class</td><td>Path &amp; metadata operations (exists, create, delete, permissions)</td></tr>
+        <tr><td>Byte Streams</td><td>InputStream / OutputStream — raw binary data</td></tr>
+        <tr><td>Character Streams</td><td>Reader / Writer — text with charset handling</td></tr>
+        <tr><td>Buffered Streams</td><td>Use to increase performance via memory buffers</td></tr>
+        <tr><td>Object Serialization</td><td>ObjectOutputStream/ObjectInputStream — persist Java objects</td></tr>
+        <tr><td>java.nio.file</td><td>Files &amp; Paths — modern, concise file APIs with better exceptions</td></tr>
+        <tr><td>Exception Handling</td><td>Use try-with-resources &amp; catch IOException for robust code</td></tr>
+      </table>
+
+      <h3 class="mt-4">Byte Stream vs Character Stream (Quick)</h3>
+      <table class="mt-2">
+        <tr><th>Aspect</th><th>Byte Stream</th><th>Character Stream</th></tr>
+        <tr><td>Unit</td><td>8-bit bytes</td><td>Unicode chars</td></tr>
+        <tr><td>Classes</td><td>InputStream/OutputStream</td><td>Reader/Writer</td></tr>
+        <tr><td>Use</td><td>Binary files</td><td>Text files</td></tr>
+        <tr><td>Wrap with</td><td>BufferedInput/OutputStream</td><td>BufferedReader/BufferedWriter</td></tr>
+      </table>
+    </section>
+    <div class="flex justify-between mt-8 pt-6 border-t border-gray-300">
+    <a href="java-topic8.html" class="text-sky-600 font-semibold hover:text-sky-700 transition duration-200">← Previous</a>
+    <a href="java-topic10.html" class="text-sky-600 font-semibold hover:text-sky-700 transition duration-200">Next →</a>
+  </div>
+
+  <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+    <footer class="mt-8">
+      <p class="small">&copy; 2025 KnowledgeStream — Built for learners. Created by Naveen.</p>
+    </footer>
+  </main>
+</body>
+</html>

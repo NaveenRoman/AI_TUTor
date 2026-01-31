@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Java Topic 5 — Exception Handling (KnowledgeStream)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap');
+
+    :root {
+      --bg: #f7f7f7;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #ef4444; /* red-accent */
+      --accent-dark: #b91c1c;
+    }
+
+    html,body { height:100%; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: #0f172a;
+      margin:0;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container { max-width:1100px; margin: 0 auto; padding: 28px; }
+    header { position: sticky; top:0; z-index:50; background: rgba(255,255,255,0.95); backdrop-filter: blur(6px); border-bottom:1px solid #e6e6e6; }
+    .card { background: var(--card); border-radius:12px; padding:26px; border:1px solid #e6edf2; box-shadow: 0 8px 30px rgba(2,6,23,0.03); }
+
+    h1 { color: var(--accent-dark); font-weight:800; font-size:1.9rem; }
+    h2 { color: var(--accent); font-weight:700; font-size:1.2rem; margin-top:1rem; }
+    .muted { color:var(--muted); }
+
+    pre.code { background:#0f172a; color:#d1d5db; padding:14px; border-radius:8px; overflow-x:auto; font-family:'Roboto Mono', monospace; }
+    code.inline { background:#f3f4f6; padding:2px 6px; border-radius:6px; font-family:'Roboto Mono',monospace; color:#b91c1c; }
+
+    .code-block {
+        font-family: 'Roboto Mono', monospace;
+        background-color: #1f2937; /* Dark Gray BG */
+        color: #d1d5db; /* Light text */
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+    }
+
+    .red-accent { color: #ef4444; }
+    .bg-red-accent { background-color: #ef4444; }
+
+    /* Modal styling */
+    .modal-backdrop { position:fixed; inset:0; background:rgba(6,11,15,0.6); display:flex; align-items:center; justify-content:center; z-index:100; }
+    .modal { background: white; width: 96%; max-width: 920px; border-radius:12px; padding:20px; box-shadow:0 10px 40px rgba(2,6,23,0.4); transform:translateY(-10px); transition:all .22s ease; }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .question { font-weight:700; margin-bottom:8px; font-size:1.05rem; }
+    .option { display:block; padding:10px 12px; border-radius:8px; border:1px solid #eef2f7; margin-bottom:8px; cursor:pointer; user-select:none; }
+    .option.selected { border-color: #ef4444; background: #fff1f2; }
+    .no-select { -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; }
+
+    /* Non-copyable for quiz content */
+    .no-copy { user-select:none !important; -webkit-user-select:none !important; -moz-user-select:none !important; -ms-user-select:none !important; }
+
+    /* small helper */
+    .tiny { font-size:0.85rem; color:var(--muted); }
+
+    /* disabled styles */
+    button:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+    /* proctor badge */
+    .proctor-badge { display:flex; gap:8px; align-items:center; background:linear-gradient(90deg,#fef2f2,#fff1f2); border: 1px dashed #fecaca; padding:8px 10px; border-radius:8px; color:#7f1d1d; font-weight:600; }
+
+    /* responsive */
+    @media (max-width:640px){
+      .modal { padding:14px; }
+      h1 { font-size:1.5rem; }
+    }
+
+    /* print protection while modal open (in JS style switching) */
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
+      <div>
+        <h1 class="text-2xl font-extrabold flex items-center">
+          <span class="text-gray-800">Knowledge</span><span class="red-accent ml-1">Stream</span>
+          <span class="ml-3 text-sm font-medium text-gray-500">— Java</span>
+        </h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="java-topic4.html" class="px-3 py-2 text-sm font-semibold text-gray-700 hover:text-red-accent rounded-lg border border-gray-200">← Previous</a>
+        <a href="java-topic6.html" class="px-3 py-2 text-sm font-semibold text-white bg-gray-800 hover:bg-red-accent rounded-lg shadow-md">Next →</a>
+        <!-- Button to open quiz modal -->
+        <button id="open-quiz-btn" class="ml-3 px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow">Begin Quiz</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content container (no sidebar per request) -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <article class="space-y-8">
+
+      <!-- All 12 sections (full content retained) -->
+      <!-- 1. What is Exception Handling -->
+      <section id="what-is-exception-handling" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">1. What is Exception Handling</h2>
+        <div class="space-y-4">
+          <p class="text-gray-700">
+            Exception handling in Java is a robust mechanism designed to manage runtime errors, known as <strong class="red-accent">Exceptions</strong>. The primary goal is to maintain the normal flow of the application despite encountering unexpected events. When an exception occurs, the normal program termination is prevented, and the program executes specific, defined code (the exception handler) to gracefully deal with the situation, providing either a fallback, a logged error, or a user-friendly message.
+          </p>
+
+          <h3 class="font-semibold">5–7 Key Points</h3>
+          <ul class="list-disc list-inside text-gray-700 ml-4">
+            <li><strong>Graceful Termination:</strong> Prevents sudden, unexpected program crashes.</li>
+            <li><strong>Exception Object:</strong> When an exception occurs, an object of the exception class is created and "thrown."</li>
+            <li><strong>JVM Role:</strong> The Java Virtual Machine (JVM) is responsible for catching exceptions if the programmer doesn't, which leads to abrupt termination.</li>
+            <li><strong>Mechanism:</strong> Uses <code>try</code>, <code>catch</code>, and <code>finally</code>.</li>
+            <li><strong>Hierarchy:</strong> All exceptions inherit from <code>java.lang.Throwable</code>.</li>
+            <li><strong>Debugging Aid:</strong> Stack traces help locate the source.</li>
+          </ul>
+
+          <h3 class="font-semibold">Example Program</h3>
+          <pre class="code-block">
+public class BasicExceptionDemo {
+    public static void main(String[] args) {
+        try {
+            int result = 100 / 0; // ArithmeticException will occur
+            System.out.println("Result: " + result);
+        } catch (ArithmeticException e) {
+            System.err.println("Error: Cannot divide by zero.");
+        }
+        System.out.println("Program continues execution.");
+    }
+}
+          </pre>
+
+          <h3 class="font-semibold">Line-by-Line Explanation</h3>
+          <ul class="list-disc list-inside text-gray-700 ml-4">
+            <li><code>try { ... }</code>: Defines the block of code where an exception might occur.</li>
+            <li><code>int result = 100 / 0;</code>: This line triggers an <code>ArithmeticException</code>.</li>
+            <li><code>catch (ArithmeticException e) { ... }</code>: This block catches the specific exception thrown.</li>
+            <li><code>System.err.println(...);</code>: Executes the handler code, printing an error message.</li>
+            <li><code>System.out.println("Program continues...");</code>: Proves the exception was handled and the program continues.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 2. Errors vs Exceptions -->
+      <section id="errors-vs-exceptions" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">2. Errors vs Exceptions</h2>
+        <div class="space-y-4">
+          <p class="text-gray-700">
+            Both <strong>Errors</strong> and <strong>Exceptions</strong> inherit from <code>Throwable</code>, but they represent different problems. <strong class="red-accent">Errors</strong> are serious—usually outside application control (e.g., <code>OutOfMemoryError</code>)—and are often unrecoverable. <strong class="red-accent">Exceptions</strong> are conditions programmers can handle (e.g., <code>IOException</code>).
+          </p>
+
+          <h3 class="font-semibold">Examples & Tips</h3>
+          <pre class="code-block">
+public class ErrorVsExceptionDemo {
+    public static void recursiveCall() {
+        recursiveCall(); // Leads to StackOverflowError
+    }
+
+    public static void main(String[] args) {
+        try {
+            // recursiveCall(); // Dangerous — may produce StackOverflowError
+            System.out.println("Processing completed.");
+        } catch (StackOverflowError e) {
+            System.err.println("Caught an Error (Stack Overflow). Too late to recover.");
+        } catch (Exception e) {
+            System.err.println("Caught a regular Exception. Recovery possible.");
+        }
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- 3. Checked vs Unchecked Exceptions -->
+      <section id="checked-vs-unchecked" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">3. Checked vs Unchecked Exceptions</h2>
+        <div class="space-y-4">
+          <p class="text-gray-700">Checked exceptions are enforced at compile time (must be handled or declared). Unchecked exceptions (subclasses of <code>RuntimeException</code>) are not checked by the compiler and usually indicate programming errors.</p>
+
+          <pre class="code-block">
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+
+public class CheckedUncheckedDemo {
+    public void readFile() throws FileNotFoundException {
+        FileReader file = new FileReader("nonexistent.txt");
+    }
+
+    public void calculate(int a, int b) {
+        int result = a / b; // potential ArithmeticException (unchecked)
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- Bonus Table -->
+      <section class="bg-white p-8 rounded-xl shadow-xl">
+        <h3 class="text-xl font-bold mb-4 red-accent">Bonus: Comparison Table (Checked vs Unchecked)</h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Feature</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Checked Exceptions</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unchecked Exceptions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200 text-gray-700">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap font-semibold">Compiler Check</td>
+                <td class="px-6 py-4 whitespace-nowrap text-red-accent">Mandatory (Compile-Time)</td>
+                <td class="px-6 py-4 whitespace-nowrap">Optional (Runtime)</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap font-semibold">Inherits From</td>
+                <td class="px-6 py-4 whitespace-nowrap"><code>Exception</code> (direct)</td>
+                <td class="px-6 py-4 whitespace-nowrap"><code>RuntimeException</code></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap font-semibold">Typical Cause</td>
+                <td class="px-6 py-4 whitespace-nowrap">External issues (I/O, DB)</td>
+                <td class="px-6 py-4 whitespace-nowrap">Programming errors (null, index)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 4. Exception Hierarchy -->
+      <section id="exception-hierarchy" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">4. Exception Hierarchy Diagram</h2>
+        <pre class="code-block text-gray-300">
+                               +-------------------------+
+                               |     java.lang.Throwable |
+                               +-------------------------+
+                                    /         \
+                                   /           \
+                       +------------------+    +----------------------+
+                       |  java.lang.Error |    | java.lang.Exception  |
+                       +------------------+    +----------------------+
+                            (System)               /         \
+                                                   / (CHECKED) \
+                                                  /             \
+                                 +----------------------+    +----------------------+
+                                 | OutOfMemoryError     |    | IOException          |
+                                 +----------------------+    | SQLException         |
+                                                              +----------------------+
+                                                                   |
+                                                                   +----------------------+
+                                                                   | java.lang.RuntimeException |
+                                                                   +----------------------+
+                                                                          |
+                                                                          +----------------------+
+                                                                          | NullPointerException |
+                                                                          | ArithmeticException  |
+                                                                          | ArrayIndexOutOfBounds|
+                                                                          +----------------------+
+        </pre>
+      </section>
+
+      <!-- 5. Try, Catch, Finally -->
+      <section id="try-catch-finally" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">5. Try, Catch, Finally</h2>
+        <div class="space-y-4">
+          <p class="text-gray-700">The <code>try</code>, <code>catch</code>, and <code>finally</code> keywords form the core of Java exception handling. <code>finally</code> runs regardless of whether the exception was thrown or a return was executed (except in rare JVM exit/kill scenarios).</p>
+
+          <pre class="code-block">
+public class TryCatchFinallyDemo {
+    public static void main(String[] args) {
+        int[] numbers = {10, 20};
+        try {
+            System.out.println("Entering try block...");
+            System.out.println(numbers[2]); // ArrayIndexOutOfBoundsException
+            return; // Will not prevent finally from running
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Caught exception: Array index is out of bounds.");
+        } finally {
+            System.out.println("Finally block: This always executes.");
+        }
+        System.out.println("After the try-catch-finally block.");
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- Flow diagram -->
+      <section class="bg-white p-8 rounded-xl shadow-xl">
+        <h3 class="text-xl font-bold mb-4 red-accent">Bonus: Flow Diagram (Try → Catch → Finally)</h3>
+        <pre class="code-block text-gray-300">
++----------------------+
+| Start Try Block Code |
++----------------------+
+          |
+          v (Does an Exception Occur?)
+      +-------+
+      |  YES  |  -- Exception Created & Thrown
+      +-------+
+          |
+          v (Is there a matching Catch block?)
+      +-------+
+      |  YES  |  -- Matching Catch Block Found
+      +-------+
+          |
+          v (Execute Catch)
++----------------------+
+| Execute Catch Block  |
++----------------------+
+          |
+          v (Finally Block Exists?)
+      +-------+
+      |  YES  |
+      +-------+
+          |
+          v
++----------------------+
+| Execute Finally Block|
++----------------------+
+          |
+          v
++----------------------+
+| Continue Program     |
++----------------------+
+        </pre>
+      </section>
+
+      <!-- 6. Throw & Throws -->
+      <section id="throw-and-throws" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">6. Throw & Throws</h2>
+        <div class="space-y-4">
+          <p class="text-gray-700">Use <code>throw</code> to create and throw an exception instance inside a method. Use <code>throws</code> in a method signature to declare checked exceptions the method may propagate.</p>
+
+          <pre class="code-block">
+import java.io.IOException;
+
+public class ThrowThrowsDemo {
+    public void processFile(int size) throws IOException {
+        if (size <= 0) {
+            throw new IOException("File size cannot be zero or negative.");
+        }
+        System.out.println("File processing started with size: " + size);
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- 7. Multiple Catch & Nested Try -->
+      <section id="multiple-catch-nested-try" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">7. Multiple Catch & Nested Try</h2>
+        <div class="space-y-4">
+          <p class="text-gray-700">Multiple <code>catch</code> blocks allow handling various exception types. Nested <code>try</code> blocks help localize handling but can complicate code. Prefer multi-catch if handling logic can be shared.</p>
+
+          <pre class="code-block">
+public class MultiCatchNestedTryDemo {
+    public static void main(String[] args) {
+        try { // Outer try
+            String s = null;
+            try { // Inner try
+                int x = Integer.parseInt("abc"); // NumberFormatException
+                int len = s.length(); // NullPointerException (not reached)
+            } catch (NumberFormatException e) {
+                System.out.println("Inner Catch: Invalid number format.");
+            }
+            int arr[] = new int[5];
+            arr[10] = 50; // ArrayIndexOutOfBoundsException
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Outer Catch: Array access error.");
+        } catch (Exception e) { // General handler
+            System.out.println("Outer Catch: Generic error.");
+        }
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- 8. Custom Exceptions -->
+      <section id="custom-exceptions" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">8. Custom Exceptions</h2>
+        <div class="space-y-4">
+          <p class="text-gray-700">Create domain-specific exceptions by extending <code>Exception</code> (checked) or <code>RuntimeException</code> (unchecked).</p>
+
+          <pre class="code-block">
+// Custom Checked Exception
+class InsufficientFundsException extends Exception {
+    public InsufficientFundsException(String message) {
+        super(message);
+    }
+}
+
+public class Account {
+    private double balance = 1000.0;
+
+    // Declares the Checked Exception
+    public void withdraw(double amount) throws InsufficientFundsException {
+        if (amount > balance) {
+            throw new InsufficientFundsException("Withdrawal amount exceeds balance.");
+        }
+        balance -= amount;
+        System.out.println("Withdrawal successful. New balance: " + balance);
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- 9. Exception Propagation -->
+      <section id="exception-propagation" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">9. Exception Propagation</h2>
+        <div class="space-y-4">
+          <p class="text-gray-700">If a method throws an exception and doesn't handle it, it propagates up the call stack until a matching handler is found or the JVM terminates the thread.</p>
+
+          <pre class="code-block">
+public class PropagationDemo {
+    public static void methodC() {
+        int result = 10 / 0; // Exception occurs here
+    }
+
+    public static void methodB() { methodC(); }
+    public static void methodA() {
+        try { methodB(); }
+        catch (ArithmeticException e) {
+            System.err.println("Handler found in method A: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        methodA();
+        System.out.println("Program finishes successfully.");
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- 10. Try-with-Resources -->
+      <section id="try-with-resources" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">10. Try-with-Resources</h2>
+        <div class="space-y-4">
+          <p class="text-gray-700">Java 7+ feature that auto-closes <code>AutoCloseable</code> resources, removing boilerplate <code>finally</code> closing.</p>
+
+          <pre class="code-block">
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class ResourceHandlingDemo {
+    public static void main(String[] args) {
+        String filePath = "test.txt";
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line = br.readLine();
+            System.out.println("Read from file: " + line);
+            if (line != null) { int val = 10 / 0; }
+        } catch (IOException e) {
+            System.err.println("I/O Error: " + e.getMessage());
+        } catch (ArithmeticException e) {
+            System.err.println("Arithmetic Error: " + e.getMessage());
+        }
+        System.out.println("File resource has been automatically closed.");
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- 11. Best Practices -->
+      <section id="best-practices" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">11. Best Practices</h2>
+        <div class="space-y-4">
+          <ul class="list-disc list-inside text-gray-700 ml-4">
+            <li>Handle specific exceptions, not broad <code>Exception</code>, unless as a final fallback.</li>
+            <li>Avoid empty <code>catch</code> blocks — always log or handle meaningfully.</li>
+            <li>Use Try-with-Resources to prevent leaks.</li>
+            <li>Use custom exceptions to express domain rules clearly.</li>
+            <li>Document <code>throws</code> in Javadoc for API clarity.</li>
+          </ul>
+
+          <pre class="code-block">
+import java.util.logging.Logger;
+
+public class BestPracticeDemo {
+    private static final Logger LOGGER = Logger.getLogger(BestPracticeDemo.class.getName());
+
+    public void processValue(String input) {
+        try {
+            int value = Integer.parseInt(input);
+            int result = 100 / value;
+        } catch (NumberFormatException e) {
+            LOGGER.severe("Invalid number format provided: " + input);
+        } catch (ArithmeticException e) {
+            LOGGER.warning("Division by zero attempted. Defaulting to 100.");
+        }
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- 12. Summary & Practice -->
+      <section id="summary-and-practice" class="bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4 red-accent">12. Summary and Practice Questions</h2>
+        <div class="space-y-4">
+          <div class="p-6 bg-red-100 border-l-4 border-red-accent rounded-md">
+            <p class="font-bold red-accent mb-2">Core Exception Handling (Quick Revision)</p>
+            <ul class="list-disc list-inside ml-4 text-gray-800">
+              <li><strong>Throwable:</strong> Root of Errors & Exceptions.</li>
+              <li><strong>Checked:</strong> Must be handled or declared.</li>
+              <li><strong>Unchecked:</strong> Runtime exceptions, optional handling.</li>
+              <li><strong>Try-With-Resources:</strong> Auto-closes resources.</li>
+            </ul>
+          </div>
+
+          <h3 class="text-lg font-semibold text-red-600">Practice Questions & Answers</h3>
+          <ol class="list-decimal list-inside space-y-4 ml-4 text-gray-800">
+            <li><strong>Throw vs Throws</strong> — <code>throw</code> actually throws an exception; <code>throws</code> declares possible checked exceptions in signature.</li>
+            <li><strong>Unchecked vs Checked</strong> — Checked cause compile errors if not handled/declared; unchecked do not.</li>
+            <li><strong>Example custom checked exception</strong>:
+              <pre class="code-block">class InvalidInputException extends Exception { InvalidInputException(String m){ super(m);} }</pre>
+            </li>
+            <li><strong>Finally not executed?</strong> — If JVM exits via <code>System.exit()</code>, thread killed, or system crash.</li>
+            <li><strong>Refactor to try-with-resources</strong> — move resource into <code>try(...)</code> parentheses (example shown earlier).</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Quick Summary and manual controls -->
+      <section class="bg-white p-6 rounded-xl shadow-xl">
+        <h3 class="font-bold">Quick Summary</h3>
+        <ul class="muted mt-2">
+          <li><code>Throwable</code> is the root. <code>Error</code> vs <code>Exception</code>.</li>
+          <li>Checked exceptions must be declared/handled; unchecked (Runtime) need not.</li>
+          <li><code>try</code>/<code>catch</code>/<code>finally</code>, <code>throw</code> vs <code>throws</code>.</li>
+          <li>Use Try-with-Resources for auto-closeable resources.</li>
+        </ul>
+
+        <div class="mt-4">
+          <p class="muted">Manual controls: Use the <strong>Begin Quiz</strong> button in the header to start the proctored quiz (optional camera). Copying / print / devtools are restricted during the quiz.</p>
+        </div>
+      </section>
+
+      <div class="flex justify-between">
+        <a class="px-3 py-2 rounded border bg-slate-50 text-sm" href="java-topic4.html">&larr; Previous</a>
+        <a class="px-3 py-2 rounded bg-blue-600 text-white text-sm" href="java-topic6.html">Next: Topic 6 →</a>
+      </div>
+
+    </article>
+  </main>
+
+  <!-- QUIZ MODAL (hidden by default) -->
+  <div id="quiz-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal no-copy" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
+      <div class="modal-header">
+        <div>
+          <div class="flex items-center gap-3">
+            <div class="proctor-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M12 2v4" stroke="#7f1d1d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="8" stroke="#7f1d1d" stroke-width="1.6"></circle>
+              </svg>
+              AI Proctoring
+            </div>
+            <div class="tiny">Secure exam — copying disabled</div>
+          </div>
+          <h2 id="quiz-title" class="mt-2 font-bold">Final: Exception Handling — 15 Qs</h2>
+          <div class="tiny mt-1">Score 90%+ to unlock completion (≥ 14/15)</div>
+        </div>
+
+        <div style="display:flex; gap:8px; align-items:center">
+          <div id="camera-status" class="tiny text-gray-600">Camera: Not requested</div>
+          <button id="close-modal" class="px-3 py-2 rounded-md border bg-slate-50 text-sm">Close</button>
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <div id="proctor-notice" class="mb-4 p-3 rounded-md bg-yellow-50 border-l-4 border-yellow-300 tiny">
+        <strong>Proctoring:</strong> When you press <em>Begin Quiz</em> the page will request camera permission to enable optional proctoring. You may deny permission — the quiz will continue, but proctor indicator will show disabled.
+      </div>
+
+      <div id="quiz-area" style="max-height:60vh; overflow:auto; padding-right:6px;"></div>
+
+      <div class="mt-4 flex justify-between items-center">
+        <div id="attempt-hint" class="tiny text-gray-600">Answered: <span id="answered-count">0</span>/15</div>
+        <div class="flex gap-3">
+          <button id="prev-btn" class="px-3 py-2 rounded-md border bg-slate-100 text-sm" disabled>Previous</button>
+          <button id="next-btn" class="px-3 py-2 rounded-md border bg-slate-100 text-sm" disabled>Next</button>
+          <button id="begin-btn" class="px-3 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 text-sm">Begin Quiz</button>
+          <button id="submit-btn" class="px-3 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 text-sm" disabled>Submit</button>
+        </div>
+      </div>
+
+      <div id="quiz-footer-note" class="tiny text-gray-500 mt-2">
+        Focus and visibility are monitored. Switching tabs or losing focus will count as an integrity event.
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT MODAL -->
+  <div id="result-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="flex justify-between items-start">
+        <div>
+          <h2 id="result-title" class="text-xl font-bold">Quiz Result</h2>
+          <div id="result-sub" class="tiny text-gray-600 mt-1">Score & progress</div>
+        </div>
+        <div>
+          <button id="result-close" class="px-3 py-2 rounded-md border bg-slate-50 text-sm">Close</button>
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <div id="result-body" class="mt-2"></div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button id="download-report" class="px-3 py-2 rounded-md border bg-slate-100 text-sm">Download Score (JSON)</button>
+        <button id="finish-btn" class="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 text-sm">Finish</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ============================================================
+     Full Quiz Implementation — 15 Qs from Exception Handling
+     - Non-copy modal content (CSS + JS)
+     - Camera permission request (optional)
+     - Anti-copy / anti-devtools best-effort measures
+     - localStorage "topic5" saved on success (>=90%)
+     ============================================================ */
+
+  (function() {
+
+    /* ---------- QUESTIONS (15) - derived from Topic 5 content ---------- */
+    const QUESTIONS = [
+      { id:1, q:"Which class is the superclass of all exceptions and errors in Java?", options:["java.lang.Exception","java.lang.Throwable","java.lang.Error","java.lang.Object"], a:1 },
+      { id:2, q:"Which keyword is used to forcibly create and throw a single exception object inside a method?", options:["throws","throw","try","final"], a:1 },
+      { id:3, q:"Which of the following is a checked exception?", options:["NullPointerException","ArithmeticException","IOException","ArrayIndexOutOfBoundsException"], a:2 },
+      { id:4, q:"What does 'try-with-resources' guarantee?", options:["Resources declared inside try are closed automatically","It converts checked exceptions to unchecked","It prevents all exceptions","It runs finally block twice"], a:0 },
+      { id:5, q:"Which block always executes whether an exception occurs or not?", options:["catch","finally","try","throws"], a:1 },
+      { id:6, q:"If Arrays.binarySearch returns a negative r, the insertion point is computed as:", options:["-r","-r - 1","r - 1","r + 1"], a:1 },
+      { id:7, q:"Which keyword belongs in a method signature to declare a checked exception could be thrown?", options:["throw","throws","thrown","throwsException"], a:1 },
+      { id:8, q:"Which statement about Errors is TRUE?", options:["Errors are recoverable using try-catch normally","Errors are usually outside program control and often unrecoverable","Errors are always unchecked and must be declared","Errors are synonymous with RuntimeException"], a:1 },
+      { id:9, q:"What happens if a method throws a checked exception but does not declare it or handle it?", options:["The program runs but warns at runtime","Compiler error","No effect","It becomes unchecked automatically"], a:1 },
+      { id:10, q:"Which of these will NOT necessarily run when a try block executes a return statement?", options:["Catch block","Finally block (usually runs)","Statements after the try-catch-finally (executed after finally)","Code inside the try that is after the return (not executed)"], a:0 },
+      { id:11, q:"A custom checked exception should extend which class?", options:["RuntimeException","Error","Exception","Throwable directly"], a:2 },
+      { id:12, q:"Try-with-resources requires the resource to implement which interface?", options:["java.io.Closeable","java.lang.AutoCloseable","java.lang.Closeable","java.util.Resource"], a:1 },
+      { id:13, q:"Which statement is a good practice when catching exceptions?", options:["Use empty catch blocks to ignore errors","Catch broad Exception everywhere","Log the exception and handle specific exceptions where possible","Always rethrow exceptions without logging"], a:2 },
+      { id:14, q:"Which of these is an Unchecked exception?", options:["IOException","ClassNotFoundException","NullPointerException","FileNotFoundException"], a:2 },
+      { id:15, q:"What does 'suppressed exception' refer to in try-with-resources?", options:["An exception that is ignored by the JVM","An exception thrown in close(), attached to the primary exception","An exception you choose to hide manually","An exception converted to Error"], a:1 }
+    ];
+
+    /* ---------- DOM references ---------- */
+    const openBtn = document.getElementById('open-quiz-btn');
+    const quizModal = document.getElementById('quiz-modal');
+    const quizArea = document.getElementById('quiz-area');
+    const beginBtn = document.getElementById('begin-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const closeModalBtn = document.getElementById('close-modal');
+    const cameraStatus = document.getElementById('camera-status');
+    const answeredCountEl = document.getElementById('answered-count');
+
+    const resultModal = document.getElementById('result-modal');
+    const resultBody = document.getElementById('result-body');
+    const resultClose = document.getElementById('result-close');
+    const finishBtn = document.getElementById('finish-btn');
+    const downloadReport = document.getElementById('download-report');
+
+    /* ---------- State ---------- */
+    let answers = Array(QUESTIONS.length).fill(null); // store selected option indices
+    let currentIndex = 0;
+    let proctoring = { cameraGranted:false, integrityEvents:0, focusLost:0, startTime:null, endTime:null };
+    let cameraStream = null;
+    let quizStarted = false;
+    const QUIZ_KEY = 'ks_java_topic5_progress';
+    let devtoolsOpen = false;
+
+    /* ---------- Utility Helpers ---------- */
+    function createQuestionBlock(qObj, idx) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'mb-4 p-3 border rounded-md';
+      wrapper.setAttribute('data-qindex', idx);
+      wrapper.setAttribute('data-qid', qObj.id);
+
+      const qTitle = document.createElement('div');
+      qTitle.className = 'question no-select no-copy';
+      qTitle.innerText = (idx+1) + '. ' + qObj.q;
+      wrapper.appendChild(qTitle);
+
+      const opts = document.createElement('div');
+      opts.className = 'options';
+
+      qObj.options.forEach((opt, i) => {
+        const op = document.createElement('div');
+        op.className = 'option no-select no-copy';
+        op.setAttribute('data-opt', i);
+        op.setAttribute('role', 'button');
+        op.tabIndex = 0;
+        op.innerText = String.fromCharCode(65 + i) + '. ' + opt;
+
+        op.addEventListener('click', () => {
+          if (!quizStarted) return;
+          selectOption(idx, i);
+        });
+        op.addEventListener('keydown', (ev) => {
+          if ((ev.key === 'Enter' || ev.key === ' ')) {
+            ev.preventDefault();
+            if (!quizStarted) return;
+            selectOption(idx, i);
+          }
+        });
+
+        opts.appendChild(op);
+      });
+
+      wrapper.appendChild(opts);
+      return wrapper;
+    }
+
+    function renderQuiz() {
+      quizArea.innerHTML = '';
+      QUESTIONS.forEach((qObj, i) => {
+        const block = createQuestionBlock(qObj, i);
+        quizArea.appendChild(block);
+      });
+      updateNavigation();
+      updateAnsweredCount();
+    }
+
+    function selectOption(qIndex, optIndex) {
+      answers[qIndex] = optIndex;
+      const qBlock = quizArea.querySelector(`[data-qindex="${qIndex}"]`);
+      if (!qBlock) return;
+      qBlock.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+      const chosen = qBlock.querySelector(`.option[data-opt="${optIndex}"]`);
+      if (chosen) chosen.classList.add('selected');
+      submitBtn.disabled = false;
+      updateAnsweredCount();
+    }
+
+    function updateAnsweredCount() {
+      const count = answers.filter(a => a !== null).length;
+      answeredCountEl.innerText = count + '';
+    }
+
+    /* ---------- Navigation ---------- */
+    function showQuestion(index) {
+      currentIndex = Math.max(0, Math.min(index, QUESTIONS.length-1));
+      const qBlock = quizArea.querySelector(`[data-qindex="${currentIndex}"]`);
+      if (!qBlock) return;
+      quizArea.querySelectorAll('.p-3.border').forEach(el => el.style.boxShadow = '');
+      qBlock.style.boxShadow = '0 4px 18px rgba(2,6,23,0.08)';
+      qBlock.scrollIntoView({ behavior:'smooth', block:'center' });
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === (QUESTIONS.length - 1);
+    }
+
+    function updateNavigation() {
+      prevBtn.disabled = currentIndex === 0 || !quizStarted;
+      nextBtn.disabled = currentIndex === (QUESTIONS.length - 1) || !quizStarted;
+    }
+
+    /* ---------- Begin / Submit ---------- */
+    async function beginQuiz() {
+      if (quizStarted) return;
+      quizStarted = true;
+      beginBtn.disabled = true;
+      beginBtn.innerText = 'Proctoring...';
+      try {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          cameraStream = stream;
+          proctoring.cameraGranted = true;
+          cameraStatus.innerText = 'Camera: Granted';
+        } else {
+          cameraStatus.innerText = 'Camera: Not available';
+        }
+      } catch (err) {
+        proctoring.cameraGranted = false;
+        cameraStatus.innerText = 'Camera: Denied / Unavailable';
+      }
+
+      beginBtn.innerText = 'Quiz Started';
+      beginBtn.disabled = true;
+      prevBtn.disabled = false;
+      nextBtn.disabled = false;
+      submitBtn.disabled = false;
+
+      quizArea.querySelectorAll('.option').forEach(op => op.style.opacity = '1');
+      proctoring.startTime = Date.now();
+      enableMonitoring();
+      showQuestion(0);
+    }
+
+    function computeScore() {
+      let score = 0;
+      QUESTIONS.forEach((q, i) => { if (answers[i] === q.a) score++; });
+      return score;
+    }
+
+    function submitQuiz() {
+      if (!quizStarted) return;
+      proctoring.endTime = Date.now();
+      const score = computeScore();
+      const percentage = Math.round((score / QUESTIONS.length) * 100);
+      const passed = percentage >= 90;
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+      }
+      resultBody.innerHTML = '';
+      const summary = document.createElement('div');
+      summary.innerHTML = `
+        <p class="tiny">Total Questions: ${QUESTIONS.length}</p>
+        <p class="tiny">Correct: ${score}</p>
+        <p class="tiny">Score: ${percentage}%</p>
+        <p class="tiny">Proctoring camera: ${proctoring.cameraGranted ? 'Enabled' : 'Disabled'}</p>
+        <p class="tiny">Integrity events detected: ${proctoring.integrityEvents}</p>
+      `;
+      const detail = document.createElement('div');
+      detail.style.marginTop = '12px';
+      QUESTIONS.forEach((q, i) => {
+        const correctIndex = q.a;
+        const sel = answers[i];
+        const ok = sel === correctIndex;
+        const line = document.createElement('div');
+        line.className = 'p-2 border rounded mb-2';
+        line.innerHTML = `<strong>Q${i+1}:</strong> ${q.q} <div class="tiny mt-1">Your answer: ${sel === null ? '<em>Not answered</em>' : String.fromCharCode(65+sel) + '. ' + q.options[sel]} — <strong style="color:${ok? 'green':'#b91c1c'}">${ok? 'Correct':'Wrong'}</strong> <div class="tiny text-gray-600 mt-1">Correct: ${String.fromCharCode(65+correctIndex)}. ${q.options[correctIndex]}</div></div>`;
+        detail.appendChild(line);
+      });
+      resultBody.appendChild(summary);
+      resultBody.appendChild(detail);
+
+      const banner = document.createElement('div');
+      banner.className = 'mt-4 p-3 rounded';
+      banner.style.background = passed ? '#ecfdf5' : '#fff1f2';
+      banner.style.borderLeft = passed ? '4px solid #10b981' : '4px solid #ef4444';
+      banner.innerHTML = `<strong style="font-size:1.05rem">${passed ? '✅ Passed' : '❌ Not Passed'}</strong> — ${passed ? 'You have unlocked the topic completion.' : 'Score at least 90% to unlock completion.'}`;
+      resultBody.insertBefore(banner, resultBody.firstChild);
+
+      if (passed) {
+        const now = new Date().toISOString();
+        const payload = { topic: 5, score, percentage, completedAt: now };
+        try {
+          localStorage.setItem(QUIZ_KEY, JSON.stringify(payload));
+          localStorage.setItem('ks_topic5_completed', 'true');
+        } catch (e) { console.warn('Unable to persist progress', e); }
+      }
+
+      resultModal.style.display = 'flex';
+      quizModal.style.display = 'none';
+    }
+
+    /* ---------- Monitoring / anti-cheat ---------- */
+    function enableMonitoring() {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible') {
+          proctoring.integrityEvents++;
+          proctoring.focusLost++;
+          flashIntegrityWarning();
+        }
+      });
+
+      window.addEventListener('blur', () => {
+        proctoring.integrityEvents++;
+        proctoring.focusLost++;
+        flashIntegrityWarning();
+      });
+
+      window.addEventListener('beforeunload', (e) => {
+        if (quizStarted) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+
+      document.addEventListener('copy', (e) => {
+        if (quizModal.style.display === 'flex') {
+          e.preventDefault();
+          flashTemporaryToast('Copy not allowed during quiz');
+        }
+      });
+
+      quizModal.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        flashTemporaryToast('Right-click disabled during quiz');
+      });
+
+      window.addEventListener('keydown', blockKeysDuringQuiz, true);
+      window.addEventListener('resize', detectDevTools);
+      document.addEventListener('selectionchange', () => {
+        if (quizModal.style.display === 'flex') {
+          const sel = window.getSelection();
+          if (sel && sel.toString().length > 0) {
+            sel.removeAllRanges();
+            flashTemporaryToast('Text selection disabled during quiz');
+          }
+        }
+      });
+    }
+
+    function blockKeysDuringQuiz(e) {
+      if (quizModal.style.display !== 'flex') return;
+      const ctrl = e.ctrlKey || e.metaKey;
+      const shift = e.shiftKey;
+      const key = (e.key || '').toLowerCase();
+
+      if (e.key === 'F12') { e.preventDefault(); flashTemporaryToast('F12 disabled during quiz'); proctoring.integrityEvents++; return; }
+      if (ctrl && shift && (key === 'i' || key === 'c' || key === 'j')) { e.preventDefault(); flashTemporaryToast('DevTools disabled during quiz'); proctoring.integrityEvents++; return; }
+      if (ctrl && key === 'u') { e.preventDefault(); flashTemporaryToast('Viewing source disabled during quiz'); proctoring.integrityEvents++; return; }
+      if (ctrl && key === 'p') { e.preventDefault(); flashTemporaryToast('Printing disabled during quiz'); proctoring.integrityEvents++; return; }
+      if (ctrl && (key === 'c' || key === 'x')) { e.preventDefault(); flashTemporaryToast('Copy/Cut disabled during quiz'); proctoring.integrityEvents++; return; }
+      if (e.key === 'PrintScreen') { e.preventDefault(); try { navigator.clipboard && navigator.clipboard.writeText(''); } catch(e){} flashTemporaryToast('Screenshots discouraged during quiz'); proctoring.integrityEvents++; return; }
+    }
+
+    function flashTemporaryToast(msg) {
+      const t = document.createElement('div');
+      t.innerText = msg;
+      t.style.position = 'fixed';
+      t.style.bottom = '24px';
+      t.style.left = '50%';
+      t.style.transform = 'translateX(-50%)';
+      t.style.background = '#111827';
+      t.style.color = 'white';
+      t.style.padding = '10px 14px';
+      t.style.borderRadius = '8px';
+      t.style.zIndex = 9999;
+      t.style.opacity = '0';
+      t.style.transition = 'opacity .18s ease';
+      document.body.appendChild(t);
+      requestAnimationFrame(() => t.style.opacity = '1');
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(()=> t.remove(), 200); }, 1500);
+    }
+
+    function flashIntegrityWarning() { flashTemporaryToast('Integrity event detected — focus lost or tab change'); }
+
+    /* ---------- Modal open/close ---------- */
+    openBtn.addEventListener('click', () => {
+      quizModal.style.display = 'flex';
+      if (quizArea.children.length === 0) {
+        renderQuiz();
+        quizArea.querySelectorAll('.option').forEach(op => op.style.opacity = '0.6');
+      }
+      setTimeout(()=> { beginBtn.focus(); }, 120);
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      if (quizStarted) {
+        if (!confirm('Quiz in progress — are you sure you want to exit? Your answers will be preserved but submission will be required to finish.')) return;
+      }
+      if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
+      quizModal.style.display = 'none';
+    });
+
+    prevBtn.addEventListener('click', () => { showQuestion(currentIndex - 1); });
+    nextBtn.addEventListener('click', () => { showQuestion(currentIndex + 1); });
+
+    beginBtn.addEventListener('click', () => beginQuiz());
+    submitBtn.addEventListener('click', () => {
+      if (!confirm('Submit your quiz? You will not be able to change answers after submission.')) return;
+      submitQuiz();
+    });
+
+    /* result modal controls */
+    resultClose.addEventListener('click', () => { resultModal.style.display = 'none'; });
+    finishBtn.addEventListener('click', () => {
+      resultModal.style.display = 'none';
+      if (localStorage.getItem('ks_topic5_completed') === 'true') {
+        flashTemporaryToast('Topic 5 marked completed 🎉');
+      } else {
+        flashTemporaryToast('You can retry the quiz to reach completion.');
+      }
+    });
+
+    downloadReport.addEventListener('click', () => {
+      const score = computeScore();
+      const payload = {
+        topic: 5,
+        total: QUESTIONS.length,
+        correct: score,
+        percentage: Math.round((score / QUESTIONS.length)*100),
+        answers: answers,
+        proctoring,
+        savedAt: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'topic5-quiz-result.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    /* ---------- DevTools detection (heuristic) ---------- */
+    function detectDevTools() {
+      const threshold = 160;
+      const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
+      const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
+      if (widthDiff > threshold || heightDiff > threshold) {
+        if (!devtoolsOpen) {
+          devtoolsOpen = true;
+          if (quizModal.style.display === 'flex') { proctoring.integrityEvents++; flashTemporaryToast('DevTools detected — integrity event logged'); }
+        }
+      } else {
+        devtoolsOpen = false;
+      }
+    }
+
+    /* ---------- Accessibility: close on Escape ---------- */
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (resultModal.style.display === 'flex') resultModal.style.display = 'none';
+        else if (quizModal.style.display === 'flex') {
+          if (quizStarted) flashTemporaryToast('Complete or submit the quiz before closing');
+          else quizModal.style.display = 'none';
+        }
+      }
+    });
+
+    /* ---------- Prevent printing while quiz open (print stylesheet) ---------- */
+    const styleForPrint = document.createElement('style');
+    styleForPrint.type = 'text/css';
+    styleForPrint.media = 'print';
+    styleForPrint.appendChild(document.createTextNode('body * { display: none !important; }'));
+    document.head.appendChild(styleForPrint);
+
+    /* ---------- Initialize ---------- */
+    renderQuiz();
+
+    try {
+      const saved = localStorage.getItem(QUIZ_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.percentage && parsed.percentage >= 90) {
+          setTimeout(()=> flashTemporaryToast('You previously completed Topic 5 — progress restored.'), 600);
+        }
+      }
+    } catch (e) { /* ignore parse errors */ }
+
+  })();
+  </script>
+</body>
+</html>

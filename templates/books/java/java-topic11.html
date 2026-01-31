@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KnowledgeStream — GUI Programming (Swing & JavaFX)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg:#ffffff; --muted:#6b7280; --accent:#0ea5e9; --accent-700:#0284c7; --code-bg:#f3f7fb;
+    }
+    body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#0f172a;line-height:1.6}
+    .container{max-width:980px;margin:0 auto;padding:2rem}
+    header{background:#ffffff;box-shadow:0 4px 14px rgba(2,6,23,0.06);position:sticky;top:0;z-index:50}
+    .brand{color:var(--accent);font-weight:800}
+    h1{color:#075985}
+    h2{color:#0369a1}
+    .card{background:#ffffff;border:1px solid #eef2f7;border-radius:.7rem;padding:1.25rem;box-shadow:0 6px 18px rgba(2,6,23,0.04);margin-bottom:1rem}
+    .code-card{background:var(--code-bg);border:1px solid #e6eef8;padding:1rem;border-radius:.6rem;position:relative}
+    pre{background:transparent;margin:0;white-space:pre-wrap;overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;color:#0f172a}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .7rem;border-radius:.45rem;font-weight:700;border:1px solid transparent}
+    .btn-run{background:linear-gradient(90deg,var(--accent),var(--accent-700));color:white}
+    .btn-copy{background:#f8fafc;border:1px solid #e6eef8;color:#0f172a}
+    .meta{font-size:.92rem;color:var(--muted)}
+    details summary{cursor:pointer;font-weight:700;color:#075985}
+    .diagram{background:#f8fafc;border:1px solid #e6eef8;padding:.9rem;border-radius:.5rem}
+    table{width:100%;border-collapse:collapse;margin-top:.75rem}
+    th,td{padding:.6rem;border:1px solid #eef2f7;text-align:left}
+    th{background:#eef9ff;color:#0369a1;font-weight:700}
+    .explain{background:#f1f5f9;border-left:4px solid #60a5fa;padding:.8rem;border-radius:.4rem;color:#0f172a}
+    .small{font-size:.95rem;color:var(--muted)}
+    footer{margin-top:2rem;color:var(--muted);font-size:.92rem;text-align:center;padding:1.5rem 0}
+    #toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:white;padding:.6rem 1rem;border-radius:.5rem;box-shadow:0 6px 18px rgba(2,6,23,0.2);display:none;z-index:1000}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container flex items-center justify-between py-4">
+      <a href="index.html" class="brand text-2xl">KnowledgeStream</a>
+      <nav class="meta">
+        <a href="java-topic10.html" class="hover:underline">← Previous</a>
+        <span class="mx-2">|</span>
+        <a href="java-topic12.html" class="hover:underline">Next →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="text-3xl font-bold mb-2">🌐 GUI Programming — Swing &amp; JavaFX (Complete)</h1>
+    <p class="small mb-4">Comprehensive guide to desktop GUI programming in Java: Swing components, layout managers, event handling, dialogs & menus, JavaFX basics, diagrams, a full Swing Calculator mini-project, and practice tasks.</p>
+
+    <!-- Overview card -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">What you will learn</h2>
+      <ul class="ml-6 mt-3 small">
+        <li><strong>JFrame, JPanel, JButton, JLabel:</strong> core Swing components</li>
+        <li><strong>Layout Managers:</strong> Flow, Border, Grid, Box, GridBag</li>
+        <li><strong>Event Handling:</strong> ActionListener, KeyListener, MouseListener</li>
+        <li><strong>Dialogs & Menus:</strong> JOptionPane, JMenuBar</li>
+        <li><strong>JavaFX Basics:</strong> Stage → Scene → Node lifecycle & controls</li>
+        <li><strong>Mini GUI Apps:</strong> Calculator, Login Form (full code + explanation)</li>
+      </ul>
+      <div class="explain mt-4">
+        <strong>How GUIs work (brief):</strong>
+        <p class="small mt-2">A GUI application creates windows managed by the OS (JFrame/Stage). UI code runs on a special <strong>UI thread</strong> (Event Dispatch Thread in Swing, JavaFX Application Thread in JavaFX). Events (clicks, keys) are delivered to listeners which update UI components — do heavy work on background threads to keep UI responsive.</p>
+      </div>
+    </section>
+
+    <!-- Components: Swing basics -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">1️⃣ Swing Components — JFrame, JPanel, JButton, JLabel</h2>
+      <p class="small">Role of each:</p>
+      <ul class="ml-6 mt-2 small">
+        <li><strong>JFrame:</strong> top-level window container (titlebar, close behavior).</li>
+        <li><strong>JPanel:</strong> generic container to group components and manage layout.</li>
+        <li><strong>JButton:</strong> clickable control that fires ActionEvents.</li>
+        <li><strong>JLabel:</strong> non-editable text or image display.</li>
+      </ul>
+
+      <div class="code-card mt-4 p-4">
+        <pre id="code-swing-basic"><code>import javax.swing.*;
+
+public class SwingBasics {
+  public static void main(String[] args) {
+    JFrame frame = new JFrame("Basics");
+    JPanel panel = new JPanel();
+    JLabel label = new JLabel("Hello Swing");
+    JButton btn = new JButton("Click");
+
+    panel.add(label);
+    panel.add(btn);
+    frame.add(panel);
+
+    frame.setSize(300,150);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setVisible(true);
+  }
+}</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-run" data-codeid="code-swing-basic">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-swing-basic">📋 Copy</button>
+          <div class="meta ml-auto small">Swing • Components</div>
+        </div>
+
+        <details class="mt-3">
+          <summary>Line-by-line explanation</summary>
+          <ol class="mt-2 small">
+            <li><code>JFrame frame = new JFrame("Basics");</code><br>Creates a top-level window with a title. This is the main container shown to the user.</li>
+            <li><code>JPanel panel = new JPanel();</code><br>Panel is a lightweight container that helps organize components and apply a layout manager.</li>
+            <li><code>panel.add(label); panel.add(btn);</code><br>Add components to the panel; the panel's layout manager determines positioning.</li>
+            <li><code>frame.add(panel);</code><br>Attach the panel to the frame's content pane so components become visible in the window.</li>
+            <li><code>frame.setVisible(true);</code><br>Show the window. Always create and show Swing UI on the Event Dispatch Thread (EDT) for thread safety — we'll discuss EDT below.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- Layout Managers -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">2️⃣ Layout Managers — quick guide</h2>
+      <p class="small">Layout managers control how components are sized and positioned inside containers. Choose based on desired flexibility.</p>
+
+      <table class="mt-3">
+        <tr><th>Layout</th><th>Key Idea</th><th>Use-case</th></tr>
+        <tr><td>FlowLayout</td><td>Places components left→right, wraps</td><td>Simple toolbars, small panels</td></tr>
+        <tr><td>BorderLayout</td><td>Five regions: NORTH, SOUTH, EAST, WEST, CENTER</td><td>Main window regions</td></tr>
+        <tr><td>GridLayout</td><td>Grid of equal cells</td><td>Buttons grid (calculator)</td></tr>
+        <tr><td>BoxLayout</td><td>Vertical or horizontal stacking</td><td>Forms, vertical lists</td></tr>
+        <tr><td>GridBagLayout</td><td>Powerful, fine-grained constraints</td><td>Complex UIs</td></tr>
+      </table>
+
+      <details class="mt-3">
+        <summary>Show Diagram — Layout manager flow</summary>
+        <div class="diagram mt-2">
+          <!-- simple illustrative SVG -->
+          <svg width="100%" height="160" viewBox="0 0 900 160" xmlns="http://www.w3.org/2000/svg" role="img">
+            <rect x="10" y="10" width="880" height="140" rx="10" fill="#fff" stroke="#e6eef8"/>
+            <text x="60" y="42" fill="#0369a1" font-weight="700">Layout managers decide component placement</text>
+            <text x="60" y="72" fill="#6b7280">Flow | Border | Grid | Box | GridBag</text>
+            <rect x="60" y="90" width="120" height="40" rx="6" fill="#f0f9ff" stroke="#93c5fd"/>
+            <text x="120" y="116" fill="#0369a1" text-anchor="middle">FlowLayout</text>
+            <rect x="220" y="90" width="120" height="40" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+            <text x="280" y="116" fill="#b45309" text-anchor="middle">BorderLayout</text>
+            <rect x="380" y="90" width="120" height="40" rx="6" fill="#ecfccb" stroke="#bbf7d0"/>
+            <text x="440" y="116" fill="#065f46" text-anchor="middle">GridLayout</text>
+            <rect x="540" y="90" width="120" height="40" rx="6" fill="#fef3c7" stroke="#fcd34d"/>
+            <text x="600" y="116" fill="#92400e" text-anchor="middle">BoxLayout</text>
+            <rect x="700" y="90" width="120" height="40" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+            <text x="760" y="116" fill="#374151" text-anchor="middle">GridBagLayout</text>
+          </svg>
+        </div>
+      </details>
+    </section>
+
+    <!-- Event Handling -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">3️⃣ Event Handling — ActionListener, KeyListener, MouseListener</h2>
+      <p class="small">Events are delivered to listeners registered on components. In Swing, event callbacks run on the Event Dispatch Thread (EDT) — long tasks must be offloaded to background threads.</p>
+
+      <div class="code-card p-4">
+        <pre id="code-action"><code>JButton btn = new JButton("Click");
+btn.addActionListener(e -> System.out.println("Button clicked!"));</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-run" data-codeid="code-action">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-action">📋 Copy</button>
+          <div class="meta ml-auto small">Swing • ActionListener</div>
+        </div>
+
+        <details class="mt-3">
+          <summary>Event Flow Diagram</summary>
+          <div class="diagram mt-2">
+            <svg width="100%" height="140" viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg" role="img">
+              <rect x="30" y="20" width="220" height="80" rx="8" fill="#fff" stroke="#e6eef8"/>
+              <text x="140" y="55" fill="#0369a1" font-weight="700" text-anchor="middle">User (Click)</text>
+              <rect x="340" y="20" width="220" height="80" rx="8" fill="#fff" stroke="#e6eef8"/>
+              <text x="450" y="55" fill="#0369a1" font-weight="700" text-anchor="middle">EDT: Event dispatch</text>
+              <rect x="650" y="20" width="220" height="80" rx="8" fill="#fff" stroke="#e6eef8"/>
+              <text x="760" y="55" fill="#0369a1" font-weight="700" text-anchor="middle">Listener (ActionListener)</text>
+              <path d="M250 60 H340" stroke="#0ea5e9" stroke-width="2" marker-end="url(#ev)"/>
+              <path d="M560 60 H650" stroke="#0ea5e9" stroke-width="2" marker-end="url(#ev)"/>
+              <defs><marker id="ev" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#0ea5e9"/></marker></defs>
+            </svg>
+          </div>
+        </details>
+
+        <div class="explain mt-3">
+          <p class="small">Tip: Always keep heavy computations (file I/O, long loops) off the EDT — use <code>SwingWorker</code> or background threads and update UI via <code>SwingUtilities.invokeLater()</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dialogs & Menus -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">4️⃣ Dialogs & Menus — JOptionPane & JMenuBar</h2>
+      <div class="code-card p-4">
+        <pre id="code-dialog"><code>// Message dialog
+JOptionPane.showMessageDialog(null, "Hello!");
+
+// Confirm dialog
+int res = JOptionPane.showConfirmDialog(null, "Continue?", "Confirm", JOptionPane.YES_NO_OPTION);
+
+// Simple menu
+JMenuBar bar = new JMenuBar();
+JMenu file = new JMenu("File");
+file.add(new JMenuItem("Exit"));
+bar.add(file);
+frame.setJMenuBar(bar);</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-copy" data-codeid="code-dialog">📋 Copy</button>
+          <div class="meta ml-auto small">Swing • Dialogs & Menus</div>
+        </div>
+
+        <details class="mt-3">
+          <summary>Notes</summary>
+          <ol class="mt-2 small">
+            <li><code>showMessageDialog</code> is quick for alerts; confirm dialogs return selection integers.</li>
+            <li>Menus are added to the <code>JFrame</code> via <code>setJMenuBar()</code>.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- JavaFX Basics -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">5️⃣ JavaFX Basics — Stage → Scene → Node</h2>
+      <p class="small">JavaFX uses a scene graph: a <code>Stage</code> holds a <code>Scene</code>, which holds a tree of <code>Node</code> objects (controls, shapes, layouts).</p>
+
+      <details>
+        <summary>Show Diagram — Stage → Scene → Node</summary>
+        <div class="diagram mt-2">
+          <svg width="100%" height="160" viewBox="0 0 900 160" xmlns="http://www.w3.org/2000/svg" role="img">
+            <rect x="30" y="18" width="840" height="124" rx="10" fill="#fff" stroke="#e6eef8"/>
+            <text x="90" y="48" fill="#0369a1" font-weight="700">Stage (Window)</text>
+            <text x="360" y="48" fill="#0369a1" font-weight="700">Scene (Container)</text>
+            <text x="690" y="48" fill="#0369a1" font-weight="700">Nodes (Buttons, Labels)</text>
+            <path d="M210 60 H300" stroke="#0ea5e9" stroke-width="2" marker-end="url(#j1)"/>
+            <path d="M470 60 H560" stroke="#0ea5e9" stroke-width="2" marker-end="url(#j1)"/>
+            <defs><marker id="j1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#0ea5e9"/></marker></defs>
+          </svg>
+        </div>
+      </details>
+
+      <div class="code-card mt-4 p-4">
+        <pre id="code-fx"><code>import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+public class FXDemo extends Application {
+  @Override
+  public void start(Stage stage) {
+    Button b = new Button("Click me");
+    b.setOnAction(e -> b.setText("Clicked!"));
+
+    StackPane root = new StackPane(b);
+    Scene s = new Scene(root, 300, 200);
+    stage.setScene(s);
+    stage.setTitle("FX Demo");
+    stage.show();
+  }
+  public static void main(String[] args) { launch(args); }
+}</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-run" data-codeid="code-fx">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-fx">📋 Copy</button>
+          <div class="meta ml-auto small">JavaFX • Stage / Scene / Node</div>
+        </div>
+
+        <details class="mt-3">
+          <summary>JavaFX lifecycle & notes</summary>
+          <ol class="mt-2 small">
+            <li><code>launch(args)</code> starts JavaFX runtime and calls <code>start(Stage)</code> on the JavaFX Application Thread.</li>
+            <li>Update UI only on JavaFX thread; use <code>Platform.runLater()</code> to schedule UI updates from background threads.</li>
+            <li>JavaFX supports CSS styling, FXML, and hardware acceleration for rich UIs.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- Mini-project: Swing Calculator -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">6️⃣ Mini-project — Swing Calculator (Full Code)</h2>
+      <p class="small">A simple calculator with digits, +, -, ×, ÷, equals and clear. Uses <code>GridLayout</code> for the keypad and ActionListener for buttons.</p>
+
+      <div class="code-card p-4">
+        <pre id="code-calc"><code>import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class SwingCalculator {
+  private JFrame frame;
+  private JTextField display;
+  private double result = 0;
+  private String lastOp = "=";
+  private boolean start = true;
+
+  public SwingCalculator() {
+    frame = new JFrame("Calculator");
+    display = new JTextField("0");
+    display.setEditable(false);
+    display.setHorizontalAlignment(JTextField.RIGHT);
+    display.setFont(new Font("Arial", Font.PLAIN, 24));
+
+    frame.setLayout(new BorderLayout());
+    frame.add(display, BorderLayout.NORTH);
+
+    JPanel panel = new JPanel();
+    panel.setLayout(new GridLayout(4,4,5,5));
+
+    String[] buttons = {
+      "7","8","9","/",
+      "4","5","6","*",
+      "1","2","3","-",
+      "0",".","=","+"
+    };
+
+    for (String b : buttons) {
+      JButton btn = new JButton(b);
+      btn.setFont(new Font("Arial", Font.BOLD, 18));
+      btn.addActionListener(new ButtonListener());
+      panel.add(btn);
+    }
+
+    frame.add(panel, BorderLayout.CENTER);
+    frame.setSize(320,420);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setVisible(true);
+  }
+
+  private class ButtonListener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+      String cmd = e.getActionCommand();
+      if ("0123456789.".contains(cmd)) {
+        if (start) { display.setText(cmd); start = false; }
+        else display.setText(display.getText() + cmd);
+      } else {
+        if (start) {
+          if (cmd.equals("-")) { display.setText(cmd); start = false; }
+          else lastOp = cmd;
+        } else {
+          double x = Double.parseDouble(display.getText());
+          calculate(x);
+          lastOp = cmd;
+          start = true;
+        }
+      }
+    }
+  }
+
+  private void calculate(double x) {
+    switch (lastOp) {
+      case "+": result += x; break;
+      case "-": result -= x; break;
+      case "*": result *= x; break;
+      case "/": result /= x; break;
+      case "=": result = x; break;
+    }
+    display.setText("" + result);
+  }
+
+  public static void main(String[] args) {
+    SwingUtilities.invokeLater(() -> new SwingCalculator());
+  }
+}</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-run" data-codeid="code-calc">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-calc">📋 Copy</button>
+          <div class="meta ml-auto small">Swing • Mini-project (Calculator)</div>
+        </div>
+
+        <details class="mt-3">
+          <summary>Line-by-line explanation (highlighted steps)</summary>
+          <ol class="mt-2 small">
+            <li><code>JTextField display = new JTextField("0");</code><br>
+              Creates the display; non-editable and right-aligned so users can't type invalid characters directly — all input goes through buttons.</li>
+            <li><code>panel.setLayout(new GridLayout(4,4,5,5));</code><br>
+              GridLayout for keypad: 4 columns × 4 rows with gaps for a calculator-like grid.</li>
+            <li><code>btn.addActionListener(new ButtonListener());</code><br>
+              Each button shares the same listener which inspects the action command to decide behavior (digit vs operator).</li>
+            <li><code>if ("0123456789.".contains(cmd)) { ... }</code><br>
+              Handles numeric input and building multi-digit numbers including decimal point.</li>
+            <li><code>calculate(x)</code> with switch on <code>lastOp</code><br>
+              Performs the arithmetic using the last operator; "=" resets the stored result to current input.</li>
+            <li><code>SwingUtilities.invokeLater(() -> new SwingCalculator());</code><br>
+              Ensures UI is constructed on the Event Dispatch Thread (EDT) which is the correct pattern for Swing applications.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- Expanded Swing vs JavaFX table -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">7️⃣ Swing vs JavaFX — Detailed Comparison</h2>
+      <table class="mt-3">
+        <tr><th>Feature</th><th>Swing</th><th>JavaFX</th></tr>
+        <tr><td>API Age</td><td>Old, stable (since JDK 1.2)</td><td>Newer, modern (since Java 8)</td></tr>
+        <tr><td>Threading</td><td>EDT (Event Dispatch Thread)</td><td>JavaFX Application Thread</td></tr>
+        <tr><td>Styling</td><td>Look &amp; Feel (pluggable)</td><td>CSS-like styling, FXML</td></tr>
+        <tr><td>Graphics</td><td>Software-rendered historically</td><td>Hardware-accelerated pipeline</td></tr>
+        <tr><td>FXML</td><td>No</td><td>Yes (separation of UI & logic)</td></tr>
+        <tr><td>Ideal use</td><td>Simple desktop tools, legacy apps</td><td>Rich UIs, multimedia, modern styling</td></tr>
+      </table>
+    </section>
+
+    <!-- Practice tasks -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">8️⃣ Practice Tasks</h2>
+      <ol class="ml-6 mt-2 small">
+        <li>Build a Swing login form with username/password + simple validation. Use <code>JPasswordField</code>.</li>
+        <li>Enhance the Calculator: implement backspace, percentage, and keyboard input.</li>
+        <li>Create a JavaFX to-do app with an input field and list view, persist data to local file.</li>
+        <li>Implement drag-drop behavior with MouseListener and TransferHandler.</li>
+      </ol>
+    </section>
+
+    <!-- Short quiz -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">9️⃣ Quick Quiz</h2>
+      <div class="mt-3 small">
+        <p class="font-semibold">Q1. Which thread should update Swing components?</p>
+        <label><input type="radio" name="gq1" value="A"> A. Main thread</label><br>
+        <label><input type="radio" name="gq1" value="B"> B. Event Dispatch Thread (EDT)</label><br>
+
+        <p class="font-semibold mt-3">Q2. In JavaFX, which class is the top-level window?</p>
+        <label><input type="radio" name="gq2" value="A"> A. Scene</label><br>
+        <label><input type="radio" name="gq2" value="B"> B. Stage</label><br>
+
+        <div class="mt-3">
+          <button id="check-quiz" class="btn btn-run">Check</button>
+          <button id="reset-quiz" class="btn btn-copy">Reset</button>
+          <div id="quiz-result" class="mt-3 font-semibold"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+    <footer>
+      <p class="small">© 2025 KnowledgeStream — GUI Programming. Want downloadable .java files or a printable PDF? Ask and I will generate them.</p>
+    </footer>
+  </main>
+
+  <div id="toast">Copied &amp; opened JDoodle — paste (Ctrl+V) and run</div>
+
+  <script>
+    // Toast helper
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(()=> t.style.display = 'none', 3000);
+    }
+
+    // Copy & Run Buttons (copy code and open JDoodle)
+    const JDoodleURL = 'https://www.jdoodle.com/online-java-compiler/';
+
+    document.querySelectorAll('.btn-copy').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-codeid');
+        const codeEl = document.getElementById(id);
+        const text = codeEl ? codeEl.innerText : '';
+        if (!text) { showToast('No code found'); return; }
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast('Code copied to clipboard');
+        } catch (e) {
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); ta.remove();
+          showToast('Code copied (fallback)');
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-run').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-codeid');
+        const codeEl = document.getElementById(id);
+        const text = codeEl ? codeEl.innerText : '';
+        if (!text) { showToast('No code found'); return; }
+        try {
+          await navigator.clipboard.writeText(text);
+          window.open(JDoodleURL, '_blank');
+          showToast('Copied & opened JDoodle — paste (Ctrl+V) and run');
+        } catch(e) {
+          window.open(JDoodleURL, '_blank');
+          alert('Code copied fallback. Paste into JDoodle and run.');
+        }
+      });
+    });
+
+    // For code snippets without data-codeid attributes (quick-run examples), handle generically
+    document.querySelectorAll('.btn-run:not([data-codeid])').forEach(b=>{
+      b.addEventListener('click', ()=>window.open(JDoodleURL,'_blank'));
+    });
+
+    // Simple quiz logic
+    (function(){
+      const answers = { gq1: 'B', gq2: 'B' };
+      document.getElementById('check-quiz').addEventListener('click', ()=>{
+        let total=0, score=0;
+        for (const k in answers){
+          total++;
+          const els = document.getElementsByName(k);
+          let chosen=null;
+          for(const e of els) if(e.checked) { chosen = e.value; break; }
+          if (chosen === answers[k]) score++;
+        }
+        const res = document.getElementById('quiz-result');
+        res.textContent = 'Score: ' + score + ' / ' + total;
+        const expl = document.createElement('div');
+        expl.className = 'small mt-2';
+        expl.innerHTML = '<ul><li>Q1: B — Update Swing UI on EDT (use SwingUtilities.invokeLater).</li><li>Q2: B — Stage is the top-level window in JavaFX.</li></ul>';
+        const old = document.getElementById('quiz-expl'); if(old) old.remove();
+        expl.id = 'quiz-expl';
+        res.appendChild(expl);
+      });
+      document.getElementById('reset-quiz').addEventListener('click', ()=>{
+        ['gq1','gq2'].forEach(n=>{ const arr=document.getElementsByName(n); for(const r of arr) r.checked=false; });
+        document.getElementById('quiz-result').textContent='';
+        const old = document.getElementById('quiz-expl'); if(old) old.remove();
+      });
+    })();
+  </script>
+</body>
+</html>

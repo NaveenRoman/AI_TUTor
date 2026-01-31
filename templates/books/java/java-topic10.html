@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KnowledgeStream — Inner Classes, Enums & Wrapper Classes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* White KnowledgeStream theme + card-style code blocks */
+    :root{
+      --bg:#ffffff; --muted:#6b7280; --accent:#0ea5e9; --accent-700:#0284c7; --code-bg:#f3f4f6;
+    }
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#0f172a;line-height:1.6}
+    .container{max-width:980px;margin:0 auto;padding:2rem}
+    header{background:#ffffff;box-shadow:0 4px 14px rgba(2,6,23,0.06);position:sticky;top:0;z-index:50}
+    .brand{color:var(--accent);font-weight:800}
+    h1{color:#075985}
+    h2{color:#0369a1}
+    .card{background:#ffffff;border:1px solid #eef2f7;border-radius:.6rem;padding:1rem;box-shadow:0 6px 18px rgba(2,6,23,0.04)}
+    .code-card{background:var(--code-bg);border:1px solid #e6eef8;padding:1rem;border-radius:.5rem;position:relative}
+    pre{background:transparent;margin:0;white-space:pre-wrap}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;color:#0f172a}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .7rem;border-radius:.45rem;font-weight:700;border:1px solid transparent}
+    .btn-run{background:linear-gradient(90deg,var(--accent),var(--accent-700));color:white}
+    .btn-copy{background:#f8fafc;border:1px solid #e6eef8;color:#0f172a}
+    .meta{font-size:.92rem;color:var(--muted)}
+    details summary{cursor:pointer;font-weight:700;color:#075985}
+    .diagram{background:#f8fafc;border:1px solid #e6eef8;padding:.9rem;border-radius:.5rem}
+    table{width:100%;border-collapse:collapse;margin-top:.75rem}
+    th,td{padding:.6rem;border:1px solid #eef2f7;text-align:left}
+    th{background:#eef9ff;color:#0369a1;font-weight:700}
+    .explain{background:#f1f5f9;border-left:4px solid #60a5fa;padding:.8rem;border-radius:.4rem;color:#0f172a}
+    .small{font-size:.95rem;color:var(--muted)}
+    footer{margin-top:2rem;color:var(--muted);font-size:.92rem;text-align:center;padding:1.5rem 0}
+    /* copy/run toast */
+    #toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:white;padding:.6rem 1rem;border-radius:.5rem;box-shadow:0 6px 18px rgba(2,6,23,0.2);display:none;z-index:1000}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container flex items-center justify-between py-4">
+      <a href="index.html" class="brand text-2xl">KnowledgeStream</a>
+      <nav class="space-x-4 meta">
+        <a href="java-topic9.html" class="hover:underline">← File Handling</a>
+        <a href="java-topic11.html" class="hover:underline">Next →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold">🧰 Inner Classes, Enums &amp; Wrapper Classes</h1>
+      <p class="small mt-2">Module 10 — clear explanations, interactive code cards (Run / Copy), diagrams, line-by-line commentary, practice problems, and a quiz for quick self-check.</p>
+    </div>
+
+    <!-- QUICK NAV BADGE -->
+    <div class="mb-6">
+      <span class="meta">Topics:</span>
+      <span class="inline-block ml-3 px-3 py-1 text-sm rounded-full" style="background:#eef9ff;color:#0369a1;font-weight:700">Member / Local / Static / Anonymous Inner</span>
+      <span class="inline-block ml-2 px-3 py-1 text-sm rounded-full" style="background:#fff7ed;color:#b45309;font-weight:700">Enums</span>
+      <span class="inline-block ml-2 px-3 py-1 text-sm rounded-full" style="background:#f0fdf4;color:#065f46;font-weight:700">Wrappers &amp; Autoboxing</span>
+    </div>
+
+    <!-- SECTION: Inner Classes Overview -->
+    <section class="mb-8 card">
+      <h2 class="text-xl font-semibold">1️⃣ Inner Classes — Overview & Analogy</h2>
+      <p class="small mt-1">Analogy: <em>Inner class</em> = an employee inside a company (outer). The employee can access company resources; static nested = a consultant which doesn't tie into a specific company instance.</p>
+      <div class="explain mt-3">
+        <strong>Key points</strong>
+        <ul class="ml-6 mt-2 small">
+          <li>Member inner classes are tied to an outer instance and can access private members.</li>
+          <li>Static nested classes do not reference the outer instance — they are logically grouped types.</li>
+          <li>Local inner classes live inside method scope. Anonymous inner classes are unnamed single-use implementations.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- MEMBER INNER CODE CARD -->
+    <section class="mb-8">
+      <div class="flex items-start justify-between mb-3">
+        <h3 class="text-lg font-semibold">1.1 Member (Non-static) Inner Class — Example</h3>
+        <div class="meta">Use when inner needs outer instance data</div>
+      </div>
+
+      <div class="code-card">
+        <pre id="code-member"><code>public class Outer {
+  private int x = 10;
+  class Inner {
+    void show() {
+      System.out.println("x = " + x);
+    }
+  }
+  public static void main(String[] args) {
+    Outer o = new Outer();
+    Outer.Inner i = o.new Inner();
+    i.show();
+  }
+}</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-run" data-codeid="code-member">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-member">📋 Copy</button>
+          <div class="meta ml-auto small">Java • Member Inner</div>
+        </div>
+      </div>
+
+      <details class="mt-3">
+        <summary>Line-by-line explanation</summary>
+        <ol class="mt-2 small">
+          <li><code>private int x = 10;</code> — outer's private field; inner can access it directly because inner is part of the outer's implementation context.</li>
+          <li><code>class Inner { ... }</code> — a member inner class (non-static) that implicitly holds a reference to the outer instance.</li>
+          <li><code>Outer.Inner i = o.new Inner();</code> — syntax to create an inner instance bound to a specific outer instance (<code>o</code>).</li>
+          <li><code>i.show();</code> — prints the outer field; useful to encapsulate behavior closely tied to the outer instance.</li>
+        </ol>
+      </details>
+
+      <details class="mt-3">
+        <summary>Show Diagram</summary>
+        <div class="diagram mt-2">
+          <!-- small illustrative SVG -->
+          <svg width="100%" height="120" viewBox="0 0 900 120" xmlns="http://www.w3.org/2000/svg" role="img">
+            <rect x="20" y="18" width="320" height="84" rx="8" fill="#fff" stroke="#e6eef8"/>
+            <text x="40" y="48" fill="#0369a1" font-weight="700">Outer instance (o)</text>
+            <text x="40" y="68" fill="#6b7280">private int x = 10</text>
+            <rect x="380" y="30" width="260" height="60" rx="8" fill="#fff" stroke="#e6eef8"/>
+            <text x="510" y="62" fill="#0369a1" font-weight="700" text-anchor="middle">Inner — bound to o</text>
+            <path d="M340 60 H380" stroke="#0ea5e9" stroke-width="2" marker-end="url(#a1)"/>
+            <defs><marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#0ea5e9"/></marker></defs>
+          </svg>
+        </div>
+      </details>
+    </section>
+
+    <!-- STATIC NESTED CODE CARD -->
+    <section class="mb-8 card">
+      <div class="flex items-start justify-between mb-3">
+        <h3 class="text-lg font-semibold">1.2 Static Nested Class — Example</h3>
+        <div class="meta">Use when no outer instance is required</div>
+      </div>
+
+      <div class="code-card">
+        <pre id="code-static"><code>public class Container {
+  static class Nested {
+    static void info() {
+      System.out.println("I am static nested");
+    }
+  }
+  public static void main(String[] args) {
+    Container.Nested.info();
+  }
+}</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-run" data-codeid="code-static">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-static">📋 Copy</button>
+          <div class="meta ml-auto small">Java • Static Nested</div>
+        </div>
+      </div>
+
+      <details class="mt-3">
+        <summary>Explanation</summary>
+        <ol class="mt-2 small">
+          <li>Static nested class doesn't hold implicit reference to Outer; declared with <code>static</code>.</li>
+          <li>Invoke static method via <code>Container.Nested.info()</code> — no outer instance needed.</li>
+          <li>Good for grouping helper classes logically inside a namespace.</li>
+        </ol>
+      </details>
+
+      <details class="mt-3">
+        <summary>Show Diagram</summary>
+        <div class="diagram mt-2">
+          <svg width="100%" height="100" viewBox="0 0 900 100" xmlns="http://www.w3.org/2000/svg" role="img">
+            <rect x="30" y="16" width="360" height="68" rx="8" fill="#fff" stroke="#e6eef8"/>
+            <text x="50" y="46" fill="#0369a1" font-weight="700">Container (outer)</text>
+            <rect x="420" y="28" width="320" height="44" rx="6" fill="#fff" stroke="#e6eef8"/>
+            <text x="580" y="52" fill="#0369a1" font-weight="700" text-anchor="middle">static Nested (no outer instance)</text>
+          </svg>
+        </div>
+      </details>
+    </section>
+
+    <!-- LOCAL INNER CODE CARD -->
+    <section class="mb-8">
+      <div class="flex items-start justify-between mb-3">
+        <h3 class="text-lg font-semibold">1.3 Local Inner Class — Example</h3>
+        <div class="meta">Scoped to a method — one-off helper</div>
+      </div>
+
+      <div class="code-card">
+        <pre id="code-local"><code>public class LocalExample {
+  void demo() {
+    final int factor = 2;
+    class Multiplier {
+      int multiply(int n) { return n * factor; }
+    }
+    Multiplier m = new Multiplier();
+    System.out.println(m.multiply(5));
+  }
+  public static void main(String[] args) { new LocalExample().demo(); }
+}</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-run" data-codeid="code-local">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-local">📋 Copy</button>
+          <div class="meta ml-auto small">Java • Local Inner</div>
+        </div>
+      </div>
+
+      <details class="mt-3">
+        <summary>Explanation</summary>
+        <ol class="mt-2 small">
+          <li><code>factor</code> is effectively final; local inner classes can capture final/effectively-final variables.</li>
+          <li><code>class Multiplier</code> is visible only inside <code>demo()</code> — useful for a focused helper.</li>
+          <li>Use local classes for clarity when behavior shouldn't escape method scope.</li>
+        </ol>
+      </details>
+    </section>
+
+    <!-- ANONYMOUS INNER CODE CARD -->
+    <section class="mb-8 card">
+      <div class="flex items-start justify-between mb-3">
+        <h3 class="text-lg font-semibold">1.4 Anonymous Inner Class — Example</h3>
+        <div class="meta">Single-use implementation, often for listeners</div>
+      </div>
+
+      <div class="code-card">
+        <pre id="code-anon"><code>interface Greet { void say(); }
+public class AnonDemo {
+  public static void main(String[] args) {
+    Greet g = new Greet() {
+      public void say() { System.out.println("Hello from anonymous!"); }
+    };
+    g.say();
+  }
+}</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-run" data-codeid="code-anon">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-anon">📋 Copy</button>
+          <div class="meta ml-auto small">Java • Anonymous</div>
+        </div>
+      </div>
+
+      <details class="mt-3">
+        <summary>Explanation</summary>
+        <ol class="mt-2 small">
+          <li>Creates an unnamed class implementing <code>Greet</code> and instantiates it inline.</li>
+          <li>Great for one-off behaviour like GUI listeners (before lambdas).</li>
+          <li>If repeated, prefer a named class for reuse and readability.</li>
+        </ol>
+      </details>
+    </section>
+
+    <!-- ENUMS SECTION -->
+    <section class="mb-8 card">
+      <h2 class="text-xl font-semibold">2️⃣ Enums — Basics, Advanced & Switch</h2>
+      <p class="small mt-1">Enums are type-safe constants with rich features — each constant is an instance and can have fields, methods, and constructors.</p>
+
+      <!-- Basic Enum -->
+      <div class="mt-4">
+        <h3 class="font-semibold">Enum — Basic Example</h3>
+        <div class="code-card mt-2">
+          <pre id="code-enum-basic"><code>public enum Day { MON, TUE, WED, THU, FRI, SAT, SUN; }
+
+public class EnumDemo {
+  public static void main(String[] args) {
+    Day today = Day.WED;
+    System.out.println("Today: " + today);
+  }
+}</code></pre>
+
+          <div class="mt-3 flex gap-2">
+            <button class="btn btn-run" data-codeid="code-enum-basic">▶ Run</button>
+            <button class="btn btn-copy" data-codeid="code-enum-basic">📋 Copy</button>
+            <div class="meta ml-auto small">Java • Enum</div>
+          </div>
+        </div>
+
+        <details class="mt-3">
+          <summary>Explanation</summary>
+          <ol class="mt-2 small">
+            <li>Enum constants are singletons — safe and clear compared to int constants.</li>
+            <li>You can add fields and methods to enums (see advanced example next).</li>
+          </ol>
+        </details>
+      </div>
+
+      <!-- Advanced Enum with fields -->
+      <div class="mt-4">
+        <h3 class="font-semibold">Enum — Advanced (fields, constructor, method)</h3>
+        <div class="code-card mt-2">
+          <pre id="code-enum-advanced"><code>public enum Level {
+  LOW(1), MEDIUM(5), HIGH(10);
+  private final int severity;
+  Level(int s){ severity = s; }
+  public int getSeverity(){ return severity; }
+}
+
+public class EnumAdvanced {
+  public static void main(String[] args) {
+    System.out.println(Level.HIGH.getSeverity()); // 10
+  }
+}</code></pre>
+
+          <div class="mt-3 flex gap-2">
+            <button class="btn btn-run" data-codeid="code-enum-advanced">▶ Run</button>
+            <button class="btn btn-copy" data-codeid="code-enum-advanced">📋 Copy</button>
+            <div class="meta ml-auto small">Java • Enum (fields)</div>
+          </div>
+        </div>
+
+        <details class="mt-3">
+          <summary>Explanation</summary>
+          <ol class="mt-2 small">
+            <li>Each enum constant invokes the enum constructor with params (e.g., <code>HIGH(10)</code>).</li>
+            <li>Enums can expose behavior — helpful for mapping metadata to constants.</li>
+          </ol>
+        </details>
+
+      </div>
+
+      <!-- Enum with switch -->
+      <div class="mt-4">
+        <h3 class="font-semibold">Enum with switch — Example</h3>
+        <div class="code-card mt-2">
+          <pre id="code-enum-switch"><code>public class EnumSwitch {
+  enum Color { RED, GREEN, BLUE }
+  public static void main(String[] args) {
+    Color c = Color.GREEN;
+    switch (c) {
+      case RED:   System.out.println("Red"); break;
+      case GREEN: System.out.println("Green"); break;
+      case BLUE:  System.out.println("Blue"); break;
+    }
+  }
+}</code></pre>
+
+          <div class="mt-3 flex gap-2">
+            <button class="btn btn-run" data-codeid="code-enum-switch">▶ Run</button>
+            <button class="btn btn-copy" data-codeid="code-enum-switch">📋 Copy</button>
+            <div class="meta ml-auto small">Java • Enum switch</div>
+          </div>
+        </div>
+
+        <details class="mt-3">
+          <summary>Explanation</summary>
+          <ol class="mt-2 small">
+            <li>Switching on enums is concise and safe — compiler checks coverage of constants.</li>
+            <li>No string/int constants required — reduces errors from invalid values.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- WRAPPER & AUTOBOXING -->
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold">3️⃣ Wrapper Classes &amp; Autoboxing / Unboxing</h2>
+      <p class="small mt-1">Wrappers: object forms of primitives (Integer, Double, Boolean...). Autoboxing/unboxing converts between primitive and wrapper automatically where needed.</p>
+
+      <div class="code-card mt-2">
+        <pre id="code-wrapper"><code>import java.util.ArrayList;
+public class WrapperDemo {
+  public static void main(String[] args) {
+    ArrayList<Integer> list = new ArrayList<>();
+    list.add(10);           // autoboxing: int -> Integer
+    int n = list.get(0);    // unboxing: Integer -> int
+    System.out.println(n);
+  }
+}</code></pre>
+
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-run" data-codeid="code-wrapper">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="code-wrapper">📋 Copy</button>
+          <div class="meta ml-auto small">Java • Wrapper / Autoboxing</div>
+        </div>
+      </div>
+
+      <details class="mt-3">
+        <summary>Important notes</summary>
+        <ol class="mt-2 small">
+          <li>Generics require reference types — hence <code>Integer</code> not <code>int</code>.</li>
+          <li>Autoboxing creates wrapper objects; excessive boxing/unboxing inside loops has performance cost.</li>
+          <li>Unboxing a <code>null</code> wrapper throws <code>NullPointerException</code>.</li>
+        </ol>
+      </details>
+    </section>
+
+    <!-- SUMMARY & DIFF TABLE -->
+    <section class="mb-8 card">
+      <h2 class="text-xl font-semibold">4️⃣ Summary &amp; Quick Differences</h2>
+
+      <table class="mt-3">
+        <tr><th>Topic</th><th>When to use / Key behaviour</th></tr>
+        <tr><td>Member Inner Class</td><td>Needs an outer instance; can access outer's private members.</td></tr>
+        <tr><td>Static Nested Class</td><td>Logical grouping without outer instance; behaves like top-level class.</td></tr>
+        <tr><td>Local Inner Class</td><td>Helper inside method scope; captures final/effectively-final locals.</td></tr>
+        <tr><td>Anonymous Inner Class</td><td>One-off implementation for listeners/adapters.</td></tr>
+        <tr><td>Enum</td><td>Type-safe constants; can have fields & methods.</td></tr>
+        <tr><td>Wrapper Classes</td><td>Object form of primitives; required for collections & generics.</td></tr>
+      </table>
+
+      <h3 class="mt-4">Inner vs Static Nested (Quick)</h3>
+      <table class="mt-2">
+        <tr><th>Aspect</th><th>Member Inner</th><th>Static Nested</th></tr>
+        <tr><td>Reference to Outer</td><td>Yes (implicit)</td><td>No</td></tr>
+        <tr><td>Instantiation</td><td>outer.new Inner()</td><td>new Outer.Nested()</td></tr>
+        <tr><td>Use-case</td><td>Needs outer data</td><td>Utility class grouped inside outer</td></tr>
+      </table>
+    </section>
+
+    <!-- PRACTICE -->
+    <section class="mb-8 card">
+      <h2 class="text-xl font-semibold">5️⃣ Practice Tasks</h2>
+      <ol class="mt-2 small ml-6">
+        <li>Create <code>Bank</code> with member inner class <code>Account</code> that prints balance from a private field of <code>Bank</code>.</li>
+        <li>Implement a static nested <code>Converter</code> inside <code>Weather</code> to convert Celsius↔Fahrenheit.</li>
+        <li>Write an enum <code>Level</code> (LOW, MEDIUM, HIGH) and use it in a method to print messages.</li>
+        <li>Create an <code>ArrayList&lt;Double&gt;</code>, add primitives (autoboxing), and compute average.</li>
+        <li>Use an anonymous inner class to implement <code>Runnable</code> and start a thread that prints a message.</li>
+      </ol>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="mb-8 card">
+      <h2 class="text-xl font-semibold">6️⃣ Quick Quiz — Auto-check</h2>
+      <p class="small">Select and press <strong>Check</strong>.</p>
+
+      <div class="mt-3 space-y-3">
+        <div>
+          <p class="font-semibold small">Q1. Which inner class type requires an instance of the outer class?</p>
+          <label class="block small"><input type="radio" name="q1" value="A"> A. Static nested</label>
+          <label class="block small"><input type="radio" name="q1" value="B"> B. Member inner</label>
+          <label class="block small"><input type="radio" name="q1" value="C"> C. Anonymous</label>
+        </div>
+
+        <div>
+          <p class="font-semibold small">Q2. What happens when you unbox a null Integer to int?</p>
+          <label class="block small"><input type="radio" name="q2" value="A"> A. Returns 0</label>
+          <label class="block small"><input type="radio" name="q2" value="B"> B. Throws NullPointerException</label>
+          <label class="block small"><input type="radio" name="q2" value="C"> C. Converts to Integer(0)</label>
+        </div>
+
+        <div>
+          <p class="font-semibold small">Q3. Enums can have constructors and methods. True or False?</p>
+          <label class="block small"><input type="radio" name="q3" value="A"> A. False</label>
+          <label class="block small"><input type="radio" name="q3" value="B"> B. True</label>
+        </div>
+
+        <div class="mt-3">
+          <button id="quiz-check" class="btn btn-run">Check</button>
+          <button id="quiz-reset" class="btn btn-copy ml-2">Reset</button>
+          <div id="quiz-result" class="mt-3 font-semibold"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+    <footer>
+      <p class="small">© 2025 KnowledgeStream — Want downloadable example files (.java) or a printable PDF? Ask and I'll generate them.</p>
+    </footer>
+  </main>
+
+  <!-- toast -->
+  <div id="toast">Copied &amp; opened JDoodle — paste (Ctrl+V) and run</div>
+
+  <script>
+    // Utility: copy text from a code block, show toast, and optionally open JDoodle
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(()=> t.style.display = 'none', 3000);
+    }
+
+    // Copy button behavior
+    document.querySelectorAll('.btn-copy').forEach(btn=>{
+      btn.addEventListener('click', async ()=> {
+        const id = btn.getAttribute('data-codeid');
+        const codeEl = document.getElementById(id);
+        const text = codeEl.innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast('Code copied to clipboard');
+        } catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); ta.remove();
+          showToast('Code copied (fallback)');
+        }
+      });
+    });
+
+    // Run button behavior: copies code and opens JDoodle in new tab
+    // Note: Pre-filling JDoodle is limited; this flow copies code and opens JDoodle for quick paste/run.
+    const JDoodleURL = 'https://www.jdoodle.com/online-java-compiler/';
+    document.querySelectorAll('.btn-run').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const id = btn.getAttribute('data-codeid');
+        const codeEl = document.getElementById(id);
+        const text = codeEl.innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          // Open JDoodle in a new tab
+          window.open(JDoodleURL, '_blank');
+          showToast('Copied & opened JDoodle — paste (Ctrl+V) and run');
+        } catch(e){
+          // fallback: open JDoodle and alert
+          window.open(JDoodleURL, '_blank');
+          alert('Code copied fallback. Paste into JDoodle and run.');
+        }
+      });
+    });
+
+    // Quiz logic
+    (function(){
+      const answers = { q1: 'B', q2: 'B', q3: 'B' };
+      const checkBtn = document.getElementById('quiz-check');
+      const resetBtn = document.getElementById('quiz-reset');
+      const res = document.getElementById('quiz-result');
+
+      checkBtn.addEventListener('click', ()=>{
+        let total=0, score=0;
+        for(const k in answers){
+          total++;
+          const els = document.getElementsByName(k);
+          let chosen = null;
+          for(const e of els) if(e.checked) { chosen = e.value; break; }
+          if(chosen === answers[k]) score++;
+        }
+        res.textContent = 'Score: ' + score + ' / ' + total + ' (' + Math.round((score/total)*100) + '%)';
+        const expl = document.createElement('div');
+        expl.className = 'mt-2 small';
+        expl.innerHTML = '<ul>' +
+          '<li>Q1: B — Member inner needs an outer instance.</li>' +
+          '<li>Q2: B — Unboxing null throws NullPointerException.</li>' +
+          '<li>Q3: B — Enums can have constructors and methods.</li>' +
+          '</ul>';
+        // remove old
+        const old = document.getElementById('quiz-expl');
+        if(old) old.remove();
+        expl.id = 'quiz-expl';
+        res.appendChild(expl);
+      });
+
+      resetBtn.addEventListener('click', ()=>{
+        ['q1','q2','q3'].forEach(n=>{
+          const els = document.getElementsByName(n);
+          for(const e of els) e.checked = false;
+        });
+        res.textContent = '';
+        const old = document.getElementById('quiz-expl'); if(old) old.remove();
+      });
+    })();
+  </script>
+</body>
+</html>

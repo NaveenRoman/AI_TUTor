@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>KnowledgeStream – Modern Java Features (Java 8+) — Deep Dive</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#ffffff; --muted:#6b7280; --accent:#0ea5e9; --accent-700:#0284c7; --code-bg:#f3f7fb;
+  }
+  body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#0f172a;line-height:1.6}
+  .container{max-width:980px;margin:0 auto;padding:2rem}
+  header{background:#ffffff;box-shadow:0 4px 14px rgba(2,6,23,0.06);position:sticky;top:0;z-index:60}
+  .brand{color:var(--accent);font-weight:800}
+  h1{color:#075985}
+  h2{color:#0369a1}
+  .card{background:#ffffff;border:1px solid #eef2f7;border-radius:.7rem;padding:1.25rem;box-shadow:0 6px 18px rgba(2,6,23,0.04);margin-bottom:1rem}
+  .code-card{background:var(--code-bg);border:1px solid #e6eef8;padding:1rem;border-radius:.6rem;position:relative}
+  pre{background:transparent;margin:0;white-space:pre-wrap;overflow:auto}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;color:#0f172a}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .7rem;border-radius:.45rem;font-weight:700;border:1px solid transparent;cursor:pointer}
+  .btn-run{background:linear-gradient(90deg,var(--accent),var(--accent-700));color:white}
+  .btn-copy{background:#f8fafc;border:1px solid #e6eef8;color:#0f172a}
+  .meta{font-size:.92rem;color:var(--muted)}
+  details summary{cursor:pointer;font-weight:700;color:#075985}
+  .diagram{background:#f8fafc;border:1px solid #e6eef8;padding:.9rem;border-radius:.5rem}
+  table{width:100%;border-collapse:collapse;margin-top:.75rem}
+  th,td{padding:.6rem;border:1px solid #eef2f7;text-align:left}
+  th{background:#eef9ff;color:#0369a1;font-weight:700}
+  .explain{background:#f1f5f9;border-left:4px solid #60a5fa;padding:.8rem;border-radius:.4rem;color:#0f172a}
+  .small{font-size:.95rem;color:var(--muted)}
+  footer{margin-top:2rem;color:var(--muted);font-size:.92rem;text-align:center;padding:1.5rem 0}
+  #toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:white;padding:.6rem 1rem;border-radius:.5rem;box-shadow:0 6px 18px rgba(2,6,23,0.2);display:none;z-index:1000}
+  .code-meta { display:flex; gap:.5rem; align-items:center; margin-top:.75rem; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  @media (max-width:860px){ .grid-2{grid-template-columns:1fr} }
+  .callout { background: #fffbeb; border-left:4px solid #f59e0b; padding:.75rem; border-radius:.5rem; color:#92400e; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="container flex items-center justify-between py-4">
+      <a href="index.html" class="brand text-2xl">KnowledgeStream</a>
+      <nav class="meta">
+        <a href="java-topic12.html" class="hover:underline">← Prev</a> <span class="mx-2">|</span>
+        <a href="java-topic14.html" class="hover:underline">Next →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="text-3xl font-bold mb-2">☁️ Modern Java Features (Java 8+) — Deep Dive</h1>
+    <p class="small mb-4">Enhanced explanations, collapsible "📘 Learn More" sections, diagrams, pitfalls, best practices, and extra mini-projects — all aimed at helping learners move from concept → code → production-ready thinking.</p>
+
+    <!-- LAMBDA -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">⚡ Lambda Expressions</h2>
+      <p class="small mt-2">Compact anonymous functions for single-method interfaces (functional interfaces).</p>
+
+      <div class="grid-2 mt-3">
+        <div class="code-card">
+<pre id="lambda-code"><code>interface Greeting { void say(String msg); }
+public class LambdaDemo {
+  public static void main(String[] args) {
+    Greeting g = (msg) -> System.out.println("Message: " + msg);
+    g.say("Hello Java 8!");
+  }
+}</code></pre>
+          <div class="code-meta">
+            <button class="btn btn-run" data-codeid="lambda-code">▶ Run</button>
+            <button class="btn btn-copy" data-codeid="lambda-code">📋 Copy</button>
+            <div class="meta ml-auto small">Simple lambda example</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="diagram p-3">
+            <!-- simple lambda flow -->
+            <svg viewBox="0 0 420 120" width="100%" height="120" xmlns="http://www.w3.org/2000/svg" role="img">
+              <rect x="10" y="18" width="120" height="60" rx="6" fill="#fff" stroke="#e6eef8"/>
+              <text x="70" y="55" text-anchor="middle" fill="#0369a1" font-weight="700">Caller</text>
+              <rect x="150" y="18" width="120" height="60" rx="6" fill="#fff" stroke="#e6eef8"/>
+              <text x="210" y="55" text-anchor="middle" fill="#0369a1" font-weight="700">Lambda (impl)</text>
+              <path d="M130 48 H150" stroke="#0ea5e9" stroke-width="3" marker-end="url(#m1)"/>
+              <defs><marker id="m1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#0ea5e9"/></marker></defs>
+            </svg>
+            <div class="small mt-2">Flow: caller calls interface method → runtime invokes lambda implementation.</div>
+          </div>
+
+          <details class="mt-3"><summary>📘 Learn More — Explanation & tips</summary>
+            <div class="explain mt-2 small">
+              <ol>
+                <li>Lambdas replace anonymous inner classes for single-method interfaces — cleaner and less boilerplate.</li>
+                <li>Type of `g` is the functional interface `Greeting` — the lambda is converted to an instance at runtime (via invokedynamic).</li>
+                <li><b>Tip:</b> Use meaningful variable names and avoid complex logic inside a single lambda; extract to method if complex.</li>
+                <li><b>Pitfall:</b> Lambdas capture variables; captured local variables must be effectively final — avoid mutating captured variables.</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- STREAMS -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🌊 Stream API</h2>
+      <p class="small mt-2">Streams model a pipeline of data operations — they are not collections and are lazy (intermediate ops are deferred until a terminal op runs).</p>
+
+      <div class="code-card">
+<pre id="stream-code"><code>import java.util.*;
+import java.util.stream.*;
+
+public class StreamExample {
+  public static void main(String[] args) {
+    List&lt;Integer&gt; nums = Arrays.asList(2,4,6,8,10);
+    nums.stream()
+        .filter(n -> n > 5)
+        .map(n -> n * 2)
+        .forEach(System.out::println);
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-run" data-codeid="stream-code">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="stream-code">📋 Copy</button>
+          <div class="meta ml-auto small">filter → map → terminal forEach</div>
+        </div>
+
+        <details class="mt-3"><summary>📘 Learn More — Stream pipeline (lazy, stateless/stateful)</summary>
+          <div class="explain mt-2 small">
+            <ol>
+              <li><b>Source:</b> the data source (Collection, arrays, I/O channels).</li>
+              <li><b>Intermediate ops:</b> filter, map, sorted — these are lazy and can be chained.</li>
+              <li><b>Terminal op:</b> forEach, collect, reduce — triggers the pipeline evaluation.</li>
+              <li><b>Lazy evaluation:</b> short-circuiting ops (findFirst, anyMatch) may stop processing early — good for performance.</li>
+              <li><b>Best practice:</b> prefer stateless intermediate ops and avoid side-effects in lambdas used in streams.</li>
+            </ol>
+            <div class="callout mt-2">Pitfall: calling stream() on the same source multiple times may be fine, but reusing the same stream after terminal op throws IllegalStateException.</div>
+          </div>
+        </details>
+
+        <div class="mt-4">
+          <div class="diagram p-3">
+            <!-- stream pipeline diagram -->
+            <svg viewBox="0 0 820 100" width="100%" height="100" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="20" width="160" height="60" rx="8" fill="#fff" stroke="#e6eef8"/><text x="90" y="55" text-anchor="middle" fill="#0369a1">Source (List)</text>
+              <rect x="210" y="10" width="160" height="80" rx="8" fill="#fff" stroke="#e6eef8"/><text x="290" y="55" text-anchor="middle" fill="#0369a1">filter()</text>
+              <rect x="410" y="10" width="160" height="80" rx="8" fill="#fff" stroke="#e6eef8"/><text x="490" y="55" text-anchor="middle" fill="#0369a1">map()</text>
+              <rect x="610" y="10" width="160" height="80" rx="8" fill="#fff" stroke="#e6eef8"/><text x="690" y="55" text-anchor="middle" fill="#0369a1">forEach()</text>
+              <path d="M170 50 H210 M370 50 H410 M570 50 H610" stroke="#0ea5e9" stroke-width="3" marker-end="url(#arr)"/>
+              <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#0ea5e9"/></marker></defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FUNCTIONAL INTERFACES -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🧩 Functional Interfaces (Predicate, Consumer, Function)</h2>
+
+      <div class="code-card">
+<pre id="func-code"><code>import java.util.function.*;
+public class FuncInterfaceDemo {
+  public static void main(String[] args) {
+    Predicate&lt;Integer&gt; isEven = n -> n % 2 == 0;
+    Consumer&lt;String&gt; printer = s -> System.out.println(s);
+    Function&lt;Integer,Integer&gt; doubler = n -> n * 2;
+    
+    if(isEven.test(10)) printer.accept("Even!");
+    System.out.println(doubler.apply(5));
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-run" data-codeid="func-code">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="func-code">📋 Copy</button>
+          <div class="meta ml-auto small">Predicate, Consumer, Function usage</div>
+        </div>
+
+        <details class="mt-3"><summary>📘 Learn More — When to use which</summary>
+          <div class="explain mt-2 small">
+            <ul>
+              <li><b>Predicate<T></b>: boolean-valued function — use in filter().</li>
+              <li><b>Consumer<T></b>: accepts T and returns void — use in forEach(), or as callbacks.</li>
+              <li><b>Function<T,R></b>: accepts T and returns R — use in map().</li>
+            </ul>
+            <div class="callout mt-2">Tip: Compose functions with <code>andThen()</code> and <code>compose()</code> for pipelines.</div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- METHOD REFERENCES -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🔗 Method References</h2>
+      <p class="small mt-2">Shorthand for lambdas that call an existing method — static, instance, or constructor references.</p>
+
+      <div class="code-card">
+<pre id="ref-code"><code>import java.util.*;
+public class RefExample {
+  public static void main(String[] args){
+    List&lt;String&gt; names = Arrays.asList("Naveen","Asha","Ravi");
+    names.forEach(System.out::println); // method reference
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-run" data-codeid="ref-code">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="ref-code">📋 Copy</button>
+          <div class="meta ml-auto small">Class::method, instance::method, Class::new</div>
+        </div>
+
+        <details class="mt-3"><summary>📘 Learn More — Types of method references</summary>
+          <div class="explain mt-2 small">
+            <ol>
+              <li><b>Static method:</b> ClassName::staticMethod</li>
+              <li><b>Instance method of particular object:</b> instance::instanceMethod</li>
+              <li><b>Instance method of an arbitrary object of a type:</b> ClassName::instanceMethod</li>
+              <li><b>Constructor reference:</b> ClassName::new</li>
+            </ol>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- OPTIONAL -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">❓ Optional Class</h2>
+      <p class="small mt-2">Optional is a container that may hold a non-null value — encourages explicit handling of absence.</p>
+
+      <div class="grid-2 mt-3">
+        <div class="code-card">
+<pre id="opt-code"><code>import java.util.Optional;
+public class OptionalDemo {
+  public static String getName(boolean present){
+    return present ? "Naveen" : null;
+  }
+  public static void main(String[] args){
+    Optional&lt;String&gt; opt = Optional.ofNullable(getName(false));
+    System.out.println(opt.orElse("Default Value")); // Default Value
+    opt.ifPresent(System.out::println); // prints only if present
+  }
+}</code></pre>
+
+          <div class="code-meta">
+            <button class="btn btn-run" data-codeid="opt-code">▶ Run</button>
+            <button class="btn btn-copy" data-codeid="opt-code">📋 Copy</button>
+            <div class="meta ml-auto small">Avoid null checks — prefer Optional</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="diagram p-3">
+            <svg viewBox="0 0 420 120" width="100%" height="120" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="30" width="160" height="60" rx="8" fill="#fff" stroke="#e6eef8"/>
+              <text x="90" y="62" text-anchor="middle" fill="#0369a1">Optional (may hold)</text>
+              <circle cx="310" cy="60" r="28" fill="#fff" stroke="#e6eef8"/><text x="310" y="64" text-anchor="middle" fill="#0369a1">Value</text>
+              <path d="M170 60 H282" stroke="#0ea5e9" stroke-width="3" marker-end="url(#arr2)"/>
+              <defs><marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#0ea5e9"/></marker></defs>
+            </svg>
+            <div class="small mt-2">Optional wraps the value; use <code>orElse</code>, <code>ifPresent</code>, <code>map</code>.</div>
+          </div>
+
+          <details class="mt-3"><summary>📘 Learn More — Best practices & pitfalls</summary>
+            <div class="explain mt-2 small">
+              <ul>
+                <li>Use Optional for return types, not for fields or parameters.</li>
+                <li>Prefer <code>orElseGet(supplier)</code> for expensive default computations to avoid unnecessary work.</li>
+                <li>Pitfall: Don't call <code>get()</code> without checking presence — may throw NoSuchElementException.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEFAULT & STATIC METHODS -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🧱 Default & Static Interface Methods</h2>
+      <p class="small">Interfaces can have concrete methods (default or static) — helps evolve APIs without breaking implementations.</p>
+
+      <div class="code-card">
+<pre id="default-code"><code>interface Vehicle {
+  default void start(){ System.out.println("Starting..."); }
+  static void stop(){ System.out.println("Stopped."); }
+}
+public class Car implements Vehicle {
+  public static void main(String[] args){
+    new Car().start();
+    Vehicle.stop();
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-run" data-codeid="default-code">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="default-code">📋 Copy</button>
+          <div class="meta ml-auto small">Interface evolution tool</div>
+        </div>
+
+        <details class="mt-3"><summary>📘 Learn More — When to use</summary>
+          <div class="explain mt-2 small">
+            Default methods are useful when adding behavior to interfaces without forcing all implementors to change. Keep default methods simple — avoid heavy stateful logic.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- DATE/TIME -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🕒 Date & Time API (java.time)</h2>
+      <p class="small">Use java.time (LocalDate, LocalTime, ZonedDateTime) instead of legacy java.util.Date & Calendar.</p>
+
+      <div class="code-card">
+<pre id="date-code"><code>import java.time.*;
+import java.time.format.DateTimeFormatter;
+
+public class DateDemo {
+  public static void main(String[] args){
+    LocalDate today = LocalDate.now();
+    LocalTime now = LocalTime.now();
+    System.out.println("Today: " + today);
+    System.out.println("Now: " + now.format(DateTimeFormatter.ofPattern("hh:mm a")));
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-run" data-codeid="date-code">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="date-code">📋 Copy</button>
+          <div class="meta ml-auto small">Use DateTimeFormatter for formatting</div>
+        </div>
+
+        <details class="mt-3"><summary>📘 Learn More — Timezones & immutability</summary>
+          <div class="explain mt-2 small">
+            java.time classes are immutable and thread-safe. Use ZonedDateTime for timezone-aware operations. Prefer Instant for machine timestamps.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- RECORDS -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🧾 Records (Java 14+)</h2>
+      <p class="small">Compact syntax for simple immutable data carriers (value-based classes).</p>
+
+      <div class="code-card">
+<pre id="record-code"><code>public record Student(String name, int age) {}
+class Main {
+  public static void main(String[] args){
+    Student s = new Student("Naveen", 22);
+    System.out.println(s.name() + " " + s.age());
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-run" data-codeid="record-code">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="record-code">📋 Copy</button>
+          <div class="meta ml-auto small">Records = concise data carriers</div>
+        </div>
+
+        <details class="mt-3"><summary>📘 Learn More — When to use</summary>
+          <div class="explain mt-2 small">
+            Use records for DTOs, value objects, and when immutability and equality based on state are desired. Records implicitly implement equals(), hashCode(), toString().
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- SEALED -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🧱 Sealed Classes (Java 17+)</h2>
+      <p class="small">Restrict which classes can extend or implement a superclass or interface — useful for exhaustive pattern matching.</p>
+
+      <div class="code-card">
+<pre id="sealed-code"><code>sealed interface Shape permits Circle, Rectangle {}
+final class Circle implements Shape {}
+final class Rectangle implements Shape {}
+
+public class Main {
+  public static void main(String[] args){
+    Shape s = new Circle();
+    System.out.println("Sealed type in action");
+  }
+}</code></pre>
+
+        <div class="code-meta">
+          <button class="btn btn-run" data-codeid="sealed-code">▶ Run</button>
+          <button class="btn btn-copy" data-codeid="sealed-code">📋 Copy</button>
+          <div class="meta ml-auto small">Controlled inheritance</div>
+        </div>
+
+        <details class="mt-3"><summary>📘 Learn More — Use-cases</summary>
+          <div class="explain mt-2 small">
+            Use sealed types to model closed hierarchies (e.g., domain events), enabling the compiler to verify exhaustive switches and reducing accidental subclassing.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- MINI PROJECTS -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🚀 Mini Projects (Extra)</h2>
+      <p class="small">Two short projects to practice Streams & Lambdas: Employee Filter and Lambda Sorter.</p>
+
+      <!-- Employee Filter -->
+      <div class="mt-3">
+        <h3 class="font-semibold">A. Employee Stream Filter (find high earners)</h3>
+        <div class="code-card mt-2">
+<pre id="emp-code"><code>import java.util.*;
+import java.util.stream.*;
+
+record Employee(String name, double salary){}
+
+public class EmployeeFilter {
+  public static void main(String[] args){
+    List&lt;Employee&gt; emps = List.of(
+      new Employee("Ravi", 50000),
+      new Employee("Asha", 90000),
+      new Employee("Naveen", 120000)
+    );
+
+    var rich = emps.stream()
+                   .filter(e -> e.salary() &gt; 80000)
+                   .map(Employee::name)
+                   .collect(Collectors.toList());
+    System.out.println("High earners: " + rich);
+  }
+}</code></pre>
+
+            <div class="code-meta">
+              <button class="btn btn-run" data-codeid="emp-code">▶ Run</button>
+              <button class="btn btn-copy" data-codeid="emp-code">📋 Copy</button>
+              <div class="meta ml-auto small">Stream + record example</div>
+            </div>
+
+            <details class="mt-3"><summary>📘 Learn More</summary>
+              <div class="explain mt-2 small">
+                This project demonstrates mapping to a different view (names) and collecting results. You can extend to groupBy department, compute averages, or paginate results with skip/limit.
+              </div>
+            </details>
+        </div>
+      </div>
+
+      <!-- Lambda Sorter -->
+      <div class="mt-6">
+        <h3 class="font-semibold">B. Lambda Sorter (sort by multiple fields)</h3>
+        <div class="code-card mt-2">
+<pre id="sort-code"><code>import java.util.*;
+record Student(String name, int marks){}
+
+public class LambdaSorter {
+  public static void main(String[] args){
+    List&lt;Student&gt; s = new ArrayList<>(List.of(
+      new Student("Asha", 90), new Student("Naveen", 90), new Student("Ravi", 85)
+    ));
+    s.sort(Comparator.comparing(Student::marks).reversed().thenComparing(Student::name));
+    s.forEach(System.out::println);
+  }
+}</code></pre>
+
+            <div class="code-meta">
+              <button class="btn btn-run" data-codeid="sort-code">▶ Run</button>
+              <button class="btn btn-copy" data-codeid="sort-code">📋 Copy</button>
+              <div class="meta ml-auto small">Comparator composition</div>
+            </div>
+
+            <details class="mt-3"><summary>📘 Learn More</summary>
+              <div class="explain mt-2 small">
+                Compose comparators with <code>thenComparing</code> for multi-key sorting. Use method references for clean, readable comparators.
+              </div>
+            </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARISON -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">⚖️ Quick Comparison — Pre-Java8 vs Java8+</h2>
+      <table>
+        <tr><th>Aspect</th><th>Pre-Java 8</th><th>Java 8+</th></tr>
+        <tr><td>Style</td><td>Imperative</td><td>Functional (streams & lambdas)</td></tr>
+        <tr><td>Nulls</td><td>Manual checks</td><td>Optional</td></tr>
+        <tr><td>Concurrency</td><td>Threads & synchronized</td><td>CompletableFuture, streams parallel()</td></tr>
+        <tr><td>Date/Time</td><td>java.util.Date / Calendar</td><td>java.time.* (immutable)</td></tr>
+      </table>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="card">
+      <h2 class="text-xl font-semibold">🧠 Self-check Quiz</h2>
+      <p class="small mt-2">Auto-check included — expand explanations for answers after checking.</p>
+
+      <div class="small mt-3">
+        <p class="font-semibold">Q1. Which Stream operation is terminal?</p>
+        <label><input type="radio" name="mq1" value="A"> A. filter()</label><br>
+        <label><input type="radio" name="mq1" value="B"> B. collect()</label><br>
+
+        <p class="font-semibold mt-3">Q2. Which Optional method provides lazy default computation?</p>
+        <label><input type="radio" name="mq2" value="A"> A. orElse()</label><br>
+        <label><input type="radio" name="mq2" value="B"> B. orElseGet()</label><br>
+
+        <div class="mt-3">
+          <button id="check-quiz" class="btn btn-run">Check</button>
+          <button id="reset-quiz" class="btn btn-copy">Reset</button>
+          <div id="quiz-res" class="mt-3 font-semibold"></div>
+        </div>
+
+        <details class="mt-3" id="quiz-expl" style="display:none">
+          <div class="explain mt-2 small">
+            <p><b>Q1:</b> collect() is terminal — it produces a result. filter() is intermediate.</p>
+            <p><b>Q2:</b> orElseGet() is lazy (supplier executed only if empty). orElse() always evaluates its argument.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+    <footer class="small">
+      © 2025 KnowledgeStream — Deep-dive on Modern Java. Want downloadable .java files, PDF notes, or a short exercise worksheet? Ask and I’ll generate them.
+    </footer>
+  </main>
+
+  <div id="toast">Copied to clipboard</div>
+
+  <script>
+    // Toast
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(()=> t.style.display = 'none', 2200);
+    }
+
+    // Copy & Run
+    const JDoodleURL = 'https://www.jdoodle.com/online-java-compiler/';
+
+    document.querySelectorAll('.btn-copy').forEach(btn=>{
+      btn.addEventListener('click', async (e)=>{
+        const id = btn.getAttribute('data-codeid');
+        let el = id ? document.getElementById(id) : btn.closest('.code-card')?.querySelector('pre');
+        if(!el) el = btn.closest('.card')?.querySelector('pre');
+        const text = el ? el.innerText : '';
+        if(!text){ showToast('No code found'); return; }
+        try { await navigator.clipboard.writeText(text); showToast('Code copied to clipboard'); }
+        catch(err){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); showToast('Copied (fallback)'); }
+      });
+    });
+
+    document.querySelectorAll('.btn-run').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const id = btn.getAttribute('data-codeid');
+        const pre = id ? document.getElementById(id) : btn.closest('.card')?.querySelector('pre');
+        const text = pre ? pre.innerText : '';
+        if(!text){ showToast('No code found'); return; }
+        try { await navigator.clipboard.writeText(text); window.open(JDoodleURL,'_blank'); showToast('Copied & opened JDoodle — paste & run'); }
+        catch(e){ window.open(JDoodleURL,'_blank'); alert('Opened JDoodle — paste & run'); }
+      });
+    });
+
+    // Self-check quiz
+    (function(){
+      const answers = { mq1: 'B', mq2: 'B' };
+      document.getElementById('check-quiz').addEventListener('click', ()=>{
+        let total=0, score=0;
+        for(const k in answers){
+          total++;
+          const sel = document.querySelector('input[name="'+k+'"]:checked');
+          if(sel && sel.value === answers[k]) score++;
+        }
+        document.getElementById('quiz-res').textContent = 'Score: ' + score + ' / ' + total;
+        document.getElementById('quiz-expl').style.display = 'block';
+      });
+      document.getElementById('reset-quiz').addEventListener('click', ()=>{
+        ['mq1','mq2'].forEach(n=>{ document.querySelectorAll('input[name="'+n+'"]').forEach(i=>i.checked=false); });
+        document.getElementById('quiz-res').textContent=''; document.getElementById('quiz-expl').style.display='none';
+      });
+    })();
+
+    // Toggle helper (for any demo toggles)
+    function toggle(id){
+      const el = document.getElementById(id); if(!el) return; el.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

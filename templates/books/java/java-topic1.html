@@ -1,0 +1,948 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Java Topic 1 — Getting Started | KnowledgeStream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- PROFESSIONAL LIGHT THEME --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap');
+        :root {
+            --bg: #f7f9fc; /* Light, almost white background */
+            --card: #ffffff; /* Pure white content card */
+            --accent: #007bff; /* Professional Blue */
+            --text: #212529; /* Deep dark text */
+            --muted: #6c757d; /* Gray for subtle text */
+            --link-hover: #0056b3;
+            --border-color: #e9ecef; /* Very light gray border */
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            line-height: 1.65;
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 28px; }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+            transition: box-shadow 0.3s ease;
+        }
+        .card:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
+
+        /* Typography */
+        h1 { color: var(--accent); font-weight: 800; }
+        h2 {
+            color: var(--text);
+            font-size: 1.85rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 32px;
+            font-weight: 700;
+        }
+        h3 { color: var(--accent); font-size: 1.35rem; margin-top: 20px; font-weight: 600; }
+
+        /* Code Blocks */
+        pre {
+            background: #f1f4f8; /* Light gray code block background */
+            border: 1px solid #dcdcdc;
+            padding: 18px;
+            border-radius: 6px;
+            overflow-x: auto;
+            color: #333333; /* Dark code text */
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.95rem;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        code {
+            color: var(--accent);
+            background: rgba(0, 123, 255, 0.1); /* Light blue highlight */
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+        }
+        pre code { background: none; padding: 0; color: inherit; }
+
+        /* Links and Buttons */
+        a { color: var(--accent); text-decoration: none; transition: color 0.2s; font-weight: 600; }
+        a:hover { color: var(--link-hover); text-decoration: underline; }
+        .btn {
+            background-color: var(--accent);
+            color: var(--card); /* White text on blue background */
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .btn:hover {
+            background-color: var(--link-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Collapsible Section */
+        .collapsible-header {
+            cursor: pointer;
+            padding: 15px;
+            margin-top: 10px;
+            background: #e9f5ff; /* Very light blue for header */
+            border: 1px solid #d1e7ff;
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text);
+            transition: background 0.3s;
+        }
+        .collapsible-header:hover { background: #dceeff; }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            padding: 0 15px;
+        }
+        .collapsible-content.open {
+            max-height: 700px; /* Increased max-height for potential content */
+            padding: 15px 15px 10px 15px;
+            border: 1px solid #d1e7ff;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            background-color: #ffffff;
+        }
+        .arrow { transition: transform 0.3s; }
+        .open .arrow { transform: rotate(90deg); }
+
+        /* General List Styling */
+        ul { margin-bottom: 1em; }
+        li { margin-bottom: 0.5em; }
+
+        /* Entry Animation (Subtle) */
+        .animated-section { opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+        .animated-section.in-view { opacity: 1; transform: translateY(0); }
+
+        /* Quiz Styles */
+        .quiz-card {
+            margin-top: 30px;
+            padding: 22px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+        }
+        .question {
+            margin-bottom: 18px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f8fafc;
+            border: 1px solid #eef2f7;
+        }
+        .options label { display: block; margin-bottom: 8px; cursor: pointer; }
+        .options input[type="radio"] { margin-right: 10px; }
+
+        .result {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+        .result.pass { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.15); color: var(--success); display: block;}
+        .result.fail { background: rgba(220,38,38,0.05); border: 1px solid rgba(220,38,38,0.1); color: var(--danger); display: block;}
+
+        .small-muted { font-size: 0.9rem; color: var(--muted); }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-10 shadow-sm" style="background:var(--card);">
+        <div class="container flex items-center justify-between py-4">
+            <a href="#" style="font-weight:800;color:var(--accent);font-size:1.75rem">Java Fundamentals</a>
+            <nav class="flex gap-4 sm:gap-6">
+                <a href="#overview" class="text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors">Overview</a>
+                <a href="#history" class="text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors">History</a>
+                <a href="#setup" class="text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors">Setup</a>
+                <a href="#first-app" class="text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors">Syntax</a>
+                <a href="#applications" class="text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors">Applications</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="card">
+            <h1 class="text-4xl sm:text-5xl mb-4">1. Getting Started: Java Essentials</h1>
+            <p class="text-lg text-gray-600 mb-8">A clear guide to installation, the Java ecosystem, and your first program's structure.</p>
+
+            <!-- 1. Java Overview Section -->
+            <section id="overview" class="animated-section mt-8">
+                <h2>What is Java and Why Use It?</h2>
+                <p class="mt-4 text-sm text-gray-600">Java is a highly popular, object-oriented programming language designed to run on almost any platform without needing to be rewritten. It is used everywhere, from mobile apps (Android) to huge enterprise systems.</p>
+
+                <h3 class="mt-4">Core Strengths of Java</h3>
+                <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm">
+                    <li><strong>Object-Oriented (OOP):</strong> Code is organized around "objects" (like real-world things), making it modular and easy to reuse.</li>
+                    <li><strong>Platform Independent:</strong> The famous "Write once, Run anywhere" (WORA). This is Java's biggest feature!</li>
+                    <li><strong>Simple but Robust:</strong> It automatically handles memory management (Garbage Collection), which makes it less prone to crashes and errors than other languages.</li>
+                </ul>
+            </section>
+
+            <!-- 1.5 Java History Section -->
+            <section id="history" class="animated-section mt-8">
+                <h2>The Evolution of Java (1991-2025)</h2>
+                <p class="mt-4 text-sm text-gray-600">Java has maintained its relevance for decades by constantly adapting. Here are the defining moments in its journey.</p>
+
+                <div class="space-y-4 mt-6">
+                    <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <h4 class="text-md font-bold text-yellow-800">1991-1995: The Foundation</h4>
+                        <p class="text-sm text-gray-700 mt-1">James Gosling initiates the **Green Project** at Sun Microsystems, originally creating a language called **Oak**. It was renamed to **Java** and officially released in **1995**, primarily targeting set-top boxes before finding its home on the web via applets.</p>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h4 class="text-md font-bold text-blue-800">2000s: Enterprise Dominance (J2SE, J2EE)</h4>
+                        <p class="text-sm text-gray-700 mt-1">Java rapidly becomes the standard for large-scale enterprise applications, web servers, and high-volume systems due to its robust nature and security features.</p>
+                    </div>
+                    <div class="p-4 bg-red-50 rounded-lg border border-red-200">
+                        <h4 class="text-md font-bold text-red-800">2010: Oracle Acquisition</h4>
+                        <p class="text-sm text-gray-700 mt-1">Oracle acquires Sun Microsystems, taking over the stewardship of Java and the development of the JDK. This marks a major shift in the language's corporate direction.</p>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h4 class="text-md font-bold text-green-800">2014: Java 8 (The Modern Era Begins)</h4>
+                        <p class="text-sm text-gray-700 mt-1">A massive release that introduced **Lambda Expressions**, the **Stream API**, and new Date/Time APIs, fundamentally changing how developers write Java and embracing functional programming paradigms.</p>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <h4 class="text-md font-bold text-purple-800">2018-2025: Rapid Innovation (Java 11+)</h4>
+                        <p class="text-sm text-gray-700 mt-1">Java moves to a predictable, 6-month release cadence (March and September). Key features like **Records**, **Sealed Classes**, and **Virtual Threads** (Project Loom) are introduced to simplify data modeling and drastically improve concurrency for cloud-native applications.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 2. JDK, JRE, JVM Differences Section -->
+            <section class="animated-section mt-8">
+                <h2>The Java Ecosystem: JDK, JRE, and JVM</h2>
+                <p class="mt-4 text-sm text-gray-600">These three acronyms are the fundamental components of the Java environment. Understanding their roles is key to coding in Java.</p>
+
+                <div class="flex flex-col md:flex-row gap-4 mt-4">
+                    <div class="p-4 bg-gray-50 rounded-lg flex-1 border border-blue-100">
+                        <h4 class="text-xl font-bold" style="color:#d9534f;">JVM</h4>
+                        <p class="text-sm text-gray-600">Java Virtual Machine.</p>
+                        <ul class="list-disc ml-4 text-sm mt-2 text-gray-700">
+                            <li>**What it is:** A program that runs **bytecode**.</li>
+                            <li>**Job:** The "translator" that reads the platform-neutral bytecode and converts it into language the specific computer (Windows, Mac, Linux) can understand.</li>
+                            <li>**Goal:** Enables platform independence.</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg flex-1 border border-blue-100">
+                        <h4 class="text-xl font-bold" style="color:#f0ad4e;">JRE</h4>
+                        <p class="text-sm text-gray-600">Java Runtime Environment.</p>
+                        <ul class="list-disc ml-4 text-sm mt-2 text-gray-700">
+                            <li>**What it is:** The **JVM** plus the essential libraries needed to run any Java program.</li>
+                            <li>**Job:** Allows you to **run** Java applications. If you only want to use a Java app, you only need the JRE.</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg flex-1 border border-blue-100">
+                        <h4 class="text-xl font-bold" style="color:#5cb85c;">JDK</h4>
+                        <p class="text-sm text-gray-600">Java Development Kit.</p>
+                        <ul class="list-disc ml-4 text-sm mt-2 text-gray-700">
+                            <li>**What it is:** The **JRE** plus development tools (like the compiler, `javac`).</li>
+                            <li>**Job:** Allows you to **write, compile, and run** Java programs. **This is what developers must install.**</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Setup and Compilation Section -->
+            <section id="setup" class="animated-section mt-8">
+                <h2>The Java Development Cycle: Code to Execution</h2>
+                
+                <h3 class="text-dark">Installing the JDK (The First Step)</h3>
+                <p class="mt-2 text-gray-700 text-sm">To start coding, you must first install the **JDK**. You can download official installers for Windows, macOS, and Linux from vendors like **Oracle** or use an open-source distribution like **Adoptium (Eclipse Temurin)**.</p>
+                <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm">
+                    <li>**Action:** Download the correct package for your operating system and run the installer.</li>
+                    <li>**Verification:** After installation, open your terminal/command prompt and run: <code>java -version</code>. You should see the installed version number.</li>
+                </ul>
+
+
+                <h3 class="text-dark mt-4">Structure of .java and .class Files (The Translation)</h3>
+                <p class="mt-2 text-gray-700 text-sm">To achieve "Write once, Run anywhere," Java uses a two-step process that results in two file types:</p>
+                <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm">
+                    <li><strong>1. The Source File (<code>.java</code>):</strong> This is the code you **write**. It is human-readable text. This file must be converted before it can run.</li>
+                    <li><strong>2. The Bytecode File (<code>.class</code>):</strong> This is the file the Java **compiler** (`javac`) creates. It contains special instructions (called bytecode) that are ready for the **JVM**. This file is universal and highly portable.</li>
+                </ul>
+
+                <h3 class="text-dark mt-4">Compilation vs. Execution (The Process)</h3>
+                <p class="mt-2 text-gray-700 text-sm">You use two different commands to perform these two steps:</p>
+                <pre class="mt-4"><code class="language-bash"># STEP 1: COMPILATION (Source Code to Bytecode)
+javac MyProgram.java   # This creates the file MyProgram.class from your .java file.
+
+# STEP 2: EXECUTION (Bytecode to Running Program)
+java MyProgram         # The JVM takes the .class file and runs it.</code></pre>
+                
+                <h3 class="text-dark mt-4">Setting up the Environment (PATH)</h3>
+                <p class="mt-2 text-gray-700 text-sm">After installing the JDK, you need to tell your computer where the `javac` and `java` commands are located. This is called setting the **PATH** variable.</p>
+
+                <div class="my-4">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <span>How to Set JAVA_HOME and PATH (Operating System Specific)</span>
+                        <span class="arrow text-xl">&gt;</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <h4 class="text-sm font-semibold mt-2 text-gray-800">Windows (Command Prompt)</h4>
+                        <pre><code>setx JAVA_HOME "C:\Program Files\Java\jdk-21"
+setx PATH "%PATH%;%JAVA_HOME%\bin"</code></pre>
+                        <h4 class="text-sm font-semibold mt-2 text-gray-800">macOS / Linux (Bash/Zsh)</h4>
+                        <pre><code># Find your JDK location (e.g. /usr/lib/jvm/jdk-21)
+export JAVA_HOME=/path/to/your/jdk-folder
+export PATH=$JAVA_HOME/bin:$PATH
+
+# Add these lines to your ~/.bashrc or ~/.zshrc file to make it permanent.</code></pre>
+                        <p class="text-xs text-gray-500 mt-2">Remember to restart your terminal after making changes.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. First Program and Syntax -->
+            <section id="first-app" class="animated-section mt-8">
+                <h2>Writing Your First Java Code and Syntax Rules</h2>
+
+                <h3 class="mt-4">Understanding the `main()` Method (The Program's Start Button)</h3>
+                <p class="mt-2 text-gray-700 text-sm">Every standalone Java program **must** have a method exactly like this. When the **JVM** starts, it searches for and runs this method first. Think of it as the program's official starting line.</p>
+                <pre class="mt-4"><code class="language-java">public static void main(String[] args)</code></pre>
+                <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm">
+                    <li>**`public`:** It must be public so the **JVM** (which is outside the class) can access it.</li>
+                    <li>**`static`:** It must be static so the **JVM** can call it without needing to create an object of the class first.</li>
+                    <li>**`void`:** The method is not meant to return any data; it just executes the program's logic.</li>
+                    <li>**`main`:** The fixed, required name.</li>
+                    <li>**`(String[] args)`:** This is a place to hold extra text information (arguments) that you might pass to the program when you run it from the command line.</li>
+                </ul>
+
+
+                <h3 class="mt-4">Comments and Essential Syntax Rules</h3>
+                <p class="mt-2 text-gray-700 text-sm">Syntax refers to the grammar and structure of the language. Java has two main rules to remember:</p>
+                <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm">
+                    <li>**1. Semicolons (<code>;</code>) End Statements:** Every instruction or command in Java (like defining a variable, or printing something) **must** end with a semicolon. It's like a period at the end of a sentence.</li>
+                    <li>**2. Braces (<code>{ }</code>) Define Blocks:** Curly braces are used to group code together. They define the "body" or "block" of a class, a method, or a loop.</li>
+                </ul>
+
+                <h3 class="mt-6 text-dark">Example 1: The Simplest Program Structure</h3>
+                <p class="mt-2 text-gray-700 text-sm">The classic "Hello World" showing the required class and main method structure.</p>
+                <div class="tip p-4 text-sm rounded bg-green-50 border border-green-200 my-3 text-gray-800">
+                    <strong>Syntax Rule Reminder:</strong> The file name **must** match the `public class` name exactly (e.g., `HelloWorld.java` must contain `public class HelloWorld`).
+                </div>
+                <pre class="mt-4"><code class="language-java">// File Name: HelloWorld.java
+public class HelloWorld { // Class block starts {
+    /*
+     * This is a multi-line comment explaining the main method.
+     * The compiler ignores all comments.
+     */
+    public static void main(String[] args) { // Main method block starts {
+        // This is a single-line comment.
+        System.out.println("Hello, Java World!"); // A single statement, ends with a semicolon (;)
+    } // Main method block ends }
+} // Class block ends }</code></pre>
+                
+                <h3 class="mt-6 text-dark">Example 3: Structure of a Class and Object Interaction</h3>
+                <p class="mt-2 text-gray-700 text-sm">This shows how the main method acts as the manager, creating and using parts of the program defined by the class structure.</p>
+                <pre class="mt-4"><code class="language-java">// Car.java
+public class Car {
+    // 1. Data Member (Variable)
+    String color = "Red"; // Statement ends with a semicolon (;)
+
+    // 2. Method (Action)
+    public void startEngine() { // Method block starts {
+        System.out.println("The " + color + " car engine is starting."); // Statement ends with ;
+    } // Method block ends }
+
+    // 3. Main Method (The Program Initiator)
+    public static void main(String[] args) {
+        // Create an Object (an actual car instance) from the Car Class blueprint
+        Car myCar = new Car(); // Statement ends with ;
+
+        // Call a method (make the car do its action) on the object
+        myCar.startEngine(); // Statement ends with ;
+    }
+}</code></pre>
+            </section>
+
+            <!-- 5. Java Applications and Games Section (New Content) -->
+            <section id="applications" class="animated-section mt-8">
+                <h2>Java in the Real World: Key Applications and Games</h2>
+                <p class="mt-4 text-sm text-gray-600">Java's **stability**, **scalability**, and **platform independence** make it a dominant force across many industries. Here are the core areas where Java plays a key role.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <!-- Enterprise Computing -->
+                    <div class="p-5 bg-indigo-50 rounded-lg border border-indigo-200">
+                        <h3 class="text-xl font-bold mb-2" style="color:#4f46e5;">Enterprise and Financial Systems</h3>
+                        <p class="text-sm text-gray-700">Java, especially using frameworks like **Spring** and the Jakarta EE standard, is the backbone of major corporate and banking applications.</p>
+                        <ul class="list-disc ml-6 mt-2 text-sm text-gray-600">
+                            <li>**Key Role:** Handling massive, concurrent transaction volumes, ensuring **security** and **reliability** for complex business logic.</li>
+                            <li>**Example:** Most core banking applications, stock market trading platforms, and major airline reservation systems rely on Java for their back-end stability.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Android Development -->
+                    <div class="p-5 bg-green-50 rounded-lg border border-green-200">
+                        <h3 class="text-xl font-bold mb-2" style="color:#059669;">Android Ecosystem and Mobile Apps</h3>
+                        <p class="text-sm text-gray-700">Java is foundational to Android. The entire Android SDK is built around Java, allowing developers to create native, high-performance mobile applications.</p>
+                        <ul class="list-disc ml-6 mt-2 text-sm text-gray-600">
+                            <li>**Key Role:** Providing direct access to mobile hardware and system APIs, powering millions of smart devices worldwide.</li>
+                            <li>**Example:** Popular apps like Spotify, Twitter, and Netflix use Java for significant parts of their native Android client code.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Gaming -->
+                    <div class="p-5 bg-red-50 rounded-lg border border-red-200">
+                        <h3 class="text-xl font-bold mb-2" style="color:#dc2626;">Games and Interactive Simulations</h3>
+                        <p class="text-sm text-gray-700">While typically not used for large AAA titles, Java is popular for indie development, educational software, and simulations due to its cross-platform nature and graphics libraries like LibGDX.</p>
+                        <ul class="list-disc ml-6 mt-2 text-sm text-gray-600">
+                            <li>**Key Role:** Logic processing, rendering game state, and providing robust server infrastructure for multiplayer experiences.</li>
+                            <li>**Example:** The undisputed champion of Java gaming is **Minecraft (Java Edition)**, which runs its entire client-side gameplay and server logic using the Java platform.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Big Data and Scientific -->
+                    <div class="p-5 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <h3 class="text-xl font-bold mb-2" style="color:#ca8a04;">Big Data and Cloud Computing</h3>
+                        <p class="text-sm text-gray-700">Java is dominant in the Big Data world due to its speed, reliable memory management, and strong concurrency features.</p>
+                        <ul class="list-disc ml-6 mt-2 text-sm text-gray-600">
+                            <li>**Key Role:** Processing massive, distributed datasets in an efficient and reliable manner.</li>
+                            <li>**Example:** Core components of major Big Data tools like **Apache Hadoop**, **Apache Spark**, and cloud systems like **Kafka** are written in Java (or use the JVM).</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 6. CLI vs IDE Section (Previously 5) -->
+            <section class="animated-section mt-8">
+                <h2>Command Line vs. IDE (Tools for Development)</h2>
+                <div class="flex flex-col md:flex-row gap-4 mt-4 text-sm">
+                    <div class="p-4 bg-gray-50 rounded-lg flex-1 border border-blue-100">
+                        <h4 class="text-xl font-bold" style="color:#d9534f;">Command Line Interface (CLI)</h4>
+                        <p class="text-gray-600">You use basic tools like a text editor and the `javac`/`java` commands manually.</p>
+                        <ul class="list-disc ml-4 mt-2 text-gray-700">
+                            <li>**Benefit:** Excellent for learning the compilation process from scratch.</li>
+                            <li>**Drawback:** Slow for big projects; requires manual troubleshooting.</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg flex-1 border border-blue-100">
+                        <h4 class="text-xl font-bold" style="color:#5cb85c;">Integrated Development Environment (IDE)</h4>
+                        <p class="text-gray-600">Programs like IntelliJ IDEA or Eclipse that combine all tools into one powerful editor.</p>
+                        <ul class="list-disc ml-4 mt-2 text-gray-700">
+                            <li>**Benefit:** Highly professional, with built-in error checking, code completion, and powerful debugging tools.</li>
+                            <li>**Best for:** Real-world, large-scale projects.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <div class="nav-links flex justify-between mt-10 pt-4 border-t border-gray-300">
+                <a class="btn bg-gray-200 text-gray-600 hover:bg-gray-300" style="box-shadow:none;" href="java.html">&larr; Back to Index</a>
+                <a class="btn" href="java-topic2.html">Next Topic: Data Types & Operators →</a>
+            </div>
+        </div>
+
+        <!-- QUIZ: 15 QUESTIONS -->
+        <div class="quiz-card card">
+            <h2 class="text-2xl font-bold mb-4">Topic Quiz — Getting Started (15 questions)</h2>
+            <p class="small-muted mb-4">Score ≥ <strong>90% (14/15)</strong> to activate the "Mark as Completed" button.</p>
+
+            <form id="quiz-form">
+                <!-- Q1 -->
+                <div class="question">
+                    <strong>1. What is the primary advantage of Java's "Write once, Run anywhere"?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q1" value="a"> Java source code is edited automatically</label>
+                        <label><input type="radio" name="q1" value="b"> Java bytecode runs on any JVM across platforms</label>
+                        <label><input type="radio" name="q1" value="c"> Java compiles directly to machine code for each OS</label>
+                        <label><input type="radio" name="q1" value="d"> Java programs don't require a compiler</label>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="question">
+                    <strong>2. Which component runs Java bytecode?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q2" value="a"> JDK</label>
+                        <label><input type="radio" name="q2" value="b"> JVM</label>
+                        <label><input type="radio" name="q2" value="c"> JRE</label>
+                        <label><input type="radio" name="q2" value="d"> javac</label>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="question">
+                    <strong>3. Which package allows you to compile Java source files?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q3" value="a"> JRE</label>
+                        <label><input type="radio" name="q3" value="b"> JVM</label>
+                        <label><input type="radio" name="q3" value="c"> JDK</label>
+                        <label><input type="radio" name="q3" value="d"> JAR</label>
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="question">
+                    <strong>4. What command compiles a Java file named MyProgram.java?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q4" value="a"> java MyProgram.java</label>
+                        <label><input type="radio" name="q4" value="b"> javac MyProgram.java</label>
+                        <label><input type="radio" name="q4" value="c"> compile MyProgram</label>
+                        <label><input type="radio" name="q4" value="d"> run MyProgram</label>
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="question">
+                    <strong>5. Which method signature is required as the program entry point?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q5" value="a"> public static int start(String[] args)</label>
+                        <label><input type="radio" name="q5" value="b"> public void main()</label>
+                        <label><input type="radio" name="q5" value="c"> public static void main(String[] args)</label>
+                        <label><input type="radio" name="q5" value="d"> private static void main()</label>
+                    </div>
+                </div>
+
+                <!-- Q6 -->
+                <div class="question">
+                    <strong>6. Why are semicolons important in Java?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q6" value="a"> They mark the end of statements.</label>
+                        <label><input type="radio" name="q6" value="b"> They start a class definition.</label>
+                        <label><input type="radio" name="q6" value="c"> They indicate comments.</label>
+                        <label><input type="radio" name="q6" value="d"> They are optional in Java.</label>
+                    </div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="question">
+                    <strong>7. Which of these matches the correct order for running a Java program?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q7" value="a"> Compile → Execute</label>
+                        <label><input type="radio" name="q7" value="b"> Execute → Compile</label>
+                        <label><input type="radio" name="q7" value="c"> Write → Run (no compile)</label>
+                        <label><input type="radio" name="q7" value="d"> Pack → Deploy → Compile</label>
+                    </div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="question">
+                    <strong>8. The .class file contains:</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q8" value="a"> Human-readable source code</label>
+                        <label><input type="radio" name="q8" value="b"> Machine-specific native code</label>
+                        <label><input type="radio" name="q8" value="c"> Java bytecode</label>
+                        <label><input type="radio" name="q8" value="d"> XML metadata</label>
+                    </div>
+                </div>
+
+                <!-- Q9 -->
+                <div class="question">
+                    <strong>9. To permanently add JAVA_HOME on macOS/Linux you usually:</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q9" value="a"> Run setx in command prompt</label>
+                        <label><input type="radio" name="q9" value="b"> Add export lines to ~/.bashrc or ~/.zshrc</label>
+                        <label><input type="radio" name="q9" value="c"> Download JRE only</label>
+                        <label><input type="radio" name="q9" value="d"> Use the Java GUI installer</label>
+                    </div>
+                </div>
+
+                <!-- Q10 -->
+                <div class="question">
+                    <strong>10. Which example demonstrates correct printing in Java?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q10" value="a"> System.print("Hi");</label>
+                        <label><input type="radio" name="q10" value="b"> Console.write("Hi");</label>
+                        <label><input type="radio" name="q10" value="c"> System.out.println("Hi");</label>
+                        <label><input type="radio" name="q10" value="d"> print("Hi");</label>
+                    </div>
+                </div>
+
+                <!-- Q11 -->
+                <div class="question">
+                    <strong>11. In the Car example, which statement creates an object?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q11" value="a"> Car myCar = new Car();</label>
+                        <label><input type="radio" name="q11" value="b"> Car myCar = Car();</label>
+                        <label><input type="radio" name="q11" value="c"> Car myCar := new Car()</label>
+                        <label><input type="radio" name="q11" value="d"> create Car myCar</label>
+                    </div>
+                </div>
+
+                <!-- Q12 -->
+                <div class="question">
+                    <strong>12. Which area is Java NOT typically known for?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q12" value="a"> Enterprise backends</label>
+                        <label><input type="radio" name="q12" value="b"> Android development</label>
+                        <label><input type="radio" name="q12" value="c"> Low-level OS kernel development</label>
+                        <label><input type="radio" name="q12" value="d"> Big Data systems</label>
+                    </div>
+                </div>
+
+                <!-- Q13 -->
+                <div class="question">
+                    <strong>13. Which tool gives you code completion, debugging, and refactoring tools?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q13" value="a"> CLI with a text editor</label>
+                        <label><input type="radio" name="q13" value="b"> An IDE like IntelliJ IDEA</label>
+                        <label><input type="radio" name="q13" value="c"> Notepad</label>
+                        <label><input type="radio" name="q13" value="d"> The JVM</label>
+                    </div>
+                </div>
+
+                <!-- Q14 -->
+                <div class="question">
+                    <strong>14. Which Java release introduced Lambda expressions and the Stream API?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q14" value="a"> Java 6</label>
+                        <label><input type="radio" name="q14" value="b"> Java 7</label>
+                        <label><input type="radio" name="q14" value="c"> Java 8</label>
+                        <label><input type="radio" name="q14" value="d"> Java 11</label>
+                    </div>
+                </div>
+
+                <!-- Q15 -->
+                <div class="question">
+                    <strong>15. Which statement is TRUE about the JRE?</strong>
+                    <div class="options mt-2">
+                        <label><input type="radio" name="q15" value="a"> JRE allows you to write Java code</label>
+                        <label><input type="radio" name="q15" value="b"> JRE contains the JVM and libraries to run Java apps</label>
+                        <label><input type="radio" name="q15" value="c"> JRE is the compiler</label>
+                        <label><input type="radio" name="q15" value="d"> JRE is only for macOS</label>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex gap-3 items-center">
+                    <button type="button" id="submit-quiz" class="btn">Submit Quiz</button>
+                    <div id="quiz-msg" class="small-muted"></div>
+                </div>
+
+                <div id="quiz-result-pass" class="result pass mt-4">
+                    🎉 <strong>Passed:</strong> You scored <span id="pass-score"></span> / 15 — the "Mark as Completed" button is now enabled.
+                </div>
+                <div id="quiz-result-fail" class="result fail mt-4">
+                    ❌ <strong>Not Passed:</strong> You scored <span id="fail-score"></span> / 15 — you need at least 14/15 to unlock completion.
+                </div>
+            </form>
+
+            <!-- Mark Complete (disabled until pass) -->
+            <div class="mt-6 text-center">
+                <button id="mark-complete-btn" disabled
+                        class="btn opacity-50 cursor-not-allowed"
+                        title="Complete the quiz to enable">
+                    ✅ Mark as Completed
+                </button>
+                <p id="completion-status" class="text-gray-500 mt-3 small-muted"></p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-8 mt-10 text-sm text-gray-500">
+        © 2025 KnowledgeStream — Java Roadmap
+    </footer>
+
+    <script>
+        /***** COLLAPSIBLE & ANIMATION (kept) *****/
+        function toggleCollapsible(header) {
+            const content = header.nextElementSibling;
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+            } else {
+                // Close all others
+                document.querySelectorAll('.collapsible-content.open').forEach(c => c.classList.remove('open'));
+                content.classList.add('open');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.animated-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            sections.forEach(section => observer.observe(section));
+        });
+
+        
+
+        /***** QUIZ LOGIC *****/
+        (function(){
+            // Correct answers keyed by q1..q15
+            const answers = {
+                q1: 'b',   // bytecode runs on any JVM
+                q2: 'b',   // JVM runs bytecode
+                q3: 'c',   // JDK allows compilation
+                q4: 'b',   // javac MyProgram.java
+                q5: 'c',   // public static void main(String[] args)
+                q6: 'a',   // semicolons mark end
+                q7: 'a',   // compile -> execute
+                q8: 'c',   // .class contains bytecode
+                q9: 'b',   // add export lines to rc files
+                q10: 'c',  // System.out.println
+                q11: 'a',  // Car myCar = new Car();
+                q12: 'c',  // not typically used for low-level OS kernel
+                q13: 'b',  // IDE like IntelliJ
+                q14: 'c',  // Java 8 introduced lambda & streams
+                q15: 'b'   // JRE contains JVM and libraries to run apps
+            };
+
+            const submitBtn = document.getElementById('submit-quiz');
+            const passDiv = document.getElementById('quiz-result-pass');
+            const failDiv = document.getElementById('quiz-result-fail');
+            const passScoreSpan = document.getElementById('pass-score');
+            const failScoreSpan = document.getElementById('fail-score');
+            const msg = document.getElementById('quiz-msg');
+            const markBtn = document.getElementById('mark-complete-btn');
+            const completionStatus = document.getElementById('completion-status');
+
+            // Threshold calculation: 90% of 15 = 13.5 -> need 14
+            const required = 14;
+
+            function getSelectedValue(name) {
+                const el = document.querySelector(`input[name="${name}"]:checked`);
+                return el ? el.value : null;
+            }
+
+            function gradeQuiz() {
+                let score = 0;
+                for (let i = 1; i <= 15; i++) {
+                    const key = 'q' + i;
+                    const sel = getSelectedValue(key);
+                    if (sel && sel === answers[key]) score++;
+                }
+                return score;
+            }
+
+            function disableMarkButtonUI() {
+                markBtn.disabled = true;
+                markBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                markBtn.classList.remove('bg-green-600');
+                markBtn.setAttribute('title', 'Complete the quiz to enable');
+            }
+            function enableMarkButtonUI() {
+                markBtn.disabled = false;
+                markBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                markBtn.classList.add('bg-green-600');
+                markBtn.removeAttribute('title');
+            }
+
+            // Restore previously passed state if exists
+            const topicId = (function(){
+                const m = window.location.pathname.match(/topic(\d+)/);
+                return m ? parseInt(m[1]) : 1;
+            })();
+            const storageKeyPassed = `quizPassed_topic${topicId}`;
+
+            if (localStorage.getItem(storageKeyPassed) === 'true') {
+                enableMarkButtonUI();
+                passDiv.style.display = 'block';
+                passScoreSpan.textContent = localStorage.getItem(`quizScore_topic${topicId}`) || '15';
+                completionStatus.textContent = 'Quiz already passed — you may mark this topic as completed.';
+            } else {
+                disableMarkButtonUI();
+            }
+
+            submitBtn.addEventListener('click', () => {
+                // quick validation - check all answered
+                let unanswered = [];
+                for (let i = 1; i <= 15; i++) {
+                    if (!getSelectedValue('q' + i)) unanswered.push(i);
+                }
+                if (unanswered.length > 0) {
+                    msg.textContent = `Please answer all questions. Unanswered: ${unanswered.join(', ')}`;
+                    msg.style.color = 'var(--danger)';
+                    return;
+                }
+                const score = gradeQuiz();
+                if (score >= required) {
+                    passScoreSpan.textContent = score;
+                    passDiv.style.display = 'block';
+                    failDiv.style.display = 'none';
+                    localStorage.setItem(storageKeyPassed, 'true');
+                    localStorage.setItem(`quizScore_topic${topicId}`, String(score));
+                    enableMarkButtonUI();
+                    completionStatus.textContent = `Well done — you scored ${score}/15. You can now mark this topic as completed.`;
+                    msg.textContent = '';
+                } else {
+                    failScoreSpan.textContent = score;
+                    failDiv.style.display = 'block';
+                    passDiv.style.display = 'none';
+                    msg.textContent = `You scored ${score}/15. Try again — minimum required is ${required}/15.`;
+                    msg.style.color = 'var(--danger)';
+                    // keep mark button disabled
+                    disableMarkButtonUI();
+                }
+                // Scroll to result
+                document.getElementById(score >= required ? 'quiz-result-pass' : 'quiz-result-fail').scrollIntoView({ behavior: 'smooth' });
+            });
+
+
+/***** MARK AS COMPLETED — BACKEND ONLY *****/
+document.getElementById('mark-complete-btn').addEventListener('click', () => {
+    fetch("/api/topic-complete/", {
+    method: "POST",
+    credentials: "same-origin", // 🔥 THIS IS THE FIX
+    headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+    },
+    body: JSON.stringify({
+        subject: "java",
+        topic: "java-topic1"
+    })
+})
+.then(res => res.json())
+.then(data => {
+    if (data.success) {
+        window.location.href = "/books/?subject=java";
+    } else {
+        alert(data.error || "Failed to save progress");
+    }
+})
+.catch(() => alert("Network error"));
+
+});
+
+
+
+        })();
+    </script>
+
+
+<script>
+/* =============================
+   AI ANTI-CHEATING SYSTEM
+   ============================= */
+
+// Disable text selection, right-click, copy, inspect
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (
+    (e.ctrlKey && ['c','u','s','a','p'].includes(e.key.toLowerCase())) ||
+    e.key === 'PrintScreen' || e.key === 'F12'
+  ) {
+    e.preventDefault();
+    showSecurityAlert('⚠️ Action blocked! Copying, screenshot, or inspection is disabled.');
+  }
+});
+
+// Prevent switching tabs or minimizing
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    showSecurityAlert('🚨 You switched tabs! Focus back on the test window.');
+  }
+});
+
+// Small camera alert
+function showCameraAlert() {
+  const alertBox = document.createElement('div');
+  alertBox.id = 'camera-alert';
+  alertBox.textContent = '🎥 AI Proctoring Active — Camera Monitoring Enabled';
+  Object.assign(alertBox.style, {
+    position: 'fixed',
+    top: '20px',
+    right: '20px',
+    background: '#dc2626',
+    color: '#fff',
+    padding: '10px 16px',
+    borderRadius: '8px',
+    fontSize: '0.95rem',
+    fontWeight: '600',
+    zIndex: '9999',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+    animation: 'fadeInOut 6s ease forwards'
+  });
+  document.body.appendChild(alertBox);
+  setTimeout(() => alertBox.remove(), 6000);
+}
+
+// Security alert toast
+function showSecurityAlert(msg) {
+  const alertBox = document.createElement('div');
+  alertBox.textContent = msg;
+  Object.assign(alertBox.style, {
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    background: '#f87171',
+    color: '#fff',
+    padding: '10px 16px',
+    borderRadius: '8px',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    zIndex: '9999',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+    opacity: '0',
+    transition: 'opacity 0.3s'
+  });
+  document.body.appendChild(alertBox);
+  requestAnimationFrame(() => alertBox.style.opacity = '1');
+  setTimeout(() => alertBox.remove(), 4000);
+}
+
+// Warn on tab close
+window.onbeforeunload = () => "Your test progress may be lost!";
+
+// OPTIONAL: Use webcam for AI monitoring (if you want real camera)
+async function enableWebcamMonitoring() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const video = document.createElement('video');
+    video.srcObject = stream;
+    video.autoplay = true;
+    video.muted = true;
+    video.style.position = 'fixed';
+    video.style.bottom = '10px';
+    video.style.left = '10px';
+    video.style.width = '120px';
+    video.style.border = '2px solid #22c55e';
+    video.style.borderRadius = '8px';
+    video.style.boxShadow = '0 2px 8px rgba(0,0,0,0.25)';
+    video.style.zIndex = '9999';
+    document.body.appendChild(video);
+    showCameraAlert();
+  } catch (err) {
+    showSecurityAlert('⚠️ Camera access denied — AI proctoring limited.');
+  }
+}
+
+// Start monitoring when quiz starts
+document.getElementById('submit-quiz')?.addEventListener('click', () => {
+  enableWebcamMonitoring();
+});
+</script>
+
+<style>
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  15% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+</style>
+
+
+
+
+</body>
+</html>

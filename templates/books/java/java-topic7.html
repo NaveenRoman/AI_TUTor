@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>KnowledgeStream - Java Collections Framework (JCF)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body{background:#ffffff;color:#0f172a;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+  .container{max-width:1000px;margin:0 auto;padding:2rem;}
+  pre{background:#f8fafc;padding:1rem;border-radius:0.5rem;overflow:auto;border:1px solid #e6eef6;}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#dc2626;}
+  .section-title{border-left:4px solid #0ea5e9;padding-left:0.75rem;margin-top:2rem;margin-bottom:1rem;font-size:1.5rem;color:#0369a1;}
+  .note{background:#fffbeb;border-left:4px solid #f59e0b;padding:0.6rem;border-radius:6px;margin:0.75rem 0;color:#92400e}
+  .output{background:#ecfdf5;border-left:4px solid #10b981;padding:0.6rem;border-radius:6px;margin:0.5rem 0;color:#065f46;font-family:ui-monospace,monospace}
+  .small{font-size:0.95rem;color:#475569}
+  table{width:100%;border-collapse:collapse;margin-top:0.75rem}
+  th,td{border:1px solid #e6eef6;padding:0.5rem;text-align:left}
+  th{background:#e0f2fe}
+  .kbd{background:#0ea5e9;color:white;padding:0.1rem 0.4rem;border-radius:4px;font-size:0.85rem}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1 class="text-4xl font-extrabold text-sky-600">KnowledgeStream - Java Collections Framework (JCF)</h1>
+    <p class="small mt-2">A deep-learning guide with runnable examples and line-by-line explanations so you can understand, remember, and start coding confidently.</p>
+  </header>
+
+  <!-- OVERVIEW -->
+  <section>
+    <h2 class="section-title">1️⃣ Collection Hierarchy Overview</h2>
+    <p><strong>Definition:</strong> The Java Collections Framework (JCF) is a set of interfaces and classes in <code>java.util</code> that provide standard data structures (List, Set, Map, Queue) and algorithms for storing and manipulating groups of objects.</p>
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li>JCF provides ready-made data structures (arrays with features).</li>
+        <li>Interfaces (List, Set, Queue) define behavior; implementations provide concrete performance tradeoffs.</li>
+        <li><code>Map</code> is separate (key→value), not a Collection.</li>
+        <li>Generics provide compile-time type-safety (e.g., <code>List&lt;String&gt;</code>).</li>
+        <li>Many utility methods in <code>Collections</code> simplify sorting, searching, shuffling, etc.</li>
+      </ol>
+    </div>
+
+    <pre><code>java.lang.Iterable
+ └── java.util.Collection
+      ├── List (ArrayList, LinkedList, Vector)
+      ├── Set (HashSet, LinkedHashSet, TreeSet)
+      └── Queue (PriorityQueue, Deque/ArrayDeque)
+java.util.Map (separate)
+ ├── HashMap
+ ├── LinkedHashMap
+ └── TreeMap</code></pre>
+
+    <p class="small">Usage: choose implementation based on ordering, duplication rules and performance needs (e.g., fast lookup vs ordered traversal).</p>
+  </section>
+
+  <!-- LIST -->
+  <section>
+    <h2 class="section-title">2️⃣ List Interface (ArrayList, LinkedList)</h2>
+    <p><strong>Definition:</strong> A <code>List</code> is an ordered collection allowing duplicates and positional access via indices (0-based).</p>
+
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li>Maintains insertion order.</li>
+        <li>Allows duplicate elements and nulls (implementation-dependent).</li>
+        <li>Index-based access via <code>get(int)</code>.</li>
+        <li><code>ArrayList</code> is backed by a resizable array (fast random access).</li>
+        <li><code>LinkedList</code> is a doubly-linked list (fast insert/remove at ends).</li>
+      </ol>
+    </div>
+
+    <p class="small"><strong>When to use:</strong> Use <code>ArrayList</code> for frequent reads/random access; use <code>LinkedList</code> for frequent insertions/removals at ends or when you need queue/deque operations.</p>
+
+    <h3 class="sub-section-title">Example program: ListDemo.java</h3>
+    <pre><code>// ListDemo.java
+import java.util.*;
+
+public class ListDemo {
+  public static void main(String[] args) {
+    // create an ArrayList of Strings
+    List&lt;String&gt; arrayList = new ArrayList&lt;&gt;();
+
+    // add elements
+    arrayList.add("Apple");
+    arrayList.add("Banana");
+    arrayList.add("Apple"); // duplicates allowed
+
+    // print the ArrayList
+    System.out.println("ArrayList: " + arrayList);
+
+    // access by index
+    System.out.println("Item at index 1: " + arrayList.get(1));
+
+    // create a LinkedList from existing list
+    LinkedList&lt;String&gt; linkedList = new LinkedList&lt;&gt;(arrayList);
+
+    // add elements at both ends
+    linkedList.addFirst("Mango");
+    linkedList.addLast("Peach");
+
+    // print the LinkedList
+    System.out.println("LinkedList: " + linkedList);
+  }
+}</code></pre>
+
+    <div class="note small"><strong>Explanation (line-by-line, 3–5 lines each):</strong></div>
+
+    <ol class="small">
+      <li><code>import java.util.*;</code><br>
+        - Imports all public classes/interfaces from the <code>java.util</code> package, including <code>List</code>, <code>ArrayList</code>, and <code>LinkedList</code>.<br>
+        - This saves you from importing each class individually and is common in examples (though explicit imports are preferred in large projects).<br>
+        - No runtime overhead — it's a compile-time convenience.
+      </li>
+
+      <li><code>public class ListDemo { ... }</code><br>
+        - Defines the public class <code>ListDemo</code> — the file must be named <code>ListDemo.java</code> when public.<br>
+        - Contains the <code>main</code> method which is the entry point for the program.<br>
+        - Using a class allows grouping related code and reusing it later.
+      </li>
+
+      <li><code>List&lt;String&gt; arrayList = new ArrayList&lt;&gt;();</code><br>
+        - Declares a variable named <code>arrayList</code> of type <code>List&lt;String&gt;</code>, a generic interface reference.<br>
+        - The concrete object is an <code>ArrayList</code>, created with the diamond operator (<code>&lt;&gt;</code>) to infer generic type parameters.<br>
+        - Using the interface type (<code>List</code>) improves flexibility — you can swap implementations later without changing code that uses the variable.
+      </li>
+
+      <li><code>arrayList.add("Apple");</code><br>
+        - Adds the string "Apple" to the end of the <code>ArrayList</code>.<br>
+        - <code>add</code> amortized time complexity is O(1) — occasional resizing triggers O(n) copies behind the scenes.<br>
+        - Duplicates are allowed, so calling <code>add</code> with the same value again will create another element.
+      </li>
+
+      <li><code>System.out.println("ArrayList: " + arrayList);</code><br>
+        - Prints the <code>ArrayList</code> using <code>toString()</code> of the list; produces a bracketed representation like <code>[Apple, Banana, Apple]</code>.<br>
+        - Useful for quick debugging; actual production code often iterates elements or uses logging frameworks.<br>
+        - Concatenation triggers a call to <code>arrayList.toString()</code>.
+      </li>
+
+      <li><code>arrayList.get(1)</code><br>
+        - Retrieves the element at index 1 (0-based indexing).<br>
+        - In <code>ArrayList</code>, <code>get</code> is O(1) because it's backed by an array.<br>
+        - Calling with an invalid index (< 0 or >= size) throws <code>IndexOutOfBoundsException</code>.
+      </li>
+
+      <li><code>LinkedList&lt;String&gt; linkedList = new LinkedList&lt;&gt;(arrayList);</code><br>
+        - Constructs a <code>LinkedList</code> and initializes it with all elements from <code>arrayList</code> via the collection constructor.<br>
+        - This performs iteration over <code>arrayList</code> and adds elements one by one to the linked list (O(n) total).<br>
+        - Using constructors like this is efficient and idiomatic to copy or convert collections.
+      </li>
+
+      <li><code>linkedList.addFirst("Mango");</code><br>
+        - Inserts "Mango" at the head of the <code>LinkedList</code> in constant time O(1).<br>
+        - <code>LinkedList</code> provides deque-style operations (addFirst, addLast, removeFirst, removeLast).<br>
+        - Useful when you need queue/deque semantics or frequent operations at both ends.
+      </li>
+
+      <li><code>linkedList.addLast("Peach");</code><br>
+        - Inserts "Peach" at the tail (end) of the linked list. Equivalent to <code>add()</code> for lists.<br>
+        - Also O(1) for linked lists because it maintains tail reference. For array-backed lists, adding at end amortized O(1).<br>
+        - After these modifications, printing the linked list displays the updated sequence.
+      </li>
+    </ol>
+
+    <div class="output">Expected output:<br>ArrayList: [Apple, Banana, Apple]<br>Item at index 1: Banana<br>LinkedList: [Mango, Apple, Banana, Apple, Peach]</div>
+
+    <div class="note small"><strong>Summary Table</strong>
+      <table>
+        <tr><th>Implementation</th><th>Access</th><th>Insert/Remove (middle)</th><th>Use when</th></tr>
+        <tr><td>ArrayList</td><td>Fast (O(1))</td><td>Slow (O(n))</td><td>Frequent reads / random access</td></tr>
+        <tr><td>LinkedList</td><td>Slow (O(n) random)</td><td>Fast (O(1) at ends)</td><td>Frequent insert/remove at ends</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- SET -->
+  <section>
+    <h2 class="section-title">3️⃣ Set Interface (HashSet, LinkedHashSet, TreeSet)</h2>
+    <p><strong>Definition:</strong> A <code>Set</code> is a collection that contains no duplicate elements. It models the mathematical set abstraction.</p>
+
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li>Does not allow duplicate elements.</li>
+        <li><code>HashSet</code> uses hashing for O(1) average operations.</li>
+        <li><code>LinkedHashSet</code> preserves insertion order.</li>
+        <li><code>TreeSet</code> implements <code>SortedSet</code> and keeps elements sorted (O(log n) ops).</li>
+        <li>Null handling: HashSet allows one null; TreeSet may throw NPE if null and comparator absent.</li>
+      </ol>
+    </div>
+
+    <h3 class="sub-section-title">Example program: SetDemo.java</h3>
+    <pre><code>// SetDemo.java
+import java.util.*;
+
+public class SetDemo {
+  public static void main(String[] args) {
+    Set&lt;String&gt; hashSet = new HashSet&lt;&gt;();
+    hashSet.add("Java");
+    hashSet.add("Python");
+    hashSet.add("Java"); // duplicate — ignored by set
+    System.out.println("HashSet: " + hashSet);
+
+    Set&lt;String&gt; linked = new LinkedHashSet&lt;&gt;();
+    linked.add("B"); linked.add("A"); linked.add("C");
+    System.out.println("LinkedHashSet: " + linked);
+
+    Set&lt;Integer&gt; tree = new TreeSet&lt;&gt;();
+    tree.add(5); tree.add(1); tree.add(3);
+    System.out.println("TreeSet: " + tree);
+  }
+}</code></pre>
+
+    <div class="note small"><strong>Line-by-line explanation (3–5 lines each):</strong></div>
+    <ol class="small">
+      <li><code>Set&lt;String&gt; hashSet = new HashSet&lt;&gt;();</code><br>
+        - Declares a <code>Set</code> reference, concrete object is a <code>HashSet</code> backed by a hash table.<br>
+        - Hashing provides average O(1) for add/contains/remove; worst-case O(n) if many collisions (rare with good hashCode).<br>
+        - Elements are not ordered — iteration order can appear random and should not be relied upon.
+      </li>
+
+      <li><code>hashSet.add("Java");</code><br>
+        - Adds "Java" to the set; the set checks hashCode and then equality (equals) to decide placement.<br>
+        - If an identical element already exists (same hash and equals true), the add returns false and element is not added.<br>
+        - No index; you can't get element by index — use iteration.
+      </li>
+
+      <li><code>Set&lt;String&gt; linked = new LinkedHashSet&lt;&gt;();</code><br>
+        - Creates a <code>LinkedHashSet</code> which internally uses a hash table + doubly-linked list to maintain insertion order.<br>
+        - Iteration order equals insertion order. Complexity similar to HashSet for basic ops but with extra memory for order links.<br>
+        - Useful when you need uniqueness and stable iteration order.
+      </li>
+
+      <li><code>Set&lt;Integer&gt; tree = new TreeSet&lt;&gt;();</code><br>
+        - Creates a <code>TreeSet</code> implementing <code>NavigableSet</code>, backed by a Red-Black tree (self-balancing BST).<br>
+        - Operations (add/remove/contains) are O(log n). It keeps elements sorted by natural order or a provided comparator.<br>
+        - TreeSet does not allow null elements if natural ordering is used — passing null may produce NPE.
+      </li>
+    </ol>
+
+    <div class="output">Example Output:<br>HashSet: [Python, Java]<br>LinkedHashSet: [B, A, C]<br>TreeSet: [1, 3, 5]</div>
+
+    <div class="note small"><strong>When to use:</strong> HashSet for fast membership tests; LinkedHashSet when predictable iteration order matters; TreeSet for sorted data and range queries (headSet, tailSet).</div>
+  </section>
+
+  <!-- MAP -->
+  <section>
+    <h2 class="section-title">4️⃣ Map Interface (HashMap, LinkedHashMap, TreeMap)</h2>
+    <p><strong>Definition:</strong> A <code>Map</code> stores key→value mappings. Each key is unique — put with same key replaces the value.</p>
+
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li>Keys are unique; values can be duplicated.</li>
+        <li><code>HashMap</code> uses hashing (average O(1)).</li>
+        <li><code>LinkedHashMap</code> preserves insertion order or access order (if requested).</li>
+        <li><code>TreeMap</code> sorts entries by key (O(log n)).</li>
+        <li>Null handling: HashMap allows one null key and multiple null values; TreeMap does not allow null key by default.</li>
+      </ol>
+    </div>
+
+    <h3 class="sub-section-title">Example program: MapDemo.java</h3>
+    <pre><code>// MapDemo.java
+import java.util.*;
+
+public class MapDemo {
+  public static void main(String[] args) {
+    Map&lt;Integer, String&gt; hashMap = new HashMap&lt;&gt;();
+    hashMap.put(3, "Orange");
+    hashMap.put(1, "Apple");
+    hashMap.put(2, "Banana");
+    System.out.println("HashMap: " + hashMap);
+
+    Map&lt;Integer, String&gt; linked = new LinkedHashMap&lt;&gt;(hashMap);
+    System.out.println("LinkedHashMap: " + linked);
+
+    Map&lt;Integer, String&gt; tree = new TreeMap&lt;&gt;(hashMap);
+    System.out.println("TreeMap: " + tree);
+  }
+}</code></pre>
+
+    <div class="note small"><strong>Line-by-line explanation (3–5 lines each):</strong></div>
+    <ol class="small">
+      <li><code>Map&lt;Integer,String&gt; hashMap = new HashMap&lt;&gt;();</code><br>
+        - Declares a <code>Map</code> variable typed with generic parameters <code>&lt;Integer,String&gt;</code> to store numeric keys and string values.<br>
+        - HashMap stores entries in buckets based on key.hashCode(); collisions handled via linked lists / tree bins (since Java 8) for performance.<br>
+        - Use HashMap for fastest key-based access when order doesn't matter.
+      </li>
+
+      <li><code>hashMap.put(3, "Orange");</code><br>
+        - Associates key 3 with value "Orange". If key 3 existed, put replaces its value and returns the previous value.<br>
+        - Under the hood, Java computes hashCode of key, maps it to a bucket, and either inserts new entry or updates existing one.<br>
+        - Complexity average O(1); worst-case O(n) if many collisions (rare).
+      </li>
+
+      <li><code>Map&lt;Integer,String&gt; linked = new LinkedHashMap&lt;&gt;(hashMap);</code><br>
+        - Creates a LinkedHashMap initialized with entries from hashMap while preserving insertion order.<br>
+        - LinkedHashMap uses a doubly-linked list to maintain order and has similar complexity to HashMap with slight overhead.<br>
+        - Useful for LRU caches (LinkedHashMap provides access-order mode).
+      </li>
+
+      <li><code>Map&lt;Integer,String&gt; tree = new TreeMap&lt;&gt;(hashMap);</code><br>
+        - Creates a TreeMap and copies entries from hashMap; entries are sorted by key using natural ordering.<br>
+        - TreeMap uses Red-Black tree; operations like put/get/remove are O(log n).<br>
+        - Good for range queries (subMap, headMap, tailMap).
+      </li>
+    </ol>
+
+    <div class="output">Expected Output:<br>HashMap: {1=Apple, 2=Banana, 3=Orange}<br>LinkedHashMap: {3=Orange, 1=Apple, 2=Banana}<br>TreeMap: {1=Apple, 2=Banana, 3=Orange}</div>
+
+    <div class="note small"><strong>Usage summary:</strong> HashMap for general-purpose maps; LinkedHashMap when order matters (caches); TreeMap when you need sorting and navigation by keys.</div>
+  </section>
+
+  <!-- QUEUE -->
+  <section>
+    <h2 class="section-title">5️⃣ Queue (PriorityQueue, Deque)</h2>
+    <p><strong>Definition:</strong> A <code>Queue</code> is a collection used to hold elements prior to processing — commonly FIFO (first-in, first-out). <code>PriorityQueue</code> orders by priority (natural or comparator).</p>
+
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li>Queue methods: <code>offer</code>/<code>add</code>, <code>poll</code>, <code>peek</code>.</li>
+        <li><code>PriorityQueue</code> orders elements by priority (not insertion order).</li>
+        <li><code>Deque</code> supports operations at both ends (double-ended queue).</li>
+        <li><code>ArrayDeque</code> is a resizable array implementation for deque (no capacity constraints).</li>
+        <li>Use queues for scheduling, BFS, thread pools, buffering.</li>
+      </ol>
+    </div>
+
+    <h3 class="sub-section-title">Example program: QueueDemo.java</h3>
+    <pre><code>// QueueDemo.java
+import java.util.*;
+
+public class QueueDemo {
+  public static void main(String[] args) {
+    PriorityQueue&lt;Integer&gt; pq = new PriorityQueue&lt;&gt;();
+    pq.add(30); pq.add(10); pq.add(20);
+    System.out.println("PriorityQueue: " + pq);
+    System.out.println("Peek: " + pq.peek());
+    pq.poll();
+    System.out.println("After poll: " + pq);
+
+    Deque&lt;String&gt; dq = new ArrayDeque&lt;&gt;();
+    dq.add("A"); dq.addFirst("B"); dq.addLast("C");
+    System.out.println("Deque: " + dq);
+  }
+}</code></pre>
+
+    <div class="note small"><strong>Explain (3–5 lines each):</strong></div>
+    <ol class="small">
+      <li><code>PriorityQueue&lt;Integer&gt; pq = new PriorityQueue&lt;&gt;();</code><br>
+        - Creates a min-heap-based priority queue that orders integers by natural ordering (smallest first).<br>
+        - Internally uses an array-based binary heap; peek/poll are O(log n) for rearrangement; add is O(log n) when percolating.<br>
+        - Iteration order does NOT reflect priority; it reflects heap order (not sorted).
+      </li>
+
+      <li><code>pq.add(30); pq.add(10); pq.add(20);</code><br>
+        - Adds elements to heap; after these adds heap structure ensures the smallest element is at root (accessible by peek()).<br>
+        - Duplicate values are allowed; insertion order does not affect priority order except as tie-breakers possibly depending on comparator.<br>
+        - Use <code>offer()</code> as alternative to <code>add()</code> — <code>add()</code> throws exception if capacity is bounded and full.
+      </li>
+
+      <li><code>pq.peek()</code> and <code>pq.poll()</code><br>
+        - <code>peek()</code> returns the head (smallest element) without removing; returns <code>null</code> if empty.<br>
+        - <code>poll()</code> removes and returns the head, then rebalances heap (O(log n)).<br>
+        - For blocking behavior in multithreaded contexts, use <code>PriorityBlockingQueue</code>.
+      </li>
+
+      <li><code>Deque&lt;String&gt; dq = new ArrayDeque&lt;&gt;();</code><br>
+        - ArrayDeque implements the Deque interface using resizable array — provides fast add/remove at both ends (amortized O(1)).<br>
+        - Methods: <code>addFirst</code>, <code>addLast</code>, <code>removeFirst</code>, <code>removeLast</code>, etc.<br>
+        - Avoid using <code>null</code> elements with Deque/Queue implementations — methods may throw NPE or undefined behavior.
+      </li>
+    </ol>
+
+    <div class="output">Expected Output (example):<br>PriorityQueue: [10, 30, 20]<br>Peek: 10<br>After poll: [20, 30]<br>Deque: [B, A, C]</div>
+
+    <div class="note small"><strong>When to use:</strong> PriorityQueue for scheduling by priority (e.g., Dijkstra); Deque for stack/queue hybrid operations and BFS with efficient add/remove at both ends.</div>
+  </section>
+
+  <!-- ITERATION -->
+  <section>
+    <h2 class="section-title">6️⃣ Iteration: Iterator, ListIterator, and for-each</h2>
+    <p><strong>Definition:</strong> Iteration refers to mechanisms to traverse all elements in a collection safely. Java provides <code>Iterator</code>, <code>ListIterator</code> (bidirectional), and enhanced <code>for-each</code> loop.</p>
+
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li><code>Iterator</code> provides <code>hasNext()</code>, <code>next()</code>, and <code>remove()</code> safely.</li>
+        <li><code>ListIterator</code> adds <code>hasPrevious()</code> and supports bidirectional traversal and modifications.</li>
+        <li>For-each loop is syntactic sugar over Iterator and is read-only with respect to structure.</li>
+        <li>Modifying a collection while iterating with non-Iterator methods causes <code>ConcurrentModificationException</code>.</li>
+        <li>Use concurrent collections or iterator.remove() to avoid concurrent modification issues.</li>
+      </ol>
+    </div>
+
+    <h3 class="sub-section-title">Example program: IterationDemo.java</h3>
+    <pre><code>// IterationDemo.java
+import java.util.*;
+
+public class IterationDemo {
+  public static void main(String[] args) {
+    List&lt;String&gt; list = new ArrayList&lt;&gt;(List.of("A", "B", "C"));
+
+    // Iterator: safe removal
+    Iterator&lt;String&gt; it = list.iterator();
+    while (it.hasNext()) {
+      String s = it.next();
+      if ("B".equals(s)) it.remove(); // safe remove
+    }
+    System.out.println("After Iterator remove: " + list);
+
+    // ListIterator: bidirectional traversal
+    ListIterator&lt;String&gt; li = list.listIterator(list.size());
+    System.out.print("Reverse: ");
+    while (li.hasPrevious()) {
+      System.out.print(li.previous() + " ");
+    }
+    System.out.println();
+
+    // for-each loop: simple read
+    for (String x : List.of("X", "Y", "Z")) {
+      System.out.print(x + " ");
+    }
+    System.out.println();
+  }
+}</code></pre>
+
+    <div class="note small"><strong>Line-by-line explanation (3–5 lines each):</strong></div>
+    <ol class="small">
+      <li><code>List&lt;String&gt; list = new ArrayList&lt;&gt;(List.of("A","B","C"));</code><br>
+        - Creates an unmodifiable list via <code>List.of</code>, then copies into a modifiable <code>ArrayList</code> using the collection constructor.<br>
+        - Now the list can be changed (remove/add) safely via iterator operations.<br>
+        - Good pattern to create a mutable list from literal elements.
+      </li>
+
+      <li><code>Iterator&lt;String&gt; it = list.iterator();</code><br>
+        - Retrieves an iterator over the list elements; iterator tracks a modification count to detect concurrent modifications.<br>
+        - The iterator's <code>remove()</code> method is safe and updates internal modification count so no <code>ConcurrentModificationException</code> occurs.<br>
+        - Always use iterator.remove() when removing during iteration.
+      </li>
+
+      <li><code>ListIterator&lt;String&gt; li = list.listIterator(list.size());</code><br>
+        - Creates a list iterator positioned at the end of the list (index = size), so subsequent <code>previous()</code> calls iterate backwards.<br>
+        - ListIterator supports add/set/previous/next — powerful for bidirectional traversals and in-place modifications.<br>
+        - Useful when you need to traverse forwards and backwards in a list.
+      </li>
+
+      <li><code>for (String x : List.of("X","Y","Z")) { ... }</code><br>
+        - For-each loop simplifies iteration — it's syntactic sugar over the iterator; you cannot call iterator.remove() inside for-each.<br>
+        - Best for read-only traversals; prefer iterator when you must remove elements during traversal.<br>
+        - Cleaner and less error-prone for printing or mapping functions.
+      </li>
+    </ol>
+
+    <div class="output">Expected Output:<br>After Iterator remove: [A, C]<br>Reverse: C A<br>X Y Z</div>
+
+    <div class="note small"><strong>Interview tip:</strong> Explain difference between structural modification (adds/removes) and iterator-safe removal; mention <code>ConcurrentModificationException</code> as a fail-fast behavior.</div>
+  </section>
+
+  <!-- SORTING -->
+  <section>
+    <h2 class="section-title">7️⃣ Sorting (Comparable vs Comparator)</h2>
+    <p><strong>Definition:</strong> <code>Comparable</code> provides a natural ordering for objects via <code>compareTo</code>. <code>Comparator</code> provides external/custom ordering via <code>compare</code>.</p>
+
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li><code>Comparable</code> implemented inside class; single natural order.</li>
+        <li><code>Comparator</code> is external — multiple comparators possible.</li>
+        <li>Use <code>Collections.sort()</code> or <code>List.sort()</code> with comparators.</li>
+        <li>Prefer <code>Comparator.comparing</code> and method references for concise code.</li>
+        <li>Null-safe comparators available (<code>Comparator.nullsFirst</code> / <code>nullsLast</code>).</li>
+      </ol>
+    </div>
+
+    <h3 class="sub-section-title">Example program: SortingDemo.java</h3>
+    <pre><code>// SortingDemo.java
+import java.util.*;
+
+class Product implements Comparable&lt;Product&gt; {
+  int id; String name; double price;
+  Product(int id, String name, double price) { this.id = id; this.name = name; this.price = price; }
+  public String toString() { return String.format("[%d,%s,$%.2f]", id, name, price); }
+  public int compareTo(Product o) { return Integer.compare(this.id, o.id); } // natural by id
+}
+
+public class SortingDemo {
+  public static void main(String[] args) {
+    List&lt;Product&gt; products = new ArrayList&lt;&gt;();
+    products.add(new Product(302, "Apple", 0.99));
+    products.add(new Product(101, "Banana", 0.49));
+    products.add(new Product(205, "Carrot", 1.50));
+
+    // sort by natural order (id)
+    Collections.sort(products);
+    System.out.println("By ID: " + products);
+
+    // sort by price using comparator
+    products.sort(Comparator.comparingDouble(p -> p.price));
+    System.out.println("By Price: " + products);
+
+    // sort by name using method reference
+    products.sort(Comparator.comparing(p -> p.name));
+    System.out.println("By Name: " + products);
+  }
+}</code></pre>
+
+    <div class="note small"><strong>Detailed explanation (3–5 lines each):</strong></div>
+    <ol class="small">
+      <li><code>class Product implements Comparable&lt;Product&gt; { ... }</code><br>
+        - Declares class Product implementing Comparable to provide a natural ordering by ID.<br>
+        - Implementing Comparable allows direct use of <code>Collections.sort(list)</code> which uses compareTo.<br>
+        - Natural ordering should be consistent with equals for predictable behavior.
+      </li>
+
+      <li><code>public int compareTo(Product o) { return Integer.compare(this.id, o.id); }</code><br>
+        - Compares this product's id to another's id returning negative/zero/positive depending on ordering.<br>
+        - Using <code>Integer.compare</code> is null-safe and avoids overflow risks compared to subtraction.<br>
+        - This defines the "natural" ordering used by sort().
+      </li>
+
+      <li><code>products.sort(Comparator.comparingDouble(p -&gt; p.price));</code><br>
+        - Uses a Comparator created by comparing the price field; sorts ascending by price.<br>
+        - Functional style with lambda is concise and expressive; Comparator.comparingDouble avoids boxing overhead.<br>
+        - You can chain comparators using <code>thenComparing</code>.
+      </li>
+
+      <li><code>products.sort(Comparator.comparing(p -&gt; p.name));</code><br>
+        - Sorts products alphabetically by name using a Comparator based on name property.<br>
+        - Method references (<code>Product::getName</code>) are even cleaner if getter exists.<br>
+        - Use locale-aware Collators when sorting human-language strings.
+      </li>
+    </ol>
+
+    <div class="output">Expected Output (examples):<br>By ID: [[101,Banana,$0.49],[205,Carrot,$1.50],[302,Apple,$0.99]]<br>By Price: [...]<br>By Name: [...]</div>
+
+    <div class="note small"><strong>Viva tip:</strong> Explain comparator chaining and stability — Collections.sort is stable since Java 8 (uses TimSort), meaning equal elements keep relative order when comparator returns 0.</div>
+  </section>
+
+  <!-- GENERICS -->
+  <section>
+    <h2 class="section-title">8️⃣ Generics</h2>
+    <p><strong>Definition:</strong> Generics allow you to parameterize types (e.g., <code>List&lt;String&gt;</code>), enabling compile-time checks and removing the need for casting.</p>
+
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li>Provides compile-time type safety.</li>
+        <li>Eliminates explicit casts when retrieving elements.</li>
+        <li>Use wrapper classes for primitives (Integer, Double).</li>
+        <li>Generics use type erasure at runtime — no runtime generic type info.</li>
+        <li>Use bounded generics (<code>&lt;T extends Number&gt;</code>) for constraints.</li>
+      </ol>
+    </div>
+
+    <h3 class="sub-section-title">Example program: GenericsDemo.java</h3>
+    <pre><code>// GenericsDemo.java
+import java.util.*;
+
+public class GenericsDemo {
+  public static void main(String[] args) {
+    List&lt;String&gt; names = new ArrayList&lt;&gt;();
+    names.add("Naveen");
+    // names.add(10); // compile-time error - type safety
+    for (String n : names) {
+      System.out.println(n.toUpperCase());
+    }
+  }
+}</code></pre>
+
+    <div class="note small"><strong>Line-by-line explanation (3–5 lines):</strong></div>
+    <ol class="small">
+      <li><code>List&lt;String&gt; names = new ArrayList&lt;&gt;();</code><br>
+        - Declares a list of Strings — generics ensure only Strings can be added, preventing runtime ClassCastException.<br>
+        - The diamond operator (<code>&lt;&gt;</code>) infers type parameters from the left-hand side.<br>
+        - Type erasure removes generic type info at runtime; generics are enforced at compile time.
+      </li>
+
+      <li><code>// names.add(10); // compile-time error</code><br>
+        - This commented line demonstrates how generics prevent adding wrong types; compiler error stops buggy code early.<br>
+        - Safer than raw collections which accept any Object and risk runtime failures.<br>
+        - Encourages cleaner, more maintainable code.
+      </li>
+
+      <li><code>for (String n : names) System.out.println(n.toUpperCase());</code><br>
+        - Enhanced for loop iterates over collection with type safety — each element is a <code>String</code> without need to cast.<br>
+        - Concise and safe; avoid modifying collection structure inside the loop (use Iterator for removal).<br>
+        - Use streams for more advanced operations (map/filter/collect).
+      </li>
+    </ol>
+
+    <div class="output">Expected Output:<br>NAVEEN</div>
+  </section>
+
+  <!-- HASHING -->
+  <section>
+    <h2 class="section-title">9️⃣ Hashing (hashCode() & equals())</h2>
+    <p><strong>Definition:</strong> <code>hashCode()</code> and <code>equals()</code> establish object equality and hashing behavior. Correct overrides are crucial for hash-based collections (HashSet, HashMap).</p>
+
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li>If <code>equals()</code> returns true for two objects, their <code>hashCode()</code> must be equal.</li>
+        <li>Overriding only one breaks hash-based collections.</li>
+        <li>Use <code>Objects.hash(...)</code> for concise hashCode creation.</li>
+        <li>hashCode collisions are allowed; equals determines true equality.</li>
+        <li>Good hashCode improves distribution and performance.</li>
+      </ol>
+    </div>
+
+    <h3 class="sub-section-title">Example program: HashingDemo.java</h3>
+    <pre><code>// HashingDemo.java
+import java.util.*;
+import java.util.Objects;
+
+class Student {
+  private final int id;
+  private final String name;
+  Student(int id, String name) { this.id = id; this.name = name; }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Student s = (Student) o;
+    return id == s.id && Objects.equals(name, s.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name);
+  }
+
+  @Override
+  public String toString() {
+    return "Student{id=" + id + ", name='" + name + "'}";
+  }
+}
+
+public class HashingDemo {
+  public static void main(String[] args) {
+    Set&lt;Student&gt; students = new HashSet&lt;&gt;();
+    Student s1 = new Student(101, "Alice");
+    Student s2 = new Student(101, "Alice"); // logically equal to s1
+    students.add(s1);
+    boolean added = students.add(s2); // will be false if equals/hashCode are correct
+    System.out.println("Added s2? " + added);
+    System.out.println("Set contents: " + students);
+  }
+}</code></pre>
+
+    <div class="note small"><strong>Detailed explanation (3–5 lines each):</strong></div>
+    <ol class="small">
+      <li><code>if (this == o) return true;</code><br>
+        - Fast-path identity check: if both references point to same object, equality is trivially true.<br>
+        - Improves performance by avoiding deeper comparisons for identical references.<br>
+        - Important for correctness and avoiding NullPointerException on later casts.
+      </li>
+
+      <li><code>if (o == null || getClass() != o.getClass()) return false;</code><br>
+        - Ensures you are comparing objects of the same runtime class and not null.<br>
+        - Using <code>getClass()</code> enforces strict type equality (vs <code>instanceof</code> which allows subclasses).<br>
+        - Choose <code>instanceof</code> if you want polymorphic equality logic.
+      </li>
+
+      <li><code>return Objects.hash(id, name);</code><br>
+        - Computes a combined hash code from the fields used in <code>equals</code> ensuring consistency.<br>
+        - Objects.hash uses a robust algorithm; for performance-critical classes, consider manual combination to reduce allocation overhead.<br>
+        - Good distribution of hash codes reduces collisions and improves HashMap/HashSet performance.
+      </li>
+
+      <li><code>students.add(s2); boolean added = ...</code><br>
+        - When adding s2, HashSet computes hashCode and compares with buckets; since s1 has same hash and equals true, the add will not insert and returns false.<br>
+        - This shows why both methods must be consistent — otherwise duplicates or incorrect behavior occurs.<br>
+        - Always test custom types in collections to ensure behavior is as expected.
+      </li>
+    </ol>
+
+    <div class="output">Expected Output:<br>Added s2? false<br>Set contents: [Student{id=101, name='Alice'}]</div>
+
+    <div class="note small"><strong>Viva tip:</strong> Explain the two-step lookup in hash-based collections: compute hash code → find bucket → compare using equals(). Also mention secondary data structures for collision resolution (linked lists or tree bins).</div>
+  </section>
+
+  <!-- THREAD-SAFE -->
+  <section>
+    <h2 class="section-title">🔒 Thread-Safe Collections</h2>
+    <p><strong>Definition:</strong> Thread-safe collections support safe concurrent access and modification by multiple threads without corrupting internal state.</p>
+
+    <div class="note small">
+      <strong>Key points (5):</strong>
+      <ol>
+        <li><code>Collections.synchronizedList</code> wraps a collection with coarse-grained synchronization.</li>
+        <li><code>ConcurrentHashMap</code> provides fine-grained concurrency and high throughput.</li>
+        <li><code>CopyOnWriteArrayList</code> is ideal for many readers, few writers (creates new copy on modification).</li>
+        <li>Legacy synchronized classes: <code>Vector</code> and <code>Hashtable</code> — generally superseded by concurrent classes.</li>
+        <li>When iterating, use explicit synchronization with synchronized wrappers or use concurrent iterators (weakly consistent) from concurrent collections.</li>
+      </ol>
+    </div>
+
+    <h3 class="sub-section-title">Example program: ThreadSafeDemo.java</h3>
+    <pre><code>// ThreadSafeDemo.java
+import java.util.*;
+import java.util.concurrent.*;
+
+public class ThreadSafeDemo {
+  public static void main(String[] args) {
+    List&lt;String&gt; syncList = Collections.synchronizedList(new ArrayList&lt;&gt;());
+    Map&lt;Integer,String&gt; concMap = new ConcurrentHashMap&lt;&gt;();
+
+    syncList.add("Thread1");
+    concMap.put(1, "Safe");
+
+    System.out.println(syncList);
+    System.out.println(concMap);
+  }
+}</code></pre>
+
+    <div class="note small"><strong>Explain (3–5 lines):</strong></div>
+    <ol class="small">
+      <li><code>Collections.synchronizedList(new ArrayList&lt;&gt;());</code><br>
+        - Wraps an ArrayList with synchronized methods; every access is guarded by a single lock, ensuring thread safety.<br>
+        - Coarse-grained locking can become a bottleneck under high contention; prefer concurrent collections when performance matters.<br>
+        - When iterating a synchronized collection, externally synchronize on the collection to avoid race conditions.
+      </li>
+
+      <li><code>ConcurrentHashMap&lt;&gt;()</code><br>
+        - Provides lock-striping / finer-grained concurrency — high throughput under concurrent access.<br>
+        - Iterators are weakly consistent: they reflect some but not necessarily all modifications after iterator creation, and do not throw ConcurrentModificationException.<br>
+        - Use ConcurrentHashMap for scalable multi-threaded caches and counters.
+      </li>
+    </ol>
+  </section>
+
+  <!-- PRACTICE TASKS -->
+  <section>
+    <h2 class="section-title">🧩 Practice Tasks (recommended order)</h2>
+    <ol class="small">
+      <li>Implement a word-frequency counter using <code>HashMap&lt;String,Integer&gt;</code>. Try handling punctuation and case-insensitivity.</li>
+      <li>Write a program to remove duplicates while preserving insertion order using <code>LinkedHashSet</code>.</li>
+      <li>Compare performance of <code>ArrayList</code> and <code>LinkedList</code> for 1 million insertions at front — measure time with <code>System.nanoTime()</code>.</li>
+      <li>Create an LRU cache using <code>LinkedHashMap</code>'s <code>removeEldestEntry</code> method.</li>
+      <li>Implement custom comparators (by vowel count, then alphabetically) and test sorting stability.</li>
+    </ol>
+  </section>
+
+  <!-- SUMMARY TABLE -->
+  <section>
+    <h2 class="section-title">📋 Summary Comparison</h2>
+    <table>
+      <tr><th>Type</th><th>Implementations</th><th>Ordered?</th><th>Allows Duplicates?</th><th>Common Use</th></tr>
+      <tr><td>List</td><td>ArrayList, LinkedList, Vector</td><td>Yes</td><td>Yes</td><td>Ordered collections, index access</td></tr>
+      <tr><td>Set</td><td>HashSet, LinkedHashSet, TreeSet</td><td>No/Insertion/Sorted</td><td>No</td><td>Unique elements, membership tests</td></tr>
+      <tr><td>Map</td><td>HashMap, LinkedHashMap, TreeMap</td><td>No/Insertion/Sorted</td><td>Keys: No, Values: Yes</td><td>Key→value lookups</td></tr>
+      <tr><td>Queue</td><td>PriorityQueue, ArrayDeque</td><td>Depends</td><td>Yes</td><td>Scheduling, BFS, buffering</td></tr>
+    </table>
+  </section>
+
+  <!-- 🔍 DIFFERENCE TABLE -->
+<h2 class="section-title font-semibold mt-12">📊 Key Differences in Java Collections Framework</h2>
+<p class="text-gray-700 mb-4">
+Understanding how each collection type differs helps you choose the right one for your task.  
+Here’s a visual comparison of <b>List</b>, <b>Set</b>, <b>Map</b>, and <b>Queue</b>.
+</p>
+
+<div class="overflow-x-auto">
+  <table class="min-w-full border border-gray-300 text-sm text-gray-700 rounded-lg shadow-md">
+    <thead class="bg-sky-600 text-white">
+      <tr>
+        <th class="px-4 py-3 border">⚙️ Feature</th>
+        <th class="px-4 py-3 border">📋 List</th>
+        <th class="px-4 py-3 border">🔢 Set</th>
+        <th class="px-4 py-3 border">🗺️ Map</th>
+        <th class="px-4 py-3 border">⏳ Queue</th>
+      </tr>
+    </thead>
+    <tbody class="bg-white">
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">1️⃣ Data Storage</td>
+        <td class="px-4 py-3">Stores elements sequentially</td>
+        <td class="px-4 py-3">Stores only unique elements</td>
+        <td class="px-4 py-3">Stores key–value pairs</td>
+        <td class="px-4 py-3">Stores elements in processing order (FIFO)</td>
+      </tr>
+
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">2️⃣ Duplicates Allowed?</td>
+        <td class="px-4 py-3">✅ Yes</td>
+        <td class="px-4 py-3">🚫 No</td>
+        <td class="px-4 py-3">Keys ❌, Values ✅</td>
+        <td class="px-4 py-3">✅ Yes</td>
+      </tr>
+
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">3️⃣ Order Maintained?</td>
+        <td class="px-4 py-3">✅ Yes (insertion order)</td>
+        <td class="px-4 py-3">⚙️ Depends on implementation</td>
+        <td class="px-4 py-3">⚙️ Depends on key type (sorted/insertion)</td>
+        <td class="px-4 py-3">FIFO or Priority</td>
+      </tr>
+
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">4️⃣ Access Type</td>
+        <td class="px-4 py-3">By index</td>
+        <td class="px-4 py-3">By element lookup</td>
+        <td class="px-4 py-3">By key</td>
+        <td class="px-4 py-3">Front/Rear element</td>
+      </tr>
+
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">5️⃣ Performance</td>
+        <td class="px-4 py-3">Fast random access (ArrayList)</td>
+        <td class="px-4 py-3">Fast uniqueness check (HashSet)</td>
+        <td class="px-4 py-3">Optimized key lookup (HashMap)</td>
+        <td class="px-4 py-3">Efficient element processing (Queue)</td>
+      </tr>
+
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">6️⃣ Null Support</td>
+        <td class="px-4 py-3">✅ Allowed</td>
+        <td class="px-4 py-3">✅ Allowed (not TreeSet)</td>
+        <td class="px-4 py-3">One null key (HashMap)</td>
+        <td class="px-4 py-3">Depends on implementation</td>
+      </tr>
+
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">7️⃣ Common Uses</td>
+        <td class="px-4 py-3">Maintain ordered items (To-Do list)</td>
+        <td class="px-4 py-3">Ensure uniqueness (Usernames)</td>
+        <td class="px-4 py-3">Key-based lookup (Dictionary)</td>
+        <td class="px-4 py-3">Scheduling & buffering tasks</td>
+      </tr>
+
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">8️⃣ Main Classes</td>
+        <td class="px-4 py-3">ArrayList, LinkedList, Vector, Stack</td>
+        <td class="px-4 py-3">HashSet, LinkedHashSet, TreeSet</td>
+        <td class="px-4 py-3">HashMap, LinkedHashMap, TreeMap</td>
+        <td class="px-4 py-3">PriorityQueue, ArrayDeque</td>
+      </tr>
+
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">9️⃣ Thread Safety</td>
+        <td class="px-4 py-3">❌ No (use synchronizedList)</td>
+        <td class="px-4 py-3">❌ No (use synchronizedSet)</td>
+        <td class="px-4 py-3">✅ Use ConcurrentHashMap</td>
+        <td class="px-4 py-3">✅ Use ConcurrentLinkedQueue</td>
+      </tr>
+
+      <tr class="border-t">
+        <td class="px-4 py-3 font-semibold">🔟 Real-Life Example</td>
+        <td class="px-4 py-3">📱 Playlist / Student Roll</td>
+        <td class="px-4 py-3">🎟️ Unique Email IDs</td>
+        <td class="px-4 py-3">📖 Dictionary or Database</td>
+        <td class="px-4 py-3">🕒 Print Job Queue</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="note small mt-4">
+  💡 <b>Quick Recap:</b> Use <span class="highlight">List</span> for order, <span class="highlight">Set</span> for uniqueness, 
+  <span class="highlight">Map</span> for key-value relations, and <span class="highlight">Queue</span> for scheduling tasks.
+</div>
+
+<!-- Differences Section -->
+<section id="differences" class="bg-white py-16 md:py-24">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-10 flex items-center">
+      <span class="inline-block w-2 h-10 bg-blue-600 mr-4"></span>
+      Difference Between Collection Interfaces and Classes
+    </h2>
+
+    <div class="overflow-x-auto bg-gray-50 shadow-lg rounded-xl">
+      <table class="min-w-full border border-gray-200">
+        <thead class="bg-blue-600 text-white">
+          <tr>
+            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">No.</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Collection Interface</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Collection Class</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <tr>
+            <td class="px-6 py-4 text-gray-700">1</td>
+            <td class="px-6 py-4">Defines abstract methods for group operations.</td>
+            <td class="px-6 py-4">Provides concrete implementations of those methods.</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-gray-700">2</td>
+            <td class="px-6 py-4">Cannot be instantiated directly.</td>
+            <td class="px-6 py-4">Can be instantiated using constructors.</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-gray-700">3</td>
+            <td class="px-6 py-4">Used to define rules or contracts for data handling.</td>
+            <td class="px-6 py-4">Used to store and manipulate actual data.</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-gray-700">4</td>
+            <td class="px-6 py-4">Example: List, Set, Queue, Map.</td>
+            <td class="px-6 py-4">Example: ArrayList, HashSet, PriorityQueue, HashMap.</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-gray-700">5</td>
+            <td class="px-6 py-4">Defines behavior but not performance.</td>
+            <td class="px-6 py-4">Defines both behavior and performance characteristics.</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-gray-700">6</td>
+            <td class="px-6 py-4">Focuses on “what” operations can be performed.</td>
+            <td class="px-6 py-4">Focuses on “how” operations are implemented.</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-gray-700">7</td>
+            <td class="px-6 py-4">Supports multiple implementations via polymorphism.</td>
+            <td class="px-6 py-4">Implements one specific type of collection behavior.</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-gray-700">8</td>
+            <td class="px-6 py-4">Used for designing flexible, extensible code.</td>
+            <td class="px-6 py-4">Used for writing executable, concrete code.</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-gray-700">9</td>
+            <td class="px-6 py-4">Interfaces cannot contain any data or storage logic.</td>
+            <td class="px-6 py-4">Classes contain internal data structures and logic.</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-gray-700">10</td>
+            <td class="px-6 py-4">Used by developers to ensure consistency.</td>
+            <td class="px-6 py-4">Used by JVM at runtime to perform actual operations.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ====== AI TUTOR & QUIZ MODULE ====== -->
+
+<!-- Floating Tutor Button -->
+<div class="fixed right-6 bottom-6 z-50">
+  <button id="open-tutor-floating"
+          class="bg-sky-600 hover:bg-sky-700 text-white px-5 py-3 rounded-full shadow-lg">
+    💬 AI Tutor
+  </button>
+</div>
+
+<!-- Tutor Card -->
+<div id="ai-tutor"
+     class="hidden fixed right-5 bottom-5 z-50 w-80 bg-white border border-gray-300 rounded-2xl shadow-2xl flex flex-col">
+  <div class="p-3 bg-gradient-to-r from-sky-50 to-white border-b flex justify-between items-center rounded-t-2xl">
+    <div>
+      <div class="font-semibold text-sky-700">AI Tutor — Friendly Mode 🤖</div>
+      <div class="text-xs text-gray-500">Ask about Lists, Sets, Maps, etc.</div>
+    </div>
+    <div class="flex gap-2">
+      <button id="ai-clear" class="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">Clear</button>
+      <button id="ai-close" class="text-xs px-2 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200">Close</button>
+    </div>
+  </div>
+
+  <div id="ai-messages" class="flex-1 overflow-y-auto p-3 bg-gray-50 text-sm"></div>
+
+  <form id="ai-form" class="border-t bg-white flex p-2 gap-2">
+    <input id="ai-input" placeholder="Type your question…" class="flex-1 border rounded px-2 py-1 text-sm" />
+    <select id="ai-tone" class="border rounded text-sm text-gray-600">
+      <option value="friendly" selected>Friendly</option>
+      <option value="formal">Formal</option>
+    </select>
+    <button id="ai-send" type="button"
+            class="px-3 bg-sky-600 text-white rounded hover:bg-sky-700 text-sm">Ask</button>
+  </form>
+
+  <div class="p-2 border-t bg-gray-50 text-[11px] text-gray-500 flex justify-between items-center">
+    <button id="ai-download" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">Download</button>
+    <span>KnowledgeStream</span>
+  </div>
+</div>
+
+<!-- Quiz Modal -->
+<div id="quizModal"
+     class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-2xl w-11/12 md:w-[600px] max-h-[90vh] overflow-y-auto p-6">
+    <h2 class="text-2xl font-bold text-sky-700 mb-2">📘 Java Collections Quiz</h2>
+    <p class="text-gray-600 mb-4">Answer all questions (auto-graded). 90 % required to unlock next topic.</p>
+    <div id="quizContainer" class="space-y-4 text-sm"></div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button id="submitQuiz" class="bg-sky-600 text-white px-4 py-2 rounded hover:bg-sky-700">Submit</button>
+      <button id="closeQuiz" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Close</button>
+    </div>
+    <p id="quizResult" class="text-center font-semibold mt-4 text-sky-700 hidden"></p>
+  </div>
+</div>
+
+<script>
+/* ============ QUIZ LOGIC ============ */
+const quizQs=[
+  {q:"Which interface is the root of Java Collections Framework?",a:["Collection","Iterable","List","Map"],c:1},
+  {q:"Which collection allows duplicate elements?",a:["Set","Map","List","Queue"],c:2},
+  {q:"HashSet internally uses which data structure?",a:["Array","LinkedList","Hash table","Tree"],c:2},
+  {q:"TreeMap orders elements by?",a:["Insertion","Hash","Key","Value"],c:2},
+  {q:"Which interface defines key→value pairs?",a:["Map","List","Set","Queue"],c:0},
+  {q:"Which list implementation is fastest for random access?",a:["LinkedList","Vector","ArrayList","Stack"],c:2},
+  {q:"LinkedHashSet maintains?",a:["Sorting order","Insertion order","Random order","No order"],c:1},
+  {q:"Which queue implementation uses heap internally?",a:["ArrayDeque","LinkedList","PriorityQueue","BlockingQueue"],c:2},
+  {q:"ConcurrentHashMap provides?",a:["Synchronized map","Lock-free map","Fine-grained concurrency","Immutable map"],c:2},
+  {q:"Comparable provides?",a:["Custom order externally","Natural order","Multiple orders","No order"],c:1}
+];
+const quizContainer=document.getElementById("quizContainer");
+quizQs.forEach((q,i)=>{
+  const div=document.createElement("div");
+  div.innerHTML=`<p class="font-semibold">${i+1}. ${q.q}</p>`+
+  q.a.map((opt,j)=>
+    `<label class='block'><input type='radio' name='q${i}' value='${j}' class='mr-1'/>${opt}</label>`
+  ).join('');
+  quizContainer.appendChild(div);
+});
+document.getElementById("submitQuiz").onclick=()=>{
+  let score=0;
+  quizQs.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name='q${i}']:checked`);
+    if(sel && parseInt(sel.value)===q.c)score++;
+  });
+  const pct=Math.round((score/quizQs.length)*100);
+  const res=document.getElementById("quizResult");
+  res.classList.remove("hidden");
+  res.textContent=`You scored ${pct}%`;
+  if(pct>=90){
+    localStorage.setItem("latestCompleted",7);
+    res.textContent+= " 🎉 Topic 7 unlocked!";
+  }else res.textContent+=" — try again!";
+};
+
+/* ============ AI TUTOR ============ */
+const AI=(()=>{
+  const API="/api/ask",TIMEOUT=2500;
+  let msgs=[];
+  const el={tutor:byId("ai-tutor"),msg:byId("ai-messages"),inp:byId("ai-input"),
+            send:byId("ai-send"),tone:byId("ai-tone"),
+            dl:byId("ai-download"),clr:byId("ai-clear"),
+            cls:byId("ai-close"),open:byId("open-tutor-floating")};
+  function byId(i){return document.getElementById(i);}
+  function htmlEsc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function render(){el.msg.innerHTML='';msgs.slice(-50).forEach(m=>{
+    const d=document.createElement('div');
+    d.className='mb-2 p-2 rounded '+(m.role==='user'?'bg-sky-100 text-sky-800':'bg-gray-100 text-gray-700');
+    d.innerHTML=htmlEsc(m.text);el.msg.appendChild(d);
+  });el.msg.scrollTop=el.msg.scrollHeight;}
+  function typing(){const d=document.createElement('div');d.id='typing';d.textContent='Tutor is typing…';d.className='text-gray-400 italic';el.msg.appendChild(d);}
+  function stopTyping(){const t=byId('typing');if(t)t.remove();}
+  async function ask(prompt){
+    if(!prompt.trim())return;
+    msgs.push({role:'user',text:prompt});render();typing();
+    const ctrl=new AbortController();setTimeout(()=>ctrl.abort(),TIMEOUT);
+    try{
+      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({prompt,context:{topic:7,tone:el.tone.value}}),signal:ctrl.signal});
+      const j=await r.json();stopTyping();
+      msgs.push({role:'assistant',text:j.answer||j.reply||JSON.stringify(j)});
+    }catch{
+      stopTyping();
+      msgs.push({role:'assistant',text:fallback(prompt)+" (fallback)"});
+    }
+    render();
+  }
+  function fallback(p){
+    p=p.toLowerCase();
+    if(p.includes('list'))return"A List keeps order and allows duplicates (ArrayList, LinkedList).";
+    if(p.includes('set'))return"Set disallows duplicates; HashSet is most common.";
+    if(p.includes('map'))return"Map stores key→value pairs; HashMap is typical.";
+    if(p.includes('queue'))return"Queue follows FIFO; PriorityQueue orders by priority.";
+    return"I can explain Lists, Sets, Maps, Queues, Generics, or Sorting — try one!";
+  }
+  el.send.onclick=()=>{const v=el.inp.value.trim();if(!v)return;el.inp.value='';ask(v);};
+  el.inp.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();el.send.click();}};
+  el.clr.onclick=()=>{msgs=[];render();};
+  el.cls.onclick=()=>el.tutor.classList.add('hidden');
+  el.open.onclick=()=>{
+    el.tutor.classList.remove('hidden');
+    if(!msgs.length)msgs.push({role:'assistant',text:"👋 Hi! I'm your friendly tutor for Collections. Ask me anything."});
+    render();
+  };
+  el.dl.onclick=()=>{
+    const blob=new Blob([JSON.stringify(msgs,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download='topic7-chat.json';a.click();URL.revokeObjectURL(url);
+  };
+  render();
+})();
+</script>
+<!-- ====== END AI TUTOR & QUIZ MODULE ====== -->
+
+<div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+
+
+
+  <footer class="small mt-6">
+    <p>© 2025 KnowledgeStream — Master JCF by studying these examples, running the programs, and completing practice tasks. If you want, I can also:</p>
+    <ul>
+      <li>Create a single runnable Java file with a menu to run each demo.</li>
+      <li>Export this as a printable PDF study guide.</li>
+      <li>Produce a dark-mode version of this page.</li>
+    </ul>
+  </footer>
+</div>
+</body>
+</html>

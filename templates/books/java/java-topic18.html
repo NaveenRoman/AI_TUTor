@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>KnowledgeStream – JVM Internals & Performance Tuning (Elite Edition)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#ffffff; --muted:#475569; --accent:#0ea5e9; --card:#fbfeff; --code-bg:#0b1220;
+    --panel:#f8fafc;
+  }
+  body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:var(--bg);color:#0f172a;margin:0;}
+  .container{max-width:1100px;margin:0 auto;padding:1.25rem}
+  header{background:white;box-shadow:0 6px 18px rgba(2,6,23,0.06);position:sticky;top:0;z-index:60}
+  h1,h2{color:#075985}
+  .card{background:var(--card);border:1px solid #eef2f7;border-radius:.75rem;padding:1.25rem;margin-bottom:1.25rem;box-shadow:0 6px 18px rgba(2,6,23,0.03)}
+  pre{background:var(--code-bg);color:#e6eef8;padding:1rem;border-radius:.5rem;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace}
+  code{color:#7dd3fc}
+  .meta{color:var(--muted);font-size:.95rem}
+  .diagram{background:var(--panel);border:1px solid #e6eef8;padding:1rem;border-radius:.6rem;margin-top:.8rem}
+  table{width:100%;border-collapse:collapse;margin-top:.75rem}
+  th,td{padding:.6rem;border:1px solid #eef2f7;text-align:left}
+  th{background:#eff9ff;color:#0369a1}
+  .kbd{background:#f1f5f9;padding:.15rem .4rem;border-radius:.35rem;border:1px solid #e6eef8;font-family:ui-monospace}
+  .badge{display:inline-block;padding:.28rem .6rem;border-radius:.45rem;font-weight:700;font-size:.82rem}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .75rem;border-radius:.45rem;font-weight:700;border:1px solid transparent;cursor:pointer}
+  .btn-run{background:linear-gradient(90deg,var(--accent),#0284c7);color:white}
+  .btn-copy{background:#f8fafc;border:1px solid #e6eef8;color:#0f172a}
+  .callout{background:#fffbeb;border-left:4px solid #f97316;padding:.75rem;margin-top:.8rem;border-radius:.5rem;color:#92400e}
+  footer{margin-top:1.2rem;color:var(--muted);font-size:.9rem;text-align:center;padding:1rem 0;border-top:1px solid #eef2f7}
+  .sim-heap{display:flex;gap:.75rem;align-items:flex-end;justify-content:center;}
+  .heap-region{width:90px;height:180px;border-radius:.5rem;border:1px solid #e6eef8;background:#f8fafc;display:flex;flex-direction:column-reverse;align-items:center;padding:.5rem}
+  .obj{width:80%;margin-bottom:4px;border-radius:.25rem;background:#60a5fa;color:white;text-align:center;font-size:.75rem;padding:.15rem}
+  details summary{cursor:pointer}
+  @media (max-width:900px){ .container{padding:.8rem} .sim-heap{flex-direction:column;align-items:center} .heap-region{width:80%} }
+</style>
+</head>
+<body>
+<header>
+  <div class="container flex justify-between items-center py-4">
+    <a href="index.html" class="text-2xl font-extrabold text-sky-500">KnowledgeStream</a>
+    <div class="meta">Topic 18 — JVM Internals & Performance Tuning (Elite)</div>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="text-3xl font-bold mb-2">🧱 JVM Internals & Performance Tuning — Elite Edition</h1>
+  <p class="meta mb-6">Understand how Java executes, where memory lives, how GC works, and how to profile & tune production systems. This page is built for learners preparing for performance debugging and senior interviews.</p>
+
+  <!-- JVM Architecture -->
+  <section class="card">
+    <div class="flex justify-between">
+      <h2 class="text-xl font-semibold">1️⃣ JVM Architecture — Components & Memory Areas</h2>
+      <span class="badge" style="background:#dbeafe;color:#1e40af">Core</span>
+    </div>
+
+    <p class="meta mt-2">At runtime the JVM manages multiple memory and execution regions. Knowing these areas is essential for diagnosing leaks and tuning GC.</p>
+
+    <div class="diagram mt-3">
+      <strong>High-level components</strong>
+      <ul class="mt-2 ml-5 meta">
+        <li><b>ClassLoader Subsystem</b> — loads .class files (Bootstrap, Platform, Application classloaders)</li>
+        <li><b>Runtime Data Areas</b> — Method Area (class metadata), Heap (objects), Java Stacks (frames), PC Registers, Native Method Stacks</li>
+        <li><b>Execution Engine</b> — Interpreter + JIT compiler + Garbage Collector</li>
+      </ul>
+    </div>
+
+    <div class="diagram mt-3">
+      <strong>Memory map (visual)</strong>
+      <p class="meta mt-2">↓ higher-level summary (top = shared, bottom = per-thread)</p>
+      <ul class="mt-2 ml-5 meta">
+        <li><b>Method Area/Metaspace:</b> class definitions, static variables, interned strings (Metaspace replaced PermGen since Java 8)</li>
+        <li><b>Heap:</b> Young Generation (Eden + Survivor(s)), Old/Tenured Generation — stores Java objects</li>
+        <li><b>Stacks:</b> per-thread call frames (local variables + operand stacks)</li>
+        <li><b>Native / Direct Memory:</b> JNI allocations, NIO direct buffers</li>
+      </ul>
+    </div>
+
+    <details class="mt-3"><summary class="font-semibold">Why Metaspace matters (short)</summary>
+      <p class="meta mt-2">Metaspace grows dynamically by default and stores class metadata. Leak patterns: loading classes repeatedly (e.g., many classloaders in web-app redeploys) will increase metaspace usage.</p>
+    </details>
+  </section>
+
+  <!-- Bytecode & JIT -->
+  <section class="card">
+    <h2 class="text-xl font-semibold">2️⃣ Bytecode & Just-In-Time (JIT) Compilation</h2>
+    <p class="meta mt-2">Java source → bytecode (.class). At runtime the JVM interprets bytecode, and the JIT compiles "hot" methods to native machine code for faster execution.</p>
+
+    <div class="diagram mt-3">
+      <strong>Pipeline (simplified)</strong>
+      <pre class="mt-2">javac → .class (bytecode) → ClassLoader → Interpreter (startup)
+Hot methods detected → C1/C2 JIT compilers → native machine code → optimized execution</pre>
+      <p class="meta mt-2">C1: client (fast compile) | C2: server (more optimization, slower compile)</p>
+    </div>
+
+    <details class="mt-3"><summary class="font-semibold">How to inspect bytecode quickly</summary>
+      <pre class="mt-2"><code>javac Example.java
+javap -c Example</code></pre>
+      <p class="meta mt-2">Use <code>-XX:+PrintCompilation</code> JVM flag to see which methods the JIT compiles during runtime.</p>
+    </details>
+
+    <div class="callout mt-3">
+      Tip: JIT warms up — benchmark with JMH (Java Microbenchmark Harness) to avoid startup noise. For long-running servers, JIT yields large throughput gains.
+    </div>
+  </section>
+
+  <!-- Garbage Collection -->
+  <section class="card">
+    <h2 class="text-xl font-semibold">3️⃣ Garbage Collection — Algorithms, How They Work, and Tuning</h2>
+    <p class="meta mt-2">GC reclaims memory by finding objects that are no longer reachable. Modern collectors aim for predictable pauses and high throughput.</p>
+
+    <div class="diagram mt-3">
+      <strong>Generational hypothesis</strong>
+      <p class="meta mt-2">Most objects die young. JVM splits heap into Young (Eden + Survivor) and Old (Tenured). GC frequently collects young — cheap and fast. Old gen collections are heavier and less frequent.</p>
+    </div>
+
+    <table class="mt-3">
+      <tr><th>Collector</th><th>Behaviour</th><th>When to use</th></tr>
+      <tr><td>Serial GC</td><td>Single-threaded, stop-the-world</td><td>Small apps, low memory</td></tr>
+      <tr><td>Parallel (Throughput) GC</td><td>Multi-threaded minor GCs, aims for throughput</td><td>Batch jobs, HPC</td></tr>
+      <tr><td>CMS (older)</td><td>Concurrent marking, low pause (deprecated in favor of G1)</td><td>Legacy systems</td></tr>
+      <tr><td>G1 GC</td><td>Region-based, concurrent marking + evacuation, low-pause oriented</td><td>Large heaps, server apps (default for many JDKs)</td></tr>
+      <tr><td>ZGC</td><td>Concurrent, very low pause, scales to large heaps</td><td>Large-memory, low-latency apps</td></tr>
+      <tr><td>Shenandoah</td><td>Concurrent region GC (low pause)</td><td>Similar to ZGC, supported in some JDKs</td></tr>
+    </table>
+
+    <details class="mt-3"><summary class="font-semibold">Key GC tuning flags (practical)</summary>
+      <ul class="meta mt-2">
+        <li><code>-Xms</code> / <code>-Xmx</code> — initial / max heap sizes (set to same values to avoid resizing overhead)</li>
+        <li><code>-XX:+UseG1GC</code> — enable G1 collector</li>
+        <li><code>-XX:MaxGCPauseMillis=200</code> — goal for pause time (best-effort)</li>
+        <li><code>-XX:+PrintGCDetails -Xlog:gc*</code> — enable GC logging (JDK 9+ uses unified logging)</li>
+        <li><code>-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heap.hprof</code> — dump heap when OOME occurs</li>
+      </ul>
+    </details>
+
+    <details class="mt-3"><summary class="font-semibold">GC Algorithms (short walkthrough)</summary>
+      <div class="meta mt-2">
+        <p><b>Mark-Sweep:</b> mark reachable objects → sweep unmarked ones (can fragment heap).</p>
+        <p><b>Mark-Compact:</b> mark reachable → compact live objects to reduce fragmentation (more work but reduces fragmentation).</p>
+        <p><b>Copying:</b> copy live objects from Eden to Survivor/Old — very fast for young gen because most objects die.</p>
+      </div>
+    </details>
+
+    <div class="callout mt-3">Reminder: aggressive tuning without profiling often worsens performance. Always profile and analyze GC logs before changing flags.</div>
+  </section>
+
+  <!-- Performance Tuning -->
+  <section class="card">
+    <h2 class="text-xl font-semibold">4️⃣ Java Performance Tuning — Methodology & Quick Wins</h2>
+    <p class="meta mt-2">Follow a measured approach: <b>measure → diagnose → fix → verify</b>. Below are practical steps & quick wins.</p>
+
+    <ol class="mt-2 ml-5 meta">
+      <li><b>Measure first:</b> use CPU and heap profilers (VisualVM, async-profiler).</li>
+      <li><b>Collect artifacts:</b> thread dumps, heap dumps, GC logs during problematic period.</li>
+      <li><b>Analyze hotspots:</b> expensive methods, blocking I/O, frequent allocations.</li>
+      <li><b>Fix patterns:</b> reduce object churn, use primitive arrays or pools for hot loops, avoid synchronized bottlenecks.</li>
+      <li><b>Verify:</b> run load tests and compare metrics (throughput, latency, GC pauses).</li>
+    </ol>
+
+    <details class="mt-3"><summary class="font-semibold">Quick code-level optimizations</summary>
+      <ul class="meta mt-2">
+        <li>Avoid creating temporary objects in tight loops (e.g., avoid boxing/unboxing).</li>
+        <li>Prefer <code>StringBuilder</code> for repeated string concatenation in loops.</li>
+        <li>Cache expensive computations if safe (memoization) — but watch memory use.</li>
+        <li>Use efficient data structures: <code>ArrayList</code> vs <code>LinkedList</code> depending on access patterns.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- Profilers and Tools -->
+  <section class="card">
+    <h2 class="text-xl font-semibold">5️⃣ Profilers & Monitoring Tools — Practical Walkthroughs</h2>
+    <p class="meta mt-2">Tools to capture real metrics — choose based on need: lightweight monitoring, deep profile, or production-safe sampling.</p>
+
+    <table class="mt-3">
+      <tr><th>Tool</th><th>Focus</th><th>How to use (quick)</th></tr>
+      <tr><td>VisualVM</td><td>Heap, CPU, threads, sampler</td><td>Start <span class="kbd">jvisualvm</span>, attach to process, take heap dump, examine dominator tree</td></tr>
+      <tr><td>JConsole</td><td>JMX monitoring (MBeans)</td><td>Run <span class="kbd">jconsole</span>, connect to local/remote JVM, inspect GC & memory</td></tr>
+      <tr><td>Java Mission Control (JMC)</td><td>Flight Recorder (JFR) analysis</td><td>Start JFR or record using <span class="kbd">-XX:StartFlightRecording</span>, open in JMC</td></tr>
+      <tr><td>async-profiler</td><td>Low-overhead CPU & allocation profiler (flame graphs)</td><td>Run: <span class="kbd">./profiler.sh -d 60 -f out.svg &lt;pid&gt;</span></td></tr>
+      <tr><td>jcmd / jstack / jmap / jstat</td><td>CLI diagnostics</td><td>Examples below</td></tr>
+    </table>
+
+    <details class="mt-3"><summary class="font-semibold">Useful CLI commands (examples)</summary>
+      <pre class="mt-2"><code># list java processes
+jcmd
+
+# thread dump
+jstack &lt;pid&gt; > threaddump.txt
+
+# heap dump (live)
+jmap -dump:format=b,file=heap.hprof &lt;pid&gt;
+
+# GC stats
+jstat -gc &lt;pid&gt; 1000
+
+# run jcmd tools (GC.run, VM.system_properties, GC.class_histogram)
+jcmd &lt;pid&gt; GC.class_histogram > hist.txt</code></pre>
+    </details>
+  </section>
+
+  <!-- JVM Flags Cheat Sheet -->
+  <section class="card">
+    <h2 class="text-xl font-semibold">6️⃣ JVM Flags Cheat-Sheet (Common & Practical)</h2>
+    <p class="meta mt-2">Flags below are starting points; tune based on real measurements.</p>
+
+    <table class="mt-3">
+      <tr><th>Flag</th><th>Meaning / Use</th><th>Example</th></tr>
+      <tr><td><code>-Xms</code></td><td>Initial heap size</td><td><code>-Xms2g</code></td></tr>
+      <tr><td><code>-Xmx</code></td><td>Maximum heap size</td><td><code>-Xmx2g</code></td></tr>
+      <tr><td><code>-Xss</code></td><td>Thread stack size</td><td><code>-Xss512k</code></td></tr>
+      <tr><td><code>-XX:+UseG1GC</code></td><td>Enable G1 GC (default in many JDKs)</td><td><code>-XX:+UseG1GC</code></td></tr>
+      <tr><td><code>-XX:MaxGCPauseMillis</code></td><td>Target max pause (best-effort)</td><td><code>-XX:MaxGCPauseMillis=200</code></td></tr>
+      <tr><td><code>-XX:+PrintGCDetails</code></td><td>Print detailed GC logs</td><td><code>-XX:+PrintGCDetails -Xlog:gc*</code></td></tr>
+      <tr><td><code>-XX:+HeapDumpOnOutOfMemoryError</code></td><td>Dump heap to analyze OOME</td><td><code>-XX:+HeapDumpOnOutOfMemoryError</code></td></tr>
+      <tr><td><code>-XX:NativeMemoryTracking=summary</code></td><td>Track native memory allocations</td><td><code>-XX:NativeMemoryTracking=summary</code></td></tr>
+      <tr><td><code>-XX:+UnlockDiagnosticVMOptions</code></td><td>Unlock advanced flags for debugging</td><td><code>-XX:+UnlockDiagnosticVMOptions</code></td></tr>
+    </table>
+
+    <details class="mt-3"><summary class="font-semibold">Unified logging (JDK 9+)</summary>
+      <p class="meta mt-2">Use <code>-Xlog:gc*</code> to capture GC logs in structured format.<br>Example: <code>-Xlog:gc*:file=gc.log:time,level,tags</code></p>
+    </details>
+  </section>
+
+  <!-- Case study -->
+  <section class="card">
+    <h2 class="text-xl font-semibold">7️⃣ Case Study — Diagnosing High GC Pauses</h2>
+    <p class="meta mt-2">A typical flow used in production debugging — step-by-step.</p>
+
+    <ol class="mt-2 ml-5 meta">
+      <li><b>Observe symptom:</b> spikes in 95th percentile latency, app pauses.</li>
+      <li><b>Collect GC logs:</b> enable <code>-Xlog:gc*:file=gc.log:time,level,tags</code> and gather logs across time window.</li>
+      <li><b>Look for:</b> Full GCs (stop-the-world), long mark/compact pauses, or frequent young-gen GCs indicating churn.</li>
+      <li><b>Heap dump:</b> if memory leak suspected, trigger <code>jmap -dump:live,format=b,file=heap.hprof &lt;pid&gt;</code> and analyze in VisualVM or Eclipse MAT.</li>
+      <li><b>Fix:</b> reduce object allocation rate, increase heap or change GC (e.g., G1 tuning), or address leaking data structures.</li>
+      <li><b>Verify:</b> repeat load test and compare GC pause distribution and latency graphs.</li>
+    </ol>
+
+    <div class="callout mt-3">Example quick fix: if OldGen is frequently filling, you may tune survivor ratio, increase young gen to reduce promotion, or increase overall heap size — but only after analyzing root cause.</div>
+  </section>
+
+  <!-- Interactive memory simulator -->
+  <section class="card">
+    <h2 class="text-xl font-semibold">8️⃣ Interactive — Tiny Heap Simulator (visual)</h2>
+    <p class="meta mt-2">This small simulator demonstrates object allocation into Eden, promotion to Old generation, and a simulated GC that removes unreachable objects.</p>
+
+    <div class="mt-3">
+      <div class="flex items-center gap-3 mb-3">
+        <button id="allocBtn" class="btn btn-run">Allocate Object</button>
+        <button id="promoteBtn" class="btn btn-copy">Promote Survivor → Old</button>
+        <button id="gcBtn" class="btn">Run Simulated GC</button>
+        <button id="resetBtn" class="btn btn-copy">Reset</button>
+      </div>
+
+      <div class="sim-heap mt-3">
+        <div class="heap-region" id="eden">
+          <div class="meta">Eden</div>
+        </div>
+        <div class="heap-region" id="survivor">
+          <div class="meta">Survivor</div>
+        </div>
+        <div class="heap-region" id="old">
+          <div class="meta">Old</div>
+        </div>
+      </div>
+
+      <p class="meta mt-3">Legend: blue boxes = live objects, grey = unreachable (collected).</p>
+    </div>
+
+    <script>
+      // Tiny heap simulator: not a real GC — for educational visualization only.
+      const eden = document.getElementById('eden');
+      const survivor = document.getElementById('survivor');
+      const old = document.getElementById('old');
+      const allocBtn = document.getElementById('allocBtn');
+      const promoteBtn = document.getElementById('promoteBtn');
+      const gcBtn = document.getElementById('gcBtn');
+      const resetBtn = document.getElementById('resetBtn');
+
+      function createObj(label, color='#60a5fa') {
+        const d = document.createElement('div');
+        d.className='obj';
+        d.style.background=color;
+        d.innerText = label;
+        d.dataset.live = 'true';
+        return d;
+      }
+
+      let counter = 1;
+      allocBtn.onclick = () => {
+        const o = createObj('o'+(counter++));
+        eden.appendChild(o);
+        // auto-move to survivor if eden > 6
+        if(eden.children.length > 6) {
+          // move half of eden to survivor (simulate minor GC)
+          const moveCount = Math.ceil(eden.children.length / 2);
+          for(let i=0;i<moveCount;i++){
+            const child = eden.removeChild(eden.firstElementChild);
+            // 20% chance to be unreachable (simulate short-lived objects)
+            if(Math.random() < 0.2) {
+              child.style.background = '#94a3b8'; child.dataset.live='false';
+            }
+            survivor.appendChild(child);
+          }
+        }
+      };
+
+      promoteBtn.onclick = () => {
+        // move all survivors to old (simulate promotions)
+        while(survivor.firstElementChild) {
+          const c = survivor.removeChild(survivor.firstElementChild);
+          // if live -> promote, else drop
+          if(c.dataset.live === 'true') old.appendChild(c);
+        }
+      };
+
+      gcBtn.onclick = () => {
+        // Simulated GC: clean unreachable items across regions
+        [eden, survivor, old].forEach(region=>{
+          Array.from(region.children).forEach(child=>{
+            if(child.dataset.live === 'false') region.removeChild(child);
+            else {
+              // small chance recently-live object becomes unreachable
+              if(Math.random() < 0.05) { child.dataset.live='false'; child.style.background='#94a3b8'; }
+            }
+          });
+        });
+        // compact: visually nothing — but we could reorder
+      };
+
+      resetBtn.onclick = () => {
+        [eden, survivor, old].forEach(r => { r.innerHTML = '<div class="meta">' + r.firstElementChild?.innerText + '</div>'; });
+        counter = 1;
+      };
+    </script>
+  </section>
+
+  <!-- Interview Q&A -->
+  <section class="card">
+    <h2 class="text-xl font-semibold">9️⃣ Interview & Viva — Key Q&A (Concise Answers)</h2>
+    <ol class="mt-2 ml-5 meta">
+      <li><b>Q:</b> Draw JVM memory layout. <br><b>A:</b> Method Area/Metaspace, Heap (Young/Eden/Survivor/Old), Stacks (per-thread), PC Registers, Native memory.</li>
+      <li><b>Q:</b> What is a Full GC? <br><b>A:</b> A collection that includes Old gen; usually stop-the-world and more expensive than minor GCs.</li>
+      <li><b>Q:</b> How to find memory leak? <br><b>A:</b> Get heap dump (jmap), analyze retained set using VisualVM/Eclipse MAT, find big dominators.</li>
+      <li><b>Q:</b> When to use ZGC? <br><b>A:</b> When ultra-low pause times are required and JVM heap is very large (multi-GB/TB).</li>
+      <li><b>Q:</b> How to reduce GC pause time? <br><b>A:</b> Use concurrent collectors (G1/ZGC), tune pause targets, reduce promotion rate and fragmentation.</li>
+      <li><b>Q:</b> What are safepoints? <br><b>A:</b> Points where JVM can pause all threads to perform GC or other global tasks; safepoint bias and frequency affect pauses.</li>
+    </ol>
+  </section>
+
+  <!-- Summary & Next steps -->
+  <section class="card">
+    <h2 class="text-xl font-semibold">Summary & Practical Checklist</h2>
+    <ul class="mt-2 ml-5 meta">
+      <li>Always <b>measure</b> before tuning: collect GC logs, heap/threads dumps, CPU profiles.</li>
+      <li>Use the right GC for your workload: G1 is a good default for servers; ZGC/Shenandoah for ultra-low pause scenarios.</li>
+      <li>Prefer performance tests and JMH for micro-benchmarking critical code paths.</li>
+      <li>Document baseline and compare after any tuning change.</li>
+    </ul>
+
+    <div class="mt-3">
+      <a href="java-topic17.html" class="btn btn-copy">← Previous (Real-World Java)</a>
+      <a href="java-summary.html" class="btn btn-run">Next (Summary) →</a>
+    </div>
+  </section>
+
+  <div class="text-center mt-10">
+  <button onclick="markTopicComplete()" 
+          class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition">
+    ✅ Mark as Completed
+  </button>
+
+  <p id="completion-status" class="text-gray-400 mt-4 hidden">
+    🎉 Topic marked as completed! Next topic unlocked 🔓
+  </p>
+</div>
+
+<script>
+  function markTopicComplete() {
+    const match = window.location.pathname.match(/topic(\d+)/);
+    if (match) {
+      const topicNum = parseInt(match[1]);
+
+      // Unlock next topic (e.g., finishing 1 unlocks 2)
+      const nextTopicIndex = topicNum;
+      localStorage.setItem("latestCompleted", nextTopicIndex);
+
+      // Show success message
+      const status = document.getElementById("completion-status");
+      status.classList.remove("hidden");
+      status.classList.add("text-sky-400", "font-semibold");
+
+      // Optional: small visual effect
+      status.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 600,
+        easing: "ease-in",
+      });
+
+      // Optional: disable button after marking complete
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "✅ Completed!";
+      btn.classList.remove("bg-sky-500", "hover:bg-sky-600");
+      btn.classList.add("bg-green-600", "cursor-not-allowed");
+    }
+  }
+</script>
+
+
+</main>
+
+<footer>
+  <div class="container meta">© 2025 KnowledgeStream — JVM Internals & Performance Tuning. Want the sample GC logs, example JFR traces, or a zip with example code & scripts? Ask and I'll generate it.</div>
+</footer>
+</body>
+</html>

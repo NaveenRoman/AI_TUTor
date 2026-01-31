@@ -1,0 +1,10 @@
+What is JVM and how does it work?
+Explain JDK vs JRE vs JVM.
+What is OOP? Explain its principles.
+What is the difference between Array and ArrayList?
+What is multithreading in Java?
+Explain garbage collection.
+What is HashMap and how does it work?
+Difference between interface and abstract class?
+What is exception handling?
+What are Java streams?

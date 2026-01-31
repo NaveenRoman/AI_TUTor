@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+</head>
+<body>
+
+<h2>Edit Profile</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Bio</label><br>
+    <textarea name="bio" rows="6" cols="60">{{ profile.bio }}</textarea><br><br>
+
+    <button type="submit">Save</button>
+</form>
+
+<br>
+<a href="/profile/">Back to Profile</a>
+
+</body>
+</html>

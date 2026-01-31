@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LawMate — Categories</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+<div class="container">
+<div class="brand"><a href="index.html">LawMate</a></div>
+<nav>
+<a href="index.html">Home</a>
+<a href="categories.html">Categories</a>
+<a href="docs.html">Docs</a>
+<a href="contact.html">Contact</a>
+</nav>
+</div>
+</header>
+
+
+<main class="container">
+<h2>All Categories</h2>
+<div id="categoryList" class="category-list"></div>
+</main>
+
+
+<footer class="site-footer">
+<div class="container">© LawMate — Informational only.</div>
+</footer>
+
+
+<script src="data.js"></script>
+<script>
+// render categories
+const cats = [...new Set(ARTICLES.map(a=>a.category))];
+const list = document.getElementById('categoryList');
+cats.forEach(c=>{
+const d = document.createElement('div'); d.className='card small'; d.innerHTML = `<h3>${c}</h3><p class="muted">Articles: ${ARTICLES.filter(x=>x.category===c).length}</p>`;
+d.onclick = ()=>{ localStorage.setItem('filter',c); window.location='index.html'; };
+list.appendChild(d);
+});
+</script>
+</body>
+</html>

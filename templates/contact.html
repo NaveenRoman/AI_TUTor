@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LawMate — Contact</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+<div class="container">
+<div class="brand"><a href="index.html">LawMate</a></div>
+<nav>
+<a href="index.html">Home</a>
+<a href="categories.html">Categories</a>
+<a href="docs.html">Docs</a>
+<a href="contact.html">Contact</a>
+</nav>
+</div>
+</header>
+
+
+<main class="container">
+<div class="card">
+<h2>Contact</h2>
+<label>Name</label><input id="name" />
+<label>Email</label><input id="email" />
+<label>Message</label><textarea id="message"></textarea>
+<div style="margin-top:10px"><button class="btn" id="send">Send</button></div>
+<div id="cresult" style="margin-top:8px" class="muted"></div>
+</div>
+</main>
+
+
+<footer class="site-footer">
+<div class="container">© LawMate — Informational only.</div>
+</footer>
+
+
+<script>
+document.getElementById('send').addEventListener('click', ()=>{
+document.getElementById('cresult').textContent = 'Message sent (demo)';
+setTimeout(()=>{ document.getElementById('cresult').textContent=''; },3000);
+});
+</script>
+</body>
+</html>
