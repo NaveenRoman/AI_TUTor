@@ -10,6 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+import dj_database_url
+
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ya6vpop3jpghlrmz((@5mv6mmcqrhw8dxu7vg-*5$gomqen%hx'
+SECRET_KEY = os.environ.get("tjv_vc5^u1)dv5-^8uhy%hlipk^zl$yyrf4g2k84wx^kjszv8b")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ["*"]
+
 
 
 # Application definition
@@ -85,11 +92,9 @@ WSGI_APPLICATION = 'ai_tutor.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))
 }
+
 
 
 # Password validation
@@ -170,8 +175,9 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = "naveenrom232@gmail.com"
-EMAIL_HOST_PASSWORD = "ggmdqbryxthsswvh"
+EMAIL_HOST_USER = ("naveenrom232@gmail.com")
+EMAIL_HOST_PASSWORD = ("ggmdqbryxthsswvh")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # =========================
 # AUTHENTICATION SETTINGS
@@ -193,3 +199,11 @@ EMAIL_HOST_PASSWORD = "sonfytayyatfshui"     # ✅ APP PASSWORD
 
 DEFAULT_FROM_EMAIL = "KnowledgeStream <naveenrom232@gmail.com>"
 
+
+
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
