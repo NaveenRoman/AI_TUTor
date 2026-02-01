@@ -209,6 +209,9 @@ def ask(request):
 
         mode = detect_template_type(question, payload)
         language = choose_language(payload, question)
+        best = ""
+        data = None
+
 
         if code and mode == "diagnose":
             ans = format_answer_core("Code diagnosis", code, template_type="diagnose", language=language)
@@ -231,50 +234,72 @@ def ask(request):
             ans = format_answer_core(question, text or err)
             return JsonResponse({"answer": ans})
 
+        # ================= FILE SEARCH =================
         if fileId and fileId in DOCUMENT_STORE:
             data = DOCUMENT_STORE[fileId]
-            best = ""
             
             for h, sec in data["sections"].items():
                 for s in sec["sentences"]:
                     if question.lower() in s.lower():
                         best += s + " "
-                        
-        if not best:
-            best = data["text"][:1000]
-            ans = format_answer_core(question, best, template_type=mode, language=language)
+
+            if not best:
+                best = data["text"][:1000]
+                
+            ans = format_answer_core( 
+                question,
+                best, 
+                template_type=mode,
+                language=language 
+                )
             return JsonResponse({"answer": ans, "source": "file"})
 
 
+
+        # ================= BOOK SEARCH =================
         if book and book in BOOK_KB:
-            best = ""
             for h, sec in BOOK_KB[book]["sections"].items():
                 for s in sec["sentences"]:
                     if question.lower() in s.lower():
                         best += s + " "
 
-        if not best:
-            best = "No matching content found."
-        ans = format_answer_core(question, best, template_type=mode, language=language)
-        return JsonResponse({"answer": ans, "source": "book"})
+            if not best:
+                best = "No matching content found."
+                
+                
+            ans = format_answer_core(
+                question,
+                best,
+                template_type=mode,
+                language=language
+                )
+            return JsonResponse({"answer": ans, "source": "book"})
+
 
 
         # global fallback
         
         best = ""
         best_subj = None
+        # ================= GLOBAL SEARCH =================
         for subj, info in BOOK_KB.items():
             for h, sec in info["sections"].items():
                 for s in sec["sentences"]:
                     if question.lower() in s.lower():
                         best += s + " "
-                        best_subj = subj
 
-        if not best:
-            best = "No answer found."
+            if not best:
+                best = "No answer found."
 
-        ans = format_answer_core(question, best, template_type=mode, language=language)
-        return JsonResponse({"answer": ans, "source": "global", "subject": best_subj})
+            ans = format_answer_core(
+                question,
+                best,
+                template_type=mode,
+                language=language
+                )
+
+            return JsonResponse({"answer": ans, "source": "global"})
+
 
 
     except Exception as e:
