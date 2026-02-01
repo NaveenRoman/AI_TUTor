@@ -27,13 +27,13 @@ from core.models import (
 from core.books_loader import BOOK_KB
 from core.utils import extract_text
 from core.utils_format import format_answer_core
+
 from core.views.views_chat import (
-    get_model,
-    retrieve_top_k,
     detect_template_type,
     choose_language,
     VOICE_STATE,
 )
+
 from core.views.views_quiz import auto_generate_chapter_quiz
 
 
@@ -104,9 +104,14 @@ def ask_book_topic(request):
         text = extract_text(topic_path)
         sentences = nltk.sent_tokenize(text)
 
-        embeddings = get_model().encode(sentences, convert_to_tensor=True)
+        # simple keyword-based fallback (no embeddings)
+        best_text = ""
+        for s in sentences:
+            if question.lower() in s.lower():
+                best_text += s + " "
+        if not best_text:
+            best_text = " ".join(sentences[:5])
 
-        best_text = retrieve_top_k(sentences, embeddings, question)
 
         mode = detect_template_type(question, data)
         language = choose_language(data, question)
