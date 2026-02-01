@@ -1,29 +1,20 @@
 import os
-import nltk
+import re
 from bs4 import BeautifulSoup
 from sentence_transformers import SentenceTransformer
-
 from core.models import Book, Chapter
 from django.db import transaction
-import re
 
 
 BOOK_KB = {}
 EMBED = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Ensure tokenizer installed
-for res in ["punkt", "punkt_tab"]:
-    try:
-        nltk.data.find(f"tokenizers/{res}")
-    except LookupError:
-        nltk.download(res, quiet=True)
-
 # IMPORTANT FIX: Correct books folder path
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BOOKS_PATH = os.path.join(BASE_DIR, "templates", "books")
 
+
 def extract_page_title(path):
-    from bs4 import BeautifulSoup
     try:
         with open(path, "r", encoding="utf-8") as f:
             soup = BeautifulSoup(f.read(), "html.parser")
@@ -40,6 +31,14 @@ def extract_page_title(path):
 
     return None
 
+
+def simple_sentence_split(text):
+    """
+    Lightweight sentence splitter (production safe).
+    Avoids nltk dependency.
+    """
+    sentences = re.split(r'(?<=[.!?]) +', text)
+    return [s.strip() for s in sentences if s.strip()]
 
 
 def extract_sections_from_html(path):
@@ -59,10 +58,11 @@ def extract_sections_from_html(path):
             else:
                 text = tag.get_text().strip()
                 if text:
-                    sentences = nltk.sent_tokenize(text)
+                    sentences = simple_sentence_split(text)
                     sections[current_head].extend(sentences)
 
         return sections
+
     except Exception as e:
         print(f"[ERROR] HTML parse failed for {path}: {e}")
         return {}
@@ -85,7 +85,6 @@ def load_books():
 
         print(f"[INFO] Subject: {subject}")
 
-        # ✅ Ensure Book exists
         book, _ = Book.objects.get_or_create(
             slug=subject,
             defaults={"title": f"{subject.title()} Programming"}
@@ -93,7 +92,6 @@ def load_books():
 
         SUBJECT_DATA = {"sections": {}, "folder": subject_folder}
 
-        # 🔥 SORT FILES PROPERLY (IMPORTANT)
         files = sorted(
             [f for f in os.listdir(subject_folder) if f.endswith(".html")],
             key=lambda x: int(re.search(r"(\d+)", x).group(1)) if re.search(r"(\d+)", x) else 999
@@ -104,7 +102,6 @@ def load_books():
                 path = os.path.join(subject_folder, fname)
                 print(f"  → Reading {fname}")
 
-                # 🔥 Extract topic number
                 m = re.search(r"(\d+)", fname)
                 if not m:
                     continue
@@ -112,22 +109,20 @@ def load_books():
 
                 sections = extract_sections_from_html(path)
 
-                # ✅ Create / update Chapter
-                page_title = extract_page_title(path) 
+                page_title = extract_page_title(path)
                 title = page_title or fname.replace(".html", "")
+
                 Chapter.objects.update_or_create(
-                     book=book,
-                     order=order,
-                     defaults={"title": title}
-                     )
+                    book=book,
+                    order=order,
+                    defaults={"title": title}
+                )
 
-
-                # ✅ Store content for AI
                 for heading, sentences in sections.items():
                     if not sentences:
                         continue
 
-                    emb = EMBED.encode(sentences, convert_to_tensor=True)
+                    emb = EMBED.encode(sentences)
                     SUBJECT_DATA["sections"][heading] = {
                         "sentences": sentences,
                         "embeddings": emb,
@@ -137,4 +132,3 @@ def load_books():
         BOOK_KB[subject] = SUBJECT_DATA
 
     print("[INFO] ✅ Book loading complete!")
-
