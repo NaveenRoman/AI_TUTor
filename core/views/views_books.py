@@ -203,24 +203,24 @@ def topic_complete_api(request):
     )
 
     # 4️⃣ Send email
-    if user.email:
-        send_mail(
-            subject="🎯 You unlocked a new quiz!",
-            message=f"""
-Hi {user.username},
+   # if user.email:
+     #   send_mail(
+     #       subject="🎯 You unlocked a new quiz!",
+     #       message=f"""
+#Hi {user.username},
 
-Great job completing "{chapter.title}" 🎉
+#Great job completing "{chapter.title}" 🎉
 
-You have a new quiz waiting:
-👉 {quiz_url}
+#You have a new quiz waiting:
+#👉 {quiz_url}
 
-Complete it to continue your streak 🔥
-""",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=True
-        )
-
+#Complete it to continue your streak 🔥
+#""",
+  #          from_email=settings.DEFAULT_FROM_EMAIL,
+   #         recipient_list=[user.email],
+    #        fail_silently=True
+     #   )
+#
     print("✅ topic_complete_api finished successfully")
 
     return Response({
