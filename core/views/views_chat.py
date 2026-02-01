@@ -247,7 +247,8 @@ def ask(request):
 
             for h, sec in data["sections"].items():
                 for s in sec["sentences"]:
-                    if question.lower() in s.lower():
+                    if any(word in s.lower() for word in question.lower().split()):
+
                         best += s + " "
 
             if not best:
@@ -267,7 +268,8 @@ def ask(request):
 
             for h, sec in BOOK_KB[book]["sections"].items():
                 for s in sec["sentences"]:
-                    if question.lower() in s.lower():
+                    if any(word in s.lower() for word in question.lower().split()):
+
                         best += s + " "
 
             if not best:
@@ -288,7 +290,8 @@ def ask(request):
         for subj, info in BOOK_KB.items():
             for h, sec in info["sections"].items():
                 for s in sec["sentences"]:
-                    if question.lower() in s.lower():
+                    if any(word in s.lower() for word in question.lower().split()):
+
                         best += s + " "
                         best_subj = subj
 
