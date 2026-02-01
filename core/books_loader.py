@@ -7,7 +7,8 @@ from django.db import transaction
 
 
 BOOK_KB = {}
-EMBED = SentenceTransformer("all-MiniLM-L6-v2")
+EMBED = None
+
 
 # IMPORTANT FIX: Correct books folder path
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -122,7 +123,8 @@ def load_books():
                     if not sentences:
                         continue
 
-                    emb = EMBED.encode(sentences)
+                    emb = None
+
                     SUBJECT_DATA["sections"][heading] = {
                         "sentences": sentences,
                         "embeddings": emb,
