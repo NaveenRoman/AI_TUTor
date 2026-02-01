@@ -1,7 +1,7 @@
 import os
 import re
 from bs4 import BeautifulSoup
-from sentence_transformers import SentenceTransformer
+#from sentence_transformers import SentenceTransformer
 from core.models import Book, Chapter
 from django.db import transaction
 
