@@ -209,26 +209,32 @@ def ask(request):
 
         mode = detect_template_type(question, payload)
         language = choose_language(payload, question)
-        best = ""
-        data = None
 
-
+        # ================= CODE DIAGNOSIS =================
         if code and mode == "diagnose":
-            ans = format_answer_core("Code diagnosis", code, template_type="diagnose", language=language)
+            ans = format_answer_core(
+                "Code diagnosis",
+                code,
+                template_type="diagnose",
+                language=language
+            )
             return JsonResponse({"answer": ans, "mode": mode})
 
         ql = question.lower()
 
+        # ================= TIME =================
         if "time" in ql or "date" in ql:
             now = datetime.now().strftime("%A %d %B %Y, %I:%M %p")
             ans = format_answer_core(question, now, template_type=mode)
             return JsonResponse({"answer": ans})
 
+        # ================= WEATHER =================
         if "weather" in ql:
             text, err = fetch_weather()
             ans = format_answer_core(question, text or err)
             return JsonResponse({"answer": ans})
 
+        # ================= NEWS =================
         if "news" in ql:
             text, err = fetch_news()
             ans = format_answer_core(question, text or err)
@@ -237,7 +243,8 @@ def ask(request):
         # ================= FILE SEARCH =================
         if fileId and fileId in DOCUMENT_STORE:
             data = DOCUMENT_STORE[fileId]
-            
+            best = ""
+
             for h, sec in data["sections"].items():
                 for s in sec["sentences"]:
                     if question.lower() in s.lower():
@@ -245,19 +252,19 @@ def ask(request):
 
             if not best:
                 best = data["text"][:1000]
-                
-            ans = format_answer_core( 
+
+            ans = format_answer_core(
                 question,
-                best, 
+                best,
                 template_type=mode,
-                language=language 
-                )
+                language=language
+            )
             return JsonResponse({"answer": ans, "source": "file"})
-
-
 
         # ================= BOOK SEARCH =================
         if book and book in BOOK_KB:
+            best = ""
+
             for h, sec in BOOK_KB[book]["sections"].items():
                 for s in sec["sentences"]:
                     if question.lower() in s.lower():
@@ -265,42 +272,41 @@ def ask(request):
 
             if not best:
                 best = "No matching content found."
-                
-                
+
             ans = format_answer_core(
                 question,
                 best,
                 template_type=mode,
                 language=language
-                )
+            )
             return JsonResponse({"answer": ans, "source": "book"})
 
-
-
-        # global fallback
-        
+        # ================= GLOBAL SEARCH =================
         best = ""
         best_subj = None
-        # ================= GLOBAL SEARCH =================
+
         for subj, info in BOOK_KB.items():
             for h, sec in info["sections"].items():
                 for s in sec["sentences"]:
                     if question.lower() in s.lower():
                         best += s + " "
+                        best_subj = subj
 
-            if not best:
-                best = "No answer found."
+        if not best:
+            best = "No answer found."
 
-            ans = format_answer_core(
-                question,
-                best,
-                template_type=mode,
-                language=language
-                )
+        ans = format_answer_core(
+            question,
+            best,
+            template_type=mode,
+            language=language
+        )
 
-            return JsonResponse({"answer": ans, "source": "global"})
-
-
+        return JsonResponse({
+            "answer": ans,
+            "source": "global",
+            "subject": best_subj
+        })
 
     except Exception as e:
         traceback.print_exc()
