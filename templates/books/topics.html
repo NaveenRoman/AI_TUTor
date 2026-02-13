@@ -79,58 +79,50 @@
   </section>
 
   <script>
-    // ---- Your 20 top topics ----
-  const topics = [
-  { title: "Getting Started with Java", file: "topic/java/java-topic1/" },
-  { title: "Java Basics", file: "topic/java/java-topic2/" },
-  { title: "Methods and Recursion", file: "topic/java/java-topic3/" },
-  { title: "Arrays and Strings", file: "topic/java/java-topic4/" },
-  { title: "OOP", file: "topic/java/java-topic5/" },
-  { title: "Constructors", file: "topic/java/java-topic6/" },
-  { title: "Packages", file: "topic/java/java-topic7/" },
-  { title: "Exception Handling", file: "topic/java/java-topic8/" },
-  { title: "JCF", file: "topic/java/java-topic9/" },
-  { title: "Generics", file: "topic/java/java-topic10/" },
-  { title: "Multithreading", file: "topic/java/java-topic11/" },
-  { title: "File Handling", file: "topic/java/java-topic12/" },
-  { title: "GUI", file: "topic/java/java-topic13/" },
-  { title: "JDBC", file: "topic/java/java-topic14/" },
-  { title: "Projects", file: "topic/java/java-topic15/" },
-  { title: "Interview", file: "topic/java/java-topic16/" },
-  { title: "Developer Essentials", file: "topic/java/java-topic17/" },
-  { title: "JVM Internals", file: "topic/java/java-topic18/" },
-  { title: "API", file: "topic/java/java-topic19/" },
-  { title: "Reactive", file: "topic/java/java-topic20/" },
-  { title: "Certificate", file: "topic/java/java-topic21c/" }
-];
+const urlParams = new URLSearchParams(window.location.search);
+const SUBJECT = urlParams.get("subject");
 
+const topicContainer = document.getElementById("topics");
 
-    let completedIndex = parseInt(localStorage.getItem("completedIndex") || 0);
-    const topicContainer = document.getElementById("topics");
+function renderTopics(chapters) {
+  topicContainer.innerHTML = "";
 
-    function renderTopics() {
-      topicContainer.innerHTML = "";
-      topics.forEach((topic, index) => {
-        const unlocked = index <= completedIndex;
+  chapters.forEach((ch) => {
+    let statusClass = "locked";
+    let action = `<span class="text-gray-500">🔒 Locked</span>`;
 
-        let html = `
-        <div class="index-item ${unlocked ? "unlocked" : "locked"}">
-          <h3 class="text-xl text-white">${topic.title}</h3>
-        `;
-
-        if (unlocked) {
-          html += `<a href="/${topic.file}" class="text-sky-400">Go to Topic →</a>`;
-        } else {
-          html += `<span class="text-gray-500">🔒 Locked</span>`;
-        }
-
-        html += `</div>`;
-        topicContainer.innerHTML += html;
-      });
+    if (ch.completed) {
+      statusClass = "unlocked";
+      action = `<a href="/topic/${SUBJECT}/java-topic${ch.order}/" class="text-green-400">🔁 Review</a>`;
+    } else if (ch.unlocked) {
+      statusClass = "unlocked";
+      action = `<a href="/topic/${SUBJECT}/java-topic${ch.order}/" class="text-sky-400">Go to Topic →</a>`;
     }
 
-    renderTopics();
-  </script>
+    topicContainer.innerHTML += `
+      <div class="index-item ${statusClass}">
+        <div>
+          <h3 class="text-xl text-white">${ch.title}</h3>
+          <p class="text-sm text-gray-400">Topic ${ch.order}</p>
+        </div>
+        ${action}
+      </div>
+    `;
+  });
+}
+
+async function loadProgress() {
+  const res = await fetch(`/api/book-progress/?subject=${SUBJECT}`, {
+    credentials: "include"
+  });
+
+  const data = await res.json();
+  renderTopics(data.chapters);
+}
+
+loadProgress();
+</script>
+
 
 </body>
 </html>

@@ -3,6 +3,8 @@ import random
 import traceback
 from datetime import date, timedelta
 
+from core.models import UsageLog
+
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -201,16 +203,23 @@ def start_quiz(request):
 # SUBMIT QUIZ + PROCTOR DATA
 # ======================================================
 # ======================================================
-# SUBMIT QUIZ + PROCTOR DATA (SAFE VERSION)
+# SUBMIT QUIZ + PROCTOR DATA (WEEK 3 INTELLIGENCE VERSION)
 # ======================================================
 @csrf_exempt
 @require_http_methods(["POST"])
 def submit_quiz(request):
+
+    
+    UsageLog.objects.create(
+    user=user,
+    action="quiz"
+)
+
     try:
         payload = json.loads(request.body or "{}")
 
         quiz_id = payload.get("quiz_id")
-        answers = payload.get("answers", {})
+        answers = payload.get("answers", [])
         instance_id = payload.get("instance_id")
         proctor_events = payload.get("proctor_events", [])
 
@@ -232,59 +241,103 @@ def submit_quiz(request):
                 inst = None
 
         # ----------------------------------
-        # EVALUATE ANSWERS (SAFE LOGIC)
+        # EVALUATE QUIZ
         # ----------------------------------
         score = 0
         total = 0
         wrong = []
 
-        # ✅ SAFE MCQ EVALUATION
-        mcq_answers = answers.get("mcq", [])
+        questions = quiz.questions_json  # assuming list
 
-        for idx, q in enumerate(quiz.questions_json.get("mcq", [])):
+        for idx, q in enumerate(questions):
             total += 1
-            given = mcq_answers[idx] if idx < len(mcq_answers) else None
+            given = answers[idx] if idx < len(answers) else None
+            correct_answer = q.get("answer")
 
-            if str(given).lower() == str(q.get("answer")).lower():
+            if str(given).strip().lower() == str(correct_answer).strip().lower():
                 score += 1
             else:
                 wrong.append({
                     "question": q.get("question"),
-                    "topic": q.get("topic", "General")
+                    "topic": quiz.chapter
                 })
 
-        # ✅ SAFE FILL EVALUATION
-        fill_answers = answers.get("fill", [])
-
-        for idx, q in enumerate(quiz.questions_json.get("fill", [])):
-            total += 1
-            given = fill_answers[idx] if idx < len(fill_answers) else None
-
-            if str(given).lower() == str(q.get("answer")).lower():
-                score += 1
-            else:
-                wrong.append({
-                    "question": q.get("question"),
-                    "topic": q.get("topic", "General")
-                })
+        percent_score = (score / total) * 100 if total else 0
 
         # ----------------------------------
         # CREATE QUIZ ATTEMPT
         # ----------------------------------
         attempt = QuizAttempt.objects.create(
             user=user,
-            quiz_id=quiz_id,
+            quiz=quiz,
             instance=inst,
             answers_json=answers,
-            score=(score / total) * 100 if total else 0,
+            score=percent_score,
+            correct_count=score,
+            total_questions=total,
             submitted_at=timezone.now()
         )
 
         # ----------------------------------
+        # 🔥 WEEK 3: UPDATE TOPIC STAT (INTELLIGENCE CORE)
+        # ----------------------------------
+        if user:
+            from core.models import Book, TopicStat
+            from core.utils_skill_engine import recompute_skill_profile
+
+            book = Book.objects.filter(slug=quiz.subject).first()
+
+            if book:
+                topic_stat, _ = TopicStat.objects.get_or_create(
+                    user=user,
+                    book=book,
+                    topic=quiz.chapter
+                )
+
+                previous_mastery = topic_stat.mastery_score
+
+                topic_stat.attempts += 1
+                topic_stat.correct += score
+
+                # Calculate new mastery
+                new_mastery = (
+                    (topic_stat.correct / (topic_stat.attempts * total)) * 100
+                    if total else 0
+                )
+
+                # -------------------------
+                # 1️⃣ IMPROVEMENT RATE
+                # -------------------------
+                improvement = new_mastery - previous_mastery
+                topic_stat.improvement_rate = round(improvement, 2)
+                topic_stat.last_mastery_score = previous_mastery
+
+                if improvement > 0:
+                    topic_stat.last_improved_at = timezone.now()
+
+                # -------------------------
+                # 2️⃣ DECAY ENGINE
+                # -------------------------
+                if topic_stat.last_attempted:
+                    days_idle = (timezone.now() - topic_stat.last_attempted).days
+                    if days_idle > 14:
+                        new_mastery *= 0.95  # 5% decay
+
+                topic_stat.mastery_score = round(new_mastery, 2)
+                topic_stat.last_attempted = timezone.now()
+                topic_stat.save()
+
+                # -------------------------
+                # 3️⃣ ADAPTIVE TRIGGER
+                # -------------------------
+                recompute_skill_profile(user)
+
+        # ----------------------------------
         # AI TIP GENERATION
         # ----------------------------------
-        attempt.ai_tip = generate_ai_tip(wrong)
-        attempt.save()
+        if wrong:
+            attempt.ai_tip = generate_ai_tip(wrong)
+            attempt.save()
 
         # ----------------------------------
         # SAVE PROCTOR EVENTS
@@ -303,10 +356,14 @@ def submit_quiz(request):
             inst.finished_at = timezone.now()
             inst.save()
 
+        # ----------------------------------
+        # FINAL RESPONSE
+        # ----------------------------------
         return JsonResponse({
             "status": "submitted",
             "attempt_id": attempt.id,
-            "score": attempt.score,
+            "score": percent_score,
+            "correct": score,
             "total": total,
             "ai_tip": attempt.ai_tip
         })
@@ -317,6 +374,8 @@ def submit_quiz(request):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"error": str(e)}, status=500)
+
+
 
 
 
@@ -665,3 +724,5 @@ def topic_quiz_page(request, quiz_id):
         "quiz": quiz,
         "quiz_id": quiz.id,
     })
+
+

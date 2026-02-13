@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Platform Super Admin</title>
+    <style>
+        body { font-family: Arial; padding:40px; background:#f4f7fb; }
+        .card {
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            margin-bottom:20px;
+            box-shadow:0 8px 20px rgba(0,0,0,0.06);
+        }
+        .big {
+            font-size:2rem;
+            font-weight:800;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🌍 Platform Dashboard</h2>
+
+<div class="card">
+    <h3>Total Colleges</h3>
+    <div class="big">{{ total_colleges }}</div>
+</div>
+
+<div class="card">
+    <h3>Total Students</h3>
+    <div class="big">{{ total_students }}</div>
+</div>
+
+<div class="card">
+    <h3>Platform Average Readiness</h3>
+    <div class="big">{{ avg_readiness }}%</div>
+</div>
+
+<div class="card">
+    <h3>Colleges</h3>
+    <ul>
+        {% for i in institutions %}
+            <li>{{ i.name }} ({{ i.city }})</li>
+        {% empty %}
+            <li>No colleges added yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <h3>💰 Monthly Revenue</h3>
+    <div class="big">₹ {{ total_revenue }}</div>
+</div>
+
+
+<div class="card">
+    <h3>🏫 College Comparison</h3>
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>College</th>
+            <th>Students</th>
+            <th>Avg Readiness</th>
+            <th>Plan</th>
+        </tr>
+        {% for c in college_analytics %}
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.students }}</td>
+            <td>{{ c.avg_readiness }}%</td>
+            <td>{{ c.plan }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+</body>
+</html>

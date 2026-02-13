@@ -256,7 +256,7 @@
   <div class="grid">
     <div class="card quiz-status">
       <div class="status">✔ Attempted Today</div>
-      <div class="quiz-score">{{ avg_score|default:"0" }}%</div>
+      <div class="quiz-score">{{ today_score|default:"0" }}%</div>
       <div class="quiz-meta">
         Streak: 🔥 {{ streak }} days
       </div>
@@ -305,6 +305,37 @@
     </div>
   </div>
 
+<h2 class="section-title">🧠 Skill Intelligence</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Readiness Score</h3>
+    <p style="font-size:2rem;font-weight:800">
+      {{ skill_profile.readiness_score|default:"0" }}%
+    </p>
+
+    {% if weekly_growth > 0 %}
+  <p style="color:#22c55e;font-weight:600;">
+    ↑ {{ weekly_growth }}% this week
+  </p>
+{% elif weekly_growth < 0 %}
+  <p style="color:#ef4444;font-weight:600;">
+    ↓ {{ weekly_growth|floatformat:2 }}% this week
+  </p>
+{% else %}
+  <p style="color:#64748b;">
+    No change this week
+  </p>
+{% endif %}
+
+  </div>
+
+  <div class="card">
+    <canvas id="skillRadar" height="250"></canvas>
+  </div>
+</div>
+
+
+
   <!-- AI SUGGESTION -->
   <h2 class="section-title">🧠 AI Suggestion</h2>
   <div class="grid">
@@ -314,6 +345,72 @@
 
     </div>
   </div>
+
+  <h2 class="section-title">📊 Platform Metrics</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Total Interviews</h3>
+    <p style="font-size:1.8rem;font-weight:700">
+      {{ total_interviews }}
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Daily Active Users</h3>
+    <p style="font-size:1.8rem;font-weight:700">
+      {{ daily_active_users }}
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Avg Improvement %</h3>
+    <p style="font-size:1.8rem;font-weight:700">
+      {{ avg_improvement }}%
+    </p>
+  </div>
+</div>
+
+{% if latest_session %}
+<h2 class="section-title">🧠 Behavioral Intelligence</h2>
+
+<div class="grid">
+  <div class="card">
+    <h3>Performance Trend</h3>
+    <p style="font-size:1.5rem;font-weight:700;">
+      {{ latest_session.performance_slope }}
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Consistency Score</h3>
+    <p style="font-size:1.5rem;font-weight:700;">
+      {{ latest_session.consistency_score }}%
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Confidence Trend</h3>
+    <p style="font-size:1.5rem;font-weight:700;">
+      {{ latest_session.confidence_trend }}
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Risk Status</h3>
+
+    {% if latest_session.risk_flag %}
+      <p style="color:#ef4444;font-weight:700;">
+        ⚠ At Risk – Needs Improvement
+      </p>
+    {% else %}
+      <p style="color:#22c55e;font-weight:700;">
+        ✅ Stable Performance
+      </p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
 
   <!-- STUDY PLAN -->
   <div class="card">
@@ -334,6 +431,8 @@
 <h2 class="section-title">📊 Weekly Performance Trend</h2>
 {{ weekly_labels|json_script:"weekly-labels-data" }}
 {{ weekly_scores|json_script:"weekly-scores-data" }}
+{{ skill|json_script:"skill-data" }}
+
 
 
 
@@ -341,11 +440,18 @@
   <canvas id="weeklyChart" height="90"></canvas>
 </div>
 
+
+<div class="quiz-score">{{ today_score|default:"0" }}%</div>
+
+
 <!-- DAILY STREAK -->
 <h2 class="section-title">🔥 Daily Streak (Last 7 Days)</h2>
 
 {{ streak_labels|json_script:"streak-labels-data" }}
 {{ streak_values|json_script:"streak-values-data" }}
+{{ skill|json_script:"skill-data" }}
+
+
 
 
 <div class="card">
@@ -480,6 +586,58 @@ document.querySelectorAll(".progress-fill").forEach(el => {
   }
 });
 </script>
+
+<script>
+const skillData = JSON.parse(
+  document.getElementById("skill-data").textContent
+);
+
+const readiness = skillData.readiness_score || 0;
+
+
+
+// Color logic
+let radarColor = "rgba(239,68,68,0.6)"; // red default
+
+if (readiness >= 70) {
+  radarColor = "rgba(34,197,94,0.6)"; // green
+} else if (readiness >= 40) {
+  radarColor = "rgba(249,115,22,0.6)"; // orange
+}
+
+function safe(v){
+  return Math.max(v || 0, 5); // minimum visual fill
+}
+
+new Chart(document.getElementById("skillRadar"), {
+  type: "radar",
+  data: {
+    labels: ["Technical", "Communication", "Confidence", "Accuracy", "Consistency"],
+    datasets: [{
+      label: "Skill Profile",
+      data: [
+        safe(skillData.technical_score),
+        safe(skillData.communication_score),
+        safe(skillData.confidence_score),
+        safe(skillData.accuracy_score),
+        safe(skillData.consistency_score)
+      ],
+      fill: true,
+      backgroundColor: radarColor,
+      borderColor: radarColor
+    }]
+  },
+  options: {
+    scales: {
+      r: {
+        min: 0,
+        max: 100
+      }
+    }
+  }
+});
+</script>
+
 
 
 

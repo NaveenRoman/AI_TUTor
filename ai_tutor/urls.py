@@ -3,8 +3,12 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from core.views_college import college_dashboard
+
+
 # ✅ IMPORT SIGNUP VIEW
-from core.views.views_auth import signup
+from core.views.views_auth import role_based_redirect
+
 
 urlpatterns = [
 
@@ -16,8 +20,12 @@ urlpatterns = [
     # =========================
     # AUTHENTICATION
     # =========================
-    path("accounts/signup/", signup, name="signup"),
+    path("accounts/redirect/", role_based_redirect, name="role_redirect"),
+
     path("accounts/", include("django.contrib.auth.urls")),
+
+    path("college/dashboard/", college_dashboard, name="college_dashboard"),
+
 
     # =========================
     # CORE APP (ALL PAGES + APIs)

@@ -7,19 +7,17 @@
         .card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; }
         button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
         .submit-btn { background: #4f46e5; color: white; font-weight: bold; }
+        .timer { font-size: 18px; font-weight: bold; color: #dc2626; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
 <h2>🚀 Topic Quiz</h2>
+<div class="timer">⏳ Time Left: <span id="time">05:00</span></div>
 
 <div id="quiz-container"></div>
 
 <button class="submit-btn" onclick="submitQuiz()">Submit Quiz</button>
-
-<!-- SAFE JSON INJECTION -->
-{{ quiz.questions_json|json_script:"quiz-data" }}
-
 
 <!-- SAFE DATA -->
 <script id="quiz-id-data" type="application/json">
@@ -27,6 +25,7 @@
 </script>
 
 {{ quiz.questions_json|json_script:"quiz-data" }}
+
 
 <script>
 const quizId = JSON.parse(
@@ -37,25 +36,52 @@ const questions = JSON.parse(
     document.getElementById("quiz-data").textContent
 );
 
-let answers = { mcq: [], fill: [] };
+let answers = [];
+let totalTime = 300; // 5 minutes
+let timerInterval;
+
+/* ============================= */
+/* TIMER */
+/* ============================= */
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        totalTime--;
+
+        let minutes = Math.floor(totalTime / 60);
+        let seconds = totalTime % 60;
+
+        document.getElementById("time").textContent =
+            `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+
+        if (totalTime <= 0) {
+            clearInterval(timerInterval);
+            submitQuiz();
+        }
+    }, 1000);
+}
+
+/* ============================= */
+/* RENDER QUIZ */
+/* ============================= */
 
 function renderQuiz() {
     const container = document.getElementById("quiz-container");
 
-    if (!questions.mcq || questions.mcq.length === 0) {
+    if (!questions || questions.length === 0) {
         container.innerHTML = "<p>No questions available.</p>";
         return;
     }
 
-    questions.mcq.forEach((q, index) => {
+    questions.forEach((q, index) => {
         const card = document.createElement("div");
         card.className = "card";
 
         card.innerHTML = `
-            <h4>${q.question}</h4>
+            <h4>Q${index + 1}. ${q.question}</h4>
             ${q.options.map(opt => `
                 <label>
-                    <input type="radio" name="mcq${index}" value="${opt}">
+                    <input type="radio" name="q${index}" value="${opt}">
                     ${opt}
                 </label><br>
             `).join("")}
@@ -65,18 +91,27 @@ function renderQuiz() {
     });
 }
 
-function collectAnswers() {
-    answers.mcq = [];
+/* ============================= */
+/* COLLECT ANSWERS */
+/* ============================= */
 
-    questions.mcq.forEach((q, index) => {
+function collectAnswers() {
+    answers = [];
+
+    questions.forEach((q, index) => {
         const selected = document.querySelector(
-            `input[name="mcq${index}"]:checked`
+            `input[name="q${index}"]:checked`
         );
-        answers.mcq.push(selected ? selected.value : null);
+        answers.push(selected ? selected.value : null);
     });
 }
 
+/* ============================= */
+/* SUBMIT QUIZ */
+/* ============================= */
+
 async function submitQuiz() {
+    clearInterval(timerInterval);
     collectAnswers();
 
     const response = await fetch("/api/submit-quiz/", {
@@ -98,14 +133,14 @@ async function submitQuiz() {
         return;
     }
 
-    alert("Score: " + data.score + "%");
+    alert("🎯 Score: " + data.score + "%");
 
     window.location.href = "/dashboard/";
 }
 
 renderQuiz();
+startTimer();
 </script>
-
 
 </body>
 </html>

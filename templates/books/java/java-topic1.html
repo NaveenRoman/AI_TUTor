@@ -653,6 +653,22 @@ public class Car {
     </footer>
 
     <script>
+function getCSRFToken() {
+  let cookieValue = null;
+  const cookies = document.cookie.split(';');
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith('csrftoken=')) {
+      cookieValue = cookie.substring('csrftoken='.length);
+      break;
+    }
+  }
+  return cookieValue;
+}
+</script>
+
+
+    <script>
         /***** COLLAPSIBLE & ANIMATION (kept) *****/
         function toggleCollapsible(header) {
             const content = header.nextElementSibling;
@@ -796,29 +812,29 @@ public class Car {
 
 /***** MARK AS COMPLETED — BACKEND ONLY *****/
 document.getElementById('mark-complete-btn').addEventListener('click', () => {
-    fetch("/api/topic-complete/", {
+  fetch("/api/topic-complete/", {
     method: "POST",
-    credentials: "same-origin", // 🔥 THIS IS THE FIX
+    credentials: "include",
     headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": "{{ csrf_token }}"
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
     },
     body: JSON.stringify({
-        subject: "java",
-        topic: "java-topic1"
+      subject: "java",
+      topic: "java-topic1"
     })
-})
-.then(res => res.json())
-.then(data => {
+  })
+  .then(res => res.json())
+  .then(data => {
     if (data.success) {
-        window.location.href = "/books/?subject=java";
+      window.location.href = "/books/?subject=java";
     } else {
-        alert(data.error || "Failed to save progress");
+      alert(data.error || "Failed to save progress");
     }
-})
-.catch(() => alert("Network error"));
-
+  })
+  .catch(() => alert("Network error"));
 });
+
 
 
 

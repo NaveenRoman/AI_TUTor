@@ -155,7 +155,7 @@ async function loadNextQuestion() {
     }
 
     currentQuestion = data.answer;
-    document.getElementById("question").innerText = currentQuestion;
+    document.getElementById("question").innerHTML = currentQuestion;
     document.getElementById("currentIndex").innerText = currentIndex + 1;
 }
 

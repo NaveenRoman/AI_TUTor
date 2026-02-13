@@ -1,0 +1,17 @@
+<h1>{{ institution.name }} Dashboard</h1>
+
+<p><strong>Plan:</strong> {{ institution.plan }}</p>
+<p><strong>Total Students:</strong> {{ total_students }} / {{ institution.student_limit }}</p>
+<p><strong>Average Readiness:</strong> {{ avg_readiness }}</p>
+
+<hr>
+<h3>Invite Students</h3>
+
+<input type="text" value="http://127.0.0.1:8000/signup/?institution={{ institution.code }}"
+       readonly
+       style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;">
+
+<p style="font-size:14px;color:#6b7280">
+Share this link with your students.
+</p>
+

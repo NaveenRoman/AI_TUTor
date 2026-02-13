@@ -1,4 +1,5 @@
 # core/apps.py
+
 from django.apps import AppConfig
 
 
@@ -7,17 +8,20 @@ class CoreConfig(AppConfig):
     name = "core"
 
     def ready(self):
-        # --- load signals ---
+
+        # 1️⃣ Load signals
         try:
             import core.signals
             print("[INFO] Signals loaded.")
         except Exception as e:
             print(f"[WARN] Signals load failed: {e}")
 
-        # --- load books at startup ---
+        # 2️⃣ Load books into memory
         try:
             from .books_loader import load_books
             load_books()
-            print("[INFO] Books loaded.")
+            print("[INFO] Books loaded into memory.")
         except Exception as e:
-            print(f"[WARN] Books load skipped: {e}")
+            print(f"[WARN] Book loader failed: {e}")
+
+       

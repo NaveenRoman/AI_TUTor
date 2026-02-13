@@ -9,7 +9,8 @@ import threading
 from datetime import datetime, timedelta
 
 import requests
-
+import torch
+from sentence_transformers import SentenceTransformer, util
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -23,7 +24,7 @@ from core.books_loader import BOOK_KB
 # GLOBAL STORES
 # =========================================================
 DOCUMENT_STORE = {}   # fileId -> { text, summary, keyPointsHtml, sections }
-
+_model = None
 
 _NEWS_CACHE = {"ts": None, "headlines": []}
 _NEWS_CACHE_TTL_SECONDS = 60 * 10  # 10 minutes
@@ -38,10 +39,27 @@ VOICE_STATE = {
 # =========================================================
 # MODEL / EMBEDDINGS
 # =========================================================
+def get_model():
+    global _model
+    if _model is None:
+        _model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _model
 
 
-
-
+def retrieve_top_k(sentences, embeddings, question, k=4):
+    if not sentences or embeddings is None:
+        return ""
+    try:
+        model = get_model()
+        q_emb = model.encode(question, convert_to_tensor=True)
+        sims = util.cos_sim(q_emb, embeddings)[0]
+        k = min(k, len(sentences))
+        _, idxs = torch.topk(sims, k)
+        idxs = sorted(idxs.tolist())
+        return " ".join(sentences[i] for i in idxs)
+    except Exception as e:
+        print("[retrieve_top_k]", e)
+        return ""
 
 
 # =========================================================
@@ -92,7 +110,6 @@ def choose_language(payload: dict, question: str) -> str:
 def upload(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST only"}, status=405)
-
     try:
         file = request.FILES.get("file")
         if not file:
@@ -107,11 +124,14 @@ def upload(request):
         summary = summarize_text(text)
         sections = extract_pdf_sections(text)
 
-        # Build simple section map (NO embeddings)
+        model = get_model()
         sec_map = {}
         for h, sents in sections.items():
+            if not sents:
+                continue
             sec_map[h] = {
-                "sentences": sents
+                "sentences": sents,
+                "embeddings": model.encode(sents, convert_to_tensor=True)
             }
 
         DOCUMENT_STORE[file.name] = {
@@ -128,11 +148,9 @@ def upload(request):
             "summary": summary.get("summary", ""),
             "keyPointsHtml": summary.get("keyPointsHtml", "")
         })
-
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"error": str(e)}, status=500)
-
 
 
 # =========================================================
@@ -210,106 +228,81 @@ def ask(request):
         mode = detect_template_type(question, payload)
         language = choose_language(payload, question)
 
-        # ================= CODE DIAGNOSIS =================
         if code and mode == "diagnose":
-            ans = format_answer_core(
-                "Code diagnosis",
-                code,
-                template_type="diagnose",
-                language=language
-            )
+            ans = format_answer_core("Code diagnosis", code, template_type="diagnose", language=language)
             return JsonResponse({"answer": ans, "mode": mode})
 
         ql = question.lower()
 
-        # ================= TIME =================
         if "time" in ql or "date" in ql:
             now = datetime.now().strftime("%A %d %B %Y, %I:%M %p")
             ans = format_answer_core(question, now, template_type=mode)
             return JsonResponse({"answer": ans})
 
-        # ================= WEATHER =================
         if "weather" in ql:
             text, err = fetch_weather()
             ans = format_answer_core(question, text or err)
             return JsonResponse({"answer": ans})
 
-        # ================= NEWS =================
         if "news" in ql:
             text, err = fetch_news()
             ans = format_answer_core(question, text or err)
             return JsonResponse({"answer": ans})
 
-        # ================= FILE SEARCH =================
         if fileId and fileId in DOCUMENT_STORE:
             data = DOCUMENT_STORE[fileId]
             best = ""
-
+            best_score = -1
+            model = get_model()
             for h, sec in data["sections"].items():
-                for s in sec["sentences"]:
-                    if any(word in s.lower() for word in question.lower().split()):
+                sims = util.cos_sim(
+                    model.encode(question, convert_to_tensor=True),
+                    sec["embeddings"]
+                )[0]
+                score = float(torch.max(sims))
+                if score > best_score:
+                    best_score = score
+                    best = retrieve_top_k(sec["sentences"], sec["embeddings"], question)
 
-                        best += s + " "
-
-            if not best:
-                best = data["text"][:1000]
-
-            ans = format_answer_core(
-                question,
-                best,
-                template_type=mode,
-                language=language
-            )
+            ans = format_answer_core(question, best, template_type=mode, language=language)
             return JsonResponse({"answer": ans, "source": "file"})
 
-        # ================= BOOK SEARCH =================
         if book and book in BOOK_KB:
             best = ""
-
+            best_score = -1
+            model = get_model()
             for h, sec in BOOK_KB[book]["sections"].items():
-                for s in sec["sentences"]:
-                    if any(word in s.lower() for word in question.lower().split()):
+                sims = util.cos_sim(
+                    model.encode(question, convert_to_tensor=True),
+                    sec["embeddings"]
+                )[0]
+                score = float(torch.max(sims))
+                if score > best_score:
+                    best_score = score
+                    best = retrieve_top_k(sec["sentences"], sec["embeddings"], question)
 
-                        best += s + " "
-
-            if not best:
-                best = "No matching content found."
-
-            ans = format_answer_core(
-                question,
-                best,
-                template_type=mode,
-                language=language
-            )
+            ans = format_answer_core(question, best, template_type=mode, language=language)
             return JsonResponse({"answer": ans, "source": "book"})
 
-        # ================= GLOBAL SEARCH =================
+        # global fallback
         best = ""
+        best_score = -1
         best_subj = None
-
+        model = get_model()
         for subj, info in BOOK_KB.items():
             for h, sec in info["sections"].items():
-                for s in sec["sentences"]:
-                    if any(word in s.lower() for word in question.lower().split()):
+                sims = util.cos_sim(
+                    model.encode(question, convert_to_tensor=True),
+                    sec["embeddings"]
+                )[0]
+                score = float(torch.max(sims))
+                if score > best_score:
+                    best_score = score
+                    best = retrieve_top_k(sec["sentences"], sec["embeddings"], question)
+                    best_subj = subj
 
-                        best += s + " "
-                        best_subj = subj
-
-        if not best:
-            best = "No answer found."
-
-        ans = format_answer_core(
-            question,
-            best,
-            template_type=mode,
-            language=language
-        )
-
-        return JsonResponse({
-            "answer": ans,
-            "source": "global",
-            "subject": best_subj
-        })
+        ans = format_answer_core(question, best or "No answer found", template_type=mode, language=language)
+        return JsonResponse({"answer": ans, "source": "global", "subject": best_subj})
 
     except Exception as e:
         traceback.print_exc()

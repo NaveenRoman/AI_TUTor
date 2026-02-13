@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>College Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background:#f4f7fb;
+            padding:40px;
+        }
+        h2 {
+            margin-bottom: 25px;
+            color:#0f172a;
+        }
+        .card {
+            background:white;
+            padding:25px;
+            border-radius:14px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.06);
+            margin-bottom:25px;
+        }
+        .big {
+            font-size:2.2rem;
+            font-weight:800;
+            color:#4f46e5;
+        }
+        ul {
+            padding-left: 18px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>🏫 {{ institution.name }} — Placement Analytics</h2>
+
+<div class="card">
+    <a href="{% url 'export_report' %}">
+        <button style="
+            background:#6366f1;
+            color:white;
+            padding:12px 20px;
+            border:none;
+            border-radius:8px;
+            font-weight:600;
+            cursor:pointer;
+        ">
+            📄 Export Placement Report (PDF)
+        </button>
+    </a>
+</div>
+
+<form method="get">
+    <select name="branch">
+        <option value="">All Branches</option>
+        <option value="CSE">CSE</option>
+        <option value="ECE">ECE</option>
+        <option value="EEE">EEE</option>
+        <option value="MECH">MECH</option>
+    </select>
+
+    <select name="batch">
+        <option value="">All Batches</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+    </select>
+
+    <button type="submit">Apply Filter</button>
+</form>
+
+{% if prediction %}
+<div class="card">
+    <h3>AI Placement Prediction</h3>
+    <p>{{ prediction }}</p>
+</div>
+{% endif %}
+
+
+<div class="card">
+    <h3>📊 Average Placement Readiness</h3>
+    <div class="big">{{ avg_readiness }}%</div>
+</div>
+
+<div class="card">
+    <h3>🎯 Readiness Distribution</h3>
+    <canvas id="distChart" height="120"></canvas>
+</div>
+
+<div class="card">
+    <h3>Filter Students</h3>
+
+    <form method="get">
+        <select name="department">
+            <option value="">All Departments</option>
+            {% for d in departments %}
+                <option value="{{ d }}"
+                    {% if d == selected_department %}selected{% endif %}>
+                    {{ d }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <select name="batch">
+            <option value="">All Batches</option>
+            {% for b in batches %}
+                <option value="{{ b }}"
+                    {% if b|stringformat:"s" == selected_batch %}selected{% endif %}>
+                    {{ b }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Apply</button>
+    </form>
+</div>
+
+{% if risk_students %}
+<div class="card">
+    <h3 style="color:#ef4444;">🚨 At-Risk Students</h3>
+
+    <ul>
+        {% for s in risk_students %}
+            <li>
+                <strong>{{ s.user.username }}</strong>
+                — {{ s.user.skillprofile.readiness_score }}%
+                <br>
+                Trend: {{ s.performance_slope }}
+                | Confidence: {{ s.confidence_trend }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+
+
+<div class="card">
+    <h3>🏆 Top 10 Students</h3>
+    <ul>
+        {% for s in top_students %}
+            <li>
+                <strong>{{ s.user.username }}</strong>
+                — {{ s.readiness_score }}%
+            </li>
+        {% empty %}
+            <li>No student data yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+<div class="card">
+    <h3 style="color:#dc2626;">🔴 High Risk Students</h3>
+    <ul>
+        {% for s in high_risk_students %}
+            <li>
+                <strong>{{ s.user.username }}</strong>
+                — Readiness: {{ s.readiness_score }}%
+                — Behavior: {{ s.behavior_score }}%
+            </li>
+        {% empty %}
+            <li>No high-risk students.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <h3 style="color:#f59e0b;">🟡 Medium Risk Students</h3>
+    <ul>
+        {% for s in medium_risk_students %}
+            <li>
+                <strong>{{ s.user.username }}</strong>
+                — Readiness: {{ s.readiness_score }}%
+                — Behavior: {{ s.behavior_score }}%
+            </li>
+        {% empty %}
+            <li>No medium-risk students.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <h3>🔮 Placement Prediction Distribution</h3>
+    <canvas id="predictionChart"></canvas>
+</div>
+
+{{ tier1_ready|json_script:"tier1-data" }}
+{{ service_ready|json_script:"service-data" }}
+{{ high_risk|json_script:"risk-data" }}
+{{ needs_improvement|json_script:"improve-data" }}
+
+<script>
+const tier1 = JSON.parse(document.getElementById("tier1-data").textContent);
+const service = JSON.parse(document.getElementById("service-data").textContent);
+const risk = JSON.parse(document.getElementById("risk-data").textContent);
+const improve = JSON.parse(document.getElementById("improve-data").textContent);
+
+new Chart(document.getElementById("predictionChart"), {
+    type: "bar",
+    data: {
+        labels: [
+            "Tier-1 Ready",
+            "Service Ready",
+            "High Risk",
+            "Needs Improvement"
+        ],
+        datasets: [{
+            label: "Students",
+            data: [tier1, service, risk, improve],
+            backgroundColor: [
+                "#22c55e",
+                "#3b82f6",
+                "#ef4444",
+                "#f59e0b"
+            ]
+        }]
+    },
+    options: {
+        plugins: {
+            legend: { display: false }
+        }
+    }
+});
+</script>
+
+
+
+
+<div class="card">
+    <h3>Weak Topic Clusters (College Level)</h3>
+    <ul>
+        {% for t in weak_topics %}
+            <li>
+                {{ t.topic }} — {{ t.student_count }} students weak
+            </li>
+        {% empty %}
+            <li>No weak topic clusters yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <h3>Growth Trend (Last 30 Days)</h3>
+    <canvas id="growthChart"></canvas>
+</div>
+
+
+
+<!-- ✅ SAFE DATA TRANSFER -->
+{{ not_ready|json_script:"not-ready-data" }}
+{{ moderate|json_script:"moderate-data" }}
+{{ ready|json_script:"ready-data" }}
+{{ growth_data|json_script:"growth-data" }}
+{{ growth_data|json_script:"growth-data-json" }}
+
+
+
+
+
+<script>
+const notReady = JSON.parse(
+    document.getElementById("not-ready-data").textContent
+);
+const moderate = JSON.parse(
+    document.getElementById("moderate-data").textContent
+);
+const ready = JSON.parse(
+    document.getElementById("ready-data").textContent
+);
+
+new Chart(document.getElementById("distChart"), {
+    type: "doughnut",
+    data: {
+        labels: [
+            "Not Ready (0–40%)",
+            "Moderate (40–70%)",
+            "Placement Ready (70%+)"
+        ],
+        datasets: [{
+            data: [notReady, moderate, ready],
+            backgroundColor: [
+                "#ef4444",
+                "#f59e0b",
+                "#22c55e"
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                position: "bottom"
+            }
+        }
+    }
+});
+</script>
+
+<script>
+const growthData30 = JSON.parse(
+    document.getElementById("growth-data-json").textContent
+);
+
+const growthLabels = growthData30.map(d => d.week);
+const growthValues = growthData30.map(d => d.avg_score);
+
+new Chart(document.getElementById("growthChart"), {
+    type: "line",
+    data: {
+        labels: growthLabels,
+        datasets: [{
+            label: "Avg Interview Score",
+            data: growthValues,
+            borderColor: "#6366f1",
+            backgroundColor: "rgba(99,102,241,0.1)",
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: {
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                min: 0,
+                max: 10
+            }
+        }
+    }
+});
+</script>
+
+
+
+
+
+</body>
+
+</html>

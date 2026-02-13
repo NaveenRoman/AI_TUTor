@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ profile.user.username }} - Hireable Profile</title>
+    <style>
+        body { font-family: Inter; padding:40px; background:#f4f7fb; }
+        .card { background:white; padding:30px;
+                border-radius:14px;
+                box-shadow:0 10px 25px rgba(0,0,0,0.06); }
+        .big { font-size:2rem; font-weight:800; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>{{ profile.user.username }}</h2>
+
+    <p class="big">
+        Readiness: {{ profile.readiness_score }}%
+    </p>
+
+    <p>
+        Behavior Score: {{ profile.behavior_score }}
+    </p>
+
+    <p>
+        Risk Level: {{ profile.risk_level }}
+    </p>
+
+    <p>
+        Technical: {{ profile.technical_score }} |
+        Communication: {{ profile.communication_score }} |
+        Confidence: {{ profile.confidence_score }}
+    </p>
+</div>
+
+</body>
+</html>

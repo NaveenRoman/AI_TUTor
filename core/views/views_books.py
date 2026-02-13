@@ -2,39 +2,49 @@ import os
 import json
 import traceback
 import nltk
-import re
+from django.core.mail import EmailMultiAlternatives
 
-from django.db.models import Max
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
-from django.conf import settings
-from django.core.mail import send_mail
-from django.http import JsonResponse, Http404
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 
-from django.views.decorators.csrf import csrf_exempt
-
+# 🔹 Django REST Framework
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.decorators import login_required
 
-from core.models import (
-    Book,
-    Chapter,
-    UserChapterProgress,
-    QuizChapter
-)
+# 🔹 Django shortcuts & utils
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.conf import settings
+
+from core.models import QuizChapter
+import random
+
+from django.utils import timezone   # ADD THIS AT TOP
+
+from django.http import JsonResponse, Http404
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 from core.books_loader import BOOK_KB
 from core.utils import extract_text
 from core.utils_format import format_answer_core
-
 from core.views.views_chat import (
+    get_model,
+    retrieve_top_k,
     detect_template_type,
     choose_language,
     VOICE_STATE,
 )
 
-from core.views.views_quiz import auto_generate_chapter_quiz
+from core.models import (
+    Book,
+    Chapter,
+    UserChapterProgress,
+)
+
 
 
 
@@ -42,14 +52,6 @@ from core.views.views_quiz import auto_generate_chapter_quiz
 # BOOKS PAGE (HTML)
 # ======================================================
 def book_topics_page(request):
-    subject = request.GET.get("subject")
-
-    # ✅ Subject-specific page (java, python, etc.)
-    if subject:
-        subject = subject.lower()
-        return render(request, f"books/{subject}.html")
-
-    # ✅ Fallback (if no subject provided)
     books = {
         subject: {
             "topics": list(info["sections"].keys()),
@@ -60,11 +62,7 @@ def book_topics_page(request):
     return render(request, "books/topics.html", {"books": books})
 
 
-
-
-# ======================================================
-# BOOK TOPIC PAGE (HTML)
-# ======================================================
+# ADD THIS FUNCTION BACK
 def book_topic_page(request, subject, page):
     subject = subject.lower()
     template_path = f"books/{subject}/{page}.html"
@@ -72,6 +70,9 @@ def book_topic_page(request, subject, page):
         return render(request, template_path)
     except Exception:
         raise Http404("Topic not found")
+
+
+
 
 
 # ======================================================
@@ -101,20 +102,47 @@ def ask_book_topic(request):
         if not os.path.isfile(topic_path):
             return JsonResponse({"error": "Topic not found"}, status=404)
 
+        # ======================================================
+        # 🎤 INTERVIEW MODE DETECTION
+        # ======================================================
+        if "interview question" in question.lower():
+
+            import random
+
+            interview_templates = [
+                "Explain JVM architecture.",
+                "What is the difference between JDK, JRE and JVM?",
+                "Explain OOP principles in Java.",
+                "What is multithreading in Java?",
+                "What is the difference between HashMap and Hashtable?",
+                "Explain exception handling in Java.",
+                "What is garbage collection?",
+                "What is the difference between abstract class and interface?"
+            ]
+
+            clean_question = random.choice(interview_templates)
+
+            return JsonResponse({
+                "answer": clean_question,
+                "subject": subject,
+                "topic": topic,
+                "mode": "interview",
+            })
+
+        # ======================================================
+        # 📘 NORMAL TUTOR MODE
+        # ======================================================
+
         text = extract_text(topic_path)
         sentences = nltk.sent_tokenize(text)
 
-        # simple keyword-based fallback (no embeddings)
-        best_text = ""
-        for s in sentences:
-            if question.lower() in s.lower():
-                best_text += s + " "
-        if not best_text:
-            best_text = " ".join(sentences[:5])
+        embeddings = get_model().encode(sentences, convert_to_tensor=True)
 
+        best_text = retrieve_top_k(sentences, embeddings, question)
 
         mode = detect_template_type(question, data)
         language = choose_language(data, question)
+
         if full:
             mode = "full_topic"
 
@@ -139,105 +167,178 @@ def ask_book_topic(request):
         traceback.print_exc()
         return JsonResponse({"error": str(e)}, status=500)
 
+
+# ======================================================
+# MARK TOPIC COMPLETED (API) ✅ FIXED
+# ======================================================
 # ======================================================
 # MARK TOPIC COMPLETED (API)
 # ======================================================
 @api_view(["POST"])
-@login_required
+@permission_classes([IsAuthenticated])
 def topic_complete_api(request):
-
-    print("🔥 topic_complete_api called")
+    print("🔥 topic_complete_api CALLED")
 
     user = request.user
     subject = request.data.get("subject")
     topic_slug = request.data.get("topic")
 
     if not subject or not topic_slug:
-        return Response(
-            {"success": False, "error": "Invalid data"},
-            status=400
-        )
+        return Response({"success": False}, status=400)
 
-    # Extract topic number (java-topic1 → 1)
+    import re
     match = re.search(r"(\d+)$", topic_slug)
     if not match:
-        return Response(
-            {"success": False, "error": "Invalid topic format"},
-            status=400
-        )
+        return Response({"success": False}, status=400)
 
     order = int(match.group(1))
 
-    # Get chapter from DB
     chapter = get_object_or_404(
         Chapter,
         book__slug=subject,
         order=order
     )
 
-    # 1️⃣ Mark chapter as completed
-    UserChapterProgress.objects.update_or_create(
+    # ✅ Get or create progress
+    progress, created = UserChapterProgress.objects.get_or_create(
         user=user,
-        chapter=chapter,
-        defaults={"completed": True}
+        chapter=chapter
     )
 
-    # 2️⃣ 🔥 Generate quiz properly
-    quiz_obj = auto_generate_chapter_quiz(subject, topic_slug)
+    # ✅ Prevent duplicate completion
+    if progress.completed:
+        return Response({"success": True})
 
-    if not quiz_obj:
-        quiz_obj = QuizChapter.objects.filter(
-            subject=subject,
-            chapter=topic_slug
-        ).order_by("-created_at").first()
+    # ✅ Mark as completed
+    progress.completed = True
+    progress.completed_at = timezone.now()
+    progress.save()
 
-    if not quiz_obj:
+    # =====================================================
+    # 🔥 SMART QUIZ GENERATOR
+    # =====================================================
+
+    folder = os.path.join(settings.BASE_DIR, "templates", "books", subject)
+    file_name = f"{subject}-topic{order}.html"
+    file_path = os.path.join(folder, file_name)
+
+    if not os.path.exists(file_path):
         return Response(
-            {"success": False, "error": "Quiz generation failed"},
+            {"success": False, "error": "Chapter file not found"},
             status=500
         )
 
-    # 3️⃣ Build quiz URL
-    quiz_url = request.build_absolute_uri(
-        reverse("topic_quiz", args=[quiz_obj.id])
+    text = extract_text(file_path)
+    sentences = nltk.sent_tokenize(text)
+
+    questions = []
+
+    if len(sentences) >= 5:
+        selected = random.sample(sentences, 5)
+    else:
+        selected = sentences
+
+    for sentence in selected:
+        words = sentence.split()
+
+        if len(words) < 6:
+            continue
+
+        answer_word = random.choice(words[1:-1])
+        question_text = sentence.replace(answer_word, "______", 1)
+
+        options = [answer_word]
+
+        while len(options) < 4:
+            fake = random.choice(words)
+            if fake not in options:
+                options.append(fake)
+
+        random.shuffle(options)
+
+        questions.append({
+            "question": question_text,
+            "options": options,
+            "answer": answer_word
+        })
+
+    # 🔹 Fallback (if no valid questions generated)
+    if not questions:
+        questions.append({
+            "question": f"What is the main concept of {chapter.title}?",
+            "options": ["Concept A", "Concept B", "Concept C", "Concept D"],
+            "answer": "Concept A"
+        })
+
+    # =====================================================
+    # ✅ CREATE QUIZ RECORD
+    # =====================================================
+
+    quiz = QuizChapter.objects.create(
+        subject=subject,
+        chapter=chapter.title,
+        quiz_type="chapter",
+        questions_json=questions
     )
 
-    # 4️⃣ Send email
-   # if user.email:
-     #   send_mail(
-     #       subject="🎯 You unlocked a new quiz!",
-     #       message=f"""
-#Hi {user.username},
-
-#Great job completing "{chapter.title}" 🎉
-
-#You have a new quiz waiting:
-#👉 {quiz_url}
-
-#Complete it to continue your streak 🔥
-#""",
-  #          from_email=settings.DEFAULT_FROM_EMAIL,
-   #         recipient_list=[user.email],
-    #        fail_silently=True
-     #   )
-#
-    print("✅ topic_complete_api finished successfully")
-
-    return Response({
-        "success": True,
-        "quiz_id": quiz_obj.id
-    })
+    quiz_url = request.build_absolute_uri(
+    f"/quiz/{quiz.id}/")
 
 
+    # =====================================================
+    # 📧 SEND EMAIL
+    # =====================================================
+
+    subject_line = "🎯 Topic Completed – Quiz Unlocked"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to = [user.email]
+
+    text_content = f"""
+Hi {user.username},
+
+You completed: {chapter.title}
+
+Start your quiz here:
+{quiz_url}
+"""
+
+    html_content = f"""
+<h2>🎯 Quiz Unlocked!</h2>
+<p>Hi <strong>{user.username}</strong>,</p>
+<p>You completed: <b>{chapter.title}</b></p>
+
+<p>
+<a href="{quiz_url}" style="
+  padding:12px 20px;
+  background:#2563eb;
+  color:white;
+  text-decoration:none;
+  border-radius:6px;
+  font-weight:bold;">
+  🚀 Start Quiz
+</a>
+</p>
+
+<p>Keep learning and growing! 💪</p>
+"""
+
+    msg = EmailMultiAlternatives(subject_line, text_content, from_email, to)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+    print("✅ EMAIL FUNCTION FINISHED")
+
+    return Response({"success": True})
 
 
 
 
 # ======================================================
-# BOOK PROGRESS (API)
+# BOOK PROGRESS (FINAL – STRONG SEQUENTIAL UNLOCK)
 # ======================================================
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def book_progress_api(request):
     subject = request.GET.get("subject")
 
@@ -251,33 +352,49 @@ def book_progress_api(request):
             "chapters": []
         })
 
-    chapters = list(
-        Chapter.objects.filter(book=book)
-        .order_by("order")
-        .values("order", "title")
-    )
+    chapters = Chapter.objects.filter(book=book).order_by("order")
+    total = chapters.count()
 
-    total = len(chapters)
+    user = request.user
 
-    if request.user.is_authenticated:
-        completed = (
-            UserChapterProgress.objects.filter(
-                user=request.user,
-                chapter__book=book,
-                completed=True
-            )
-            .aggregate(max_order=Max("chapter__order"))
-            .get("max_order") or 0
-        )
-    else:
-        completed = 0
+    completed_chapters = UserChapterProgress.objects.filter(
+        user=user,
+        chapter__book=book,
+        completed=True
+    ).values_list("chapter_id", flat=True)
 
-    percent = int((completed / total) * 100) if total else 0
+    completed_set = set(completed_chapters)
+    completed_count = len(completed_set)
+
+    percent = int((completed_count / total) * 100) if total else 0
+
+    chapter_list = []
+    previous_completed = True  # first chapter unlocked
+
+    for ch in chapters:
+
+        completed = ch.id in completed_set
+
+        # unlock only if previous chapter was completed
+        if previous_completed:
+            unlocked = True
+        else:
+            unlocked = False
+
+        chapter_list.append({
+            "id": ch.id,
+            "order": ch.order,
+            "title": ch.title,
+            "completed": completed,
+            "unlocked": unlocked,
+        })
+
+        previous_completed = completed  # next depends on this
 
     return JsonResponse({
-        "completed_chapters": completed,
+        "completed_chapters": completed_count,
         "total_chapters": total,
         "percent_complete": percent,
-        "chapters": chapters
+        "chapters": chapter_list,
     })
 
